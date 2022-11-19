@@ -7,15 +7,15 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
+import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
-import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
 import net.lifeupapp.lifeup.http.utils.setHtmlText
 
@@ -39,13 +39,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         lifecycleScope.launch {
-            KtorService.isRunning.collect { running ->
-                if (running == LifeUpService.RunningState.RUNNING || running == LifeUpService.RunningState.STARTING) {
-                    binding.serverStatusText.text = getString(R.string.serverStartedMessage)
-                    binding.switchStartService.isChecked = true
-                } else {
-                    binding.serverStatusText.text = getString(R.string.server_status)
-                    binding.switchStartService.isChecked = false
+            launch {
+                KtorService.isRunning.collect { running ->
+                    if (running == LifeUpService.RunningState.RUNNING || running == LifeUpService.RunningState.STARTING) {
+                        binding.serverStatusText.text = getString(R.string.serverStartedMessage)
+                        binding.switchStartService.isChecked = true
+                    } else {
+                        binding.serverStatusText.text = getString(R.string.server_status)
+                        binding.switchStartService.isChecked = false
+                    }
+                }
+            }
+
+            launch {
+                ConnectStatusManager.networkChangedEvent.sample(500L).collect {
+                    updateLocalIpAddress()
                 }
             }
         }
@@ -90,20 +98,22 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.includeOverlayConfig.btn.isGone = true
         }
+    }
 
-
+    private fun updateLocalIpAddress() {
         val localIpAddress =
             getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
                 "${it}:13276"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)
+        } else {
+            binding.ipAddressText.text = getString(R.string.ipAddressUnknown)
         }
 
         binding.tvAboutDesc.setHtmlText(R.string.about_text)
         binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         binding.tvAboutDesc.linksClickable = true
     }
-
 
 }
