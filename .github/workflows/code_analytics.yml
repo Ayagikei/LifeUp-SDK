@@ -1,0 +1,57 @@
+name: Code Analytics
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v2
+
+      - name: mkdir
+        run: mkdir reports
+
+      - name: "detekt"
+        uses: natiginfo/action-detekt-all@1.21.0
+        with:
+          args: --max-issues 9999 --report md:reports/detekt.md --baseline detekt/baseline.xml --auto-correct --parallel --plugins detekt/detekt-formatting-1.21.0.jar # --create-baseline
+
+      - name: "add & commit auto correct code"
+        uses: EndBug/add-and-commit@v7.4.0
+        with:
+          add: core/src
+          author_name: GitHub
+          author_email: noreply@github.com
+          #        branch: master
+          message: "style: ktlint auto correct style for core module"
+          github_token: ${{ github.token }}
+
+      - name: "add & commit auto correct code"
+        uses: EndBug/add-and-commit@v7.4.0
+        with:
+          add: http/src
+          author_name: GitHub
+          author_email: noreply@github.com
+          #        branch: master
+          message: "style: ktlint auto correct style for http module"
+          github_token: ${{ github.token }}
+
+      - name: "upload reports"
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: reports
+          path: 'reports/*.*'
+
+      - name: "output to summary"
+        run: |
+          while read line
+          do
+            echo "$line" >> $GITHUB_STEP_SUMMARY
+          done < reports/detekt.md

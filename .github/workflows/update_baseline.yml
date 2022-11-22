@@ -1,0 +1,29 @@
+name: Update Code Analytics Baseline
+on:
+  workflow_dispatch:
+
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v2
+
+      - name: mkdir
+        run: mkdir reports
+
+      - name: "detekt"
+        uses: natiginfo/action-detekt-all@1.21.0
+        with:
+          args: --max-issues 9999 --parallel --plugins detekt/detekt-formatting-1.21.0.jar --create-baseline --baseline detekt/baseline.xml
+
+      - name: "add & commit auto correct code"
+        uses: EndBug/add-and-commit@v7.4.0
+        with:
+          add: detekt/baseline.xml
+          author_name: GitHub
+          author_email: noreply@github.com
+          message: "chore: update detekt baseline"
+          github_token: ${{ github.token }}
