@@ -1,7 +1,6 @@
 package net.lifeupapp.lifeup.api.utils
 
 import android.content.Context
-import net.lifeupapp.lifeup.api.LifeUpApi
 
 internal fun isAppInstalled(context: Context, packageName: String): Boolean {
     return try {

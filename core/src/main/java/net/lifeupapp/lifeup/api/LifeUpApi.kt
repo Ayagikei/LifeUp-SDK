@@ -7,7 +7,6 @@ import android.os.Build
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
-
 @SuppressLint("StaticFieldLeak")
 object LifeUpApi {
 
@@ -42,6 +41,4 @@ object LifeUpApi {
         intent.selector = null
         return intent
     }
-
-
 }
