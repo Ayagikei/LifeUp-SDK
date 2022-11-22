@@ -7,7 +7,6 @@ import android.os.Build
 import net.lifeupapp.lifeup.http.R
 import net.lifeupapp.lifeup.http.base.appCtx
 
-
 object NotificationChannels {
     const val CHANNEL_NOTIFICATION = "net.lifeupapp.lifeup.http.server"
 

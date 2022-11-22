@@ -52,7 +52,6 @@ class ServerNotificationService : Service() {
             .setOngoing(true)
             .setShowWhen(false)
 
-
         notificationBuilder.setContentIntent(pendingIntent)
             .setContentTitle(getString(R.string.notification_channel_server))
             .setSound(null)

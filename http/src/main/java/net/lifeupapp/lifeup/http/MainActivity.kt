@@ -1,6 +1,5 @@
 package net.lifeupapp.lifeup.http
 
-
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -86,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (!Settings.canDrawOverlays(this)) {
                 binding.includeOverlayConfig.btn.setOnClickListener {
@@ -103,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateLocalIpAddress() {
         val localIpAddress =
             getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
-                "${it}:13276"
+                "$it:13276"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)
@@ -115,5 +113,4 @@ class MainActivity : AppCompatActivity() {
         binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         binding.tvAboutDesc.linksClickable = true
     }
-
 }

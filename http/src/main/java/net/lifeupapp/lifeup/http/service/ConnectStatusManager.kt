@@ -21,16 +21,16 @@ object ConnectStatusManager {
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             connectivityManager.registerDefaultNetworkCallback(object :
-                ConnectivityManager.NetworkCallback() {
-                override fun onCapabilitiesChanged(
-                    network: Network,
-                    networkCapabilities: NetworkCapabilities
-                ) {
-                    Log.i("ConnectStatusManager", "onCapabilitiesChanged")
-                    super.onCapabilitiesChanged(network, networkCapabilities)
-                    networkChangedEvent.tryEmit(Unit)
-                }
-            })
+                    ConnectivityManager.NetworkCallback() {
+                    override fun onCapabilitiesChanged(
+                        network: Network,
+                        networkCapabilities: NetworkCapabilities
+                    ) {
+                        Log.i("ConnectStatusManager", "onCapabilitiesChanged")
+                        super.onCapabilitiesChanged(network, networkCapabilities)
+                        networkChangedEvent.tryEmit(Unit)
+                    }
+                })
         } else {
             connectivityManager.registerNetworkCallback(
                 NetworkRequest.Builder().build(),

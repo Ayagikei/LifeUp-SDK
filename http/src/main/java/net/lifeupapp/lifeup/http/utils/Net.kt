@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.http.utils
 
 import java.net.NetworkInterface
 
-
 fun getIpAddressInLocalNetwork(): String? {
     val localAddresses = getIpAddressListInLocalNetwork()
     return localAddresses.firstOrNull()
@@ -14,7 +13,7 @@ fun getIpAddressListInLocalNetwork(): List<String> {
         it.inetAddresses.asSequence()
             .filter { inetAddress ->
                 inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":") &&
-                        inetAddress.hostAddress != "127.0.0.1"
+                    inetAddress.hostAddress != "127.0.0.1"
             }
             .map { inetAddress -> inetAddress.hostAddress }
     }?.toList() ?: emptyList()

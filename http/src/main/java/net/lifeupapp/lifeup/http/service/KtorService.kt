@@ -1,6 +1,5 @@
 package net.lifeupapp.lifeup.http.service
 
-import android.util.Log
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
@@ -17,7 +16,6 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -98,17 +96,17 @@ object KtorService : LifeUpService {
                                         +"GET request"
                                     }
                                     p {
-                                        +"http://${localAddressIp}:$port/api?url=YOUR_ENCODED_API_URL"
+                                        +"http://$localAddressIp:$port/api?url=YOUR_ENCODED_API_URL"
                                     }
                                     p {
                                         +"you can send the get request to call in directly, but you need to encode the API like this: "
                                     }
                                     p {
                                         a(
-                                            href = "http://${localAddressIp}:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1",
+                                            href = "http://$localAddressIp:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1",
                                             target = "_blank"
                                         ) {
-                                            +"http://${localAddressIp}:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1"
+                                            +"http://$localAddressIp:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1"
                                         }
                                     }
                                     div()
@@ -134,7 +132,7 @@ object KtorService : LifeUpService {
 
                 get("/api") {
                     call.request.queryParameters["url"]?.let { url ->
-                        logger.info("Got url: ${url}")
+                        logger.info("Got url: $url")
                         LifeUpApi.call(appCtx, url)
                     }
                     call.respond("success\ncheck your phone!")
@@ -169,7 +167,6 @@ object KtorService : LifeUpService {
                 _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
                 _errorMessage.value = it
             }
-
         }
     }
 
