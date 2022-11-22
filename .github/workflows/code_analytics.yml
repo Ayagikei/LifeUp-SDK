@@ -21,7 +21,7 @@ jobs:
       - name: "detekt"
         uses: natiginfo/action-detekt-all@1.21.0
         with:
-          args: --max-issues 9999 --report md:reports/detekt.md --baseline detekt/baseline.xml --auto-correct --parallel --plugins detekt/detekt-formatting-1.21.0.jar # --create-baseline
+          args: --max-issues 9999 --report md:reports/detekt.md --auto-correct --parallel --plugins detekt/detekt-formatting-1.21.0.jar # --create-baseline
 
       - name: "add & commit auto correct code"
         uses: EndBug/add-and-commit@v7.4.0
