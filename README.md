@@ -9,7 +9,16 @@
 
 ### Installation
 
-> Still under Google Play reviewing...
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=net.lifeupapp.lifeup.http">
+    <img src="https://img.shields.io/static/v1?labelColor=56595b&color=97db99&logo=google-play&logoColor=ffffff&label=google play&style=for-the-badge&message=get"/>
+  </a>
+
+
+  <a href="https://github.com/Ayagikei/LifeUp-SDK/releases">
+    <img src="https://img.shields.io/static/v1?labelColor=56595b&color=a6c6ff&logo=github&logoColor=ffffff&label=Github%20Release&style=for-the-badge&message=get"/>
+  </a>
+</p>
 
 <br/>
 
