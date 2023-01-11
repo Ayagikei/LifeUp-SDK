@@ -1,34 +1,22 @@
 package net.lifeupapp.lifeup.http.service
 
-import io.ktor.http.ContentType
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.call
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.netty.NettyApplicationEngine
-import io.ktor.server.plugins.callloging.CallLogging
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.routing
-import io.ktor.server.websocket.WebSockets
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.html.a
-import kotlinx.html.body
-import kotlinx.html.div
-import kotlinx.html.h1
-import kotlinx.html.h2
-import kotlinx.html.html
-import kotlinx.html.i
-import kotlinx.html.p
+import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.http.base.AppScope
@@ -69,7 +57,7 @@ object KtorService : LifeUpService {
 
     private var server: NettyApplicationEngine? = newService
 
-    val newService
+    private val newService
         get() = embeddedServer(Netty, port, watchPaths = emptyList()) {
             install(WebSockets)
             install(CallLogging)
@@ -142,6 +130,18 @@ object KtorService : LifeUpService {
                     logger.info("Got url: ${it.url}")
                     LifeUpApi.call(appCtx, it.url)
                     call.respond("success")
+                }
+
+                get("/tasks") {
+                    kotlin.runCatching {
+                        LifeUpApi.tasksApi.getTasks()
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(
+                            HttpStatusCode.InternalServerError, it.message ?: "Unknown error"
+                        )
+                    }
                 }
             }
         }

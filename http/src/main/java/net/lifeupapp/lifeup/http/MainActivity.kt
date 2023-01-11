@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             if (!Settings.canDrawOverlays(this)) {
                 binding.includeOverlayConfig.btn.setOnClickListener {
                     val intent = Intent(ACTION_MANAGE_OVERLAY_PERMISSION)
-                    intent.data = android.net.Uri.parse("package:" + packageName)
+                    intent.data = android.net.Uri.parse("package:$packageName")
                     startActivity(intent)
                 }
             }
@@ -99,6 +99,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateLocalIpAddress() {
+        // TODO: dynamic changed the port if 13276 is occupied
         val localIpAddress =
             getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
                 "$it:13276"
