@@ -25,6 +25,8 @@ class TasksApi(private val context: Context) {
                 })
                 it.moveToNext()
             }
+
+            return tasks
         }
         return emptyList()
     }
