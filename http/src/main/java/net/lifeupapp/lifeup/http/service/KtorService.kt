@@ -133,9 +133,7 @@ object KtorService : LifeUpService {
                 }
 
                 get("/tasks") {
-                    kotlin.runCatching {
-                        LifeUpApi.tasksApi.getTasks()
-                    }.onSuccess {
+                    LifeUpApi.tasksApi.getTasks().onSuccess {
                         call.respond(it)
                     }.onFailure {
                         call.respond(

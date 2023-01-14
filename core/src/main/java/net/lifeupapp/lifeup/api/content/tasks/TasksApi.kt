@@ -1,20 +1,14 @@
 package net.lifeupapp.lifeup.api.content.tasks
 
 import android.content.Context
-import android.net.Uri
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
+import net.lifeupapp.lifeup.api.content.queryContent
 
 class TasksApi(private val context: Context) {
-    fun getTasks(): List<Task> {
-        context.contentResolver.query(
-            Uri.parse(ContentProviderUrl.TASK), null, null, null, null
-        ).use {
-            it ?: return@use
-            it.moveToFirst()
-
-            val tasks = mutableListOf<Task>()
-
-            while (it.isAfterLast.not()) {
+    fun getTasks(): Result<List<Task>> {
+        val tasks = mutableListOf<Task>()
+        try {
+            context.queryContent(ContentProviderUrl.TASK) {
                 val id = it.getLong(0)
                 val content = it.getString(1)
                 val notes = it.getString(2)
@@ -23,11 +17,11 @@ class TasksApi(private val context: Context) {
                     setName(content)
                     setNotes(notes)
                 })
-                it.moveToNext()
             }
-
-            return tasks
+        } catch (e: Exception) {
+            return Result.failure(e)
         }
-        return emptyList()
+
+        return Result.success(tasks)
     }
 }
