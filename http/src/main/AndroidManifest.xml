@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <queries>
+        <package android:name="net.sarasarasa.lifeup" />
+        <provider android:authorities="net.sarasarasa.lifeup.provider.api" />
+    </queries>
+
     <application
         android:name=".base.App"
         android:allowBackup="true"
