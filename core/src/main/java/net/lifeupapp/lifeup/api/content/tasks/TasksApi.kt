@@ -6,12 +6,47 @@ import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
-import net.lifeupapp.lifeup.api.content.queryContent
+import net.lifeupapp.lifeup.api.content.forEachContent
+import net.lifeupapp.lifeup.api.content.tasks.category.TaskCategory
 
-class TasksApi(private val context: Context) {
+class TasksApi(private val context: Context) : ContentProviderApi {
 
-    fun getTasks(categoryId: Long?): Result<List<Task>> {
+
+    fun listCategories(): Result<List<TaskCategory>> {
+        val categories = mutableListOf<TaskCategory>()
+        try {
+            context.forEachContent(ContentProviderUrl.TASKS_CATEGORIES) {
+                val id = it.getLongOrNull(0)
+                val name = it.getStringOrNull(1)
+                val isAsc = it.getIntOrNull(2)
+                val sort = it.getStringOrNull(3)
+                val filter = it.getStringOrNull(4)
+                val order = it.getIntOrNull(5)
+                val status = it.getIntOrNull(6)
+                val type = it.getIntOrNull(7)
+
+                categories.add(TaskCategory.builder {
+                    setId(id)
+                    setName(name ?: "ERROR: name is null")
+                    setIsAsc(isAsc == 1)
+                    setSort(sort ?: "")
+                    setFilter(filter ?: "")
+                    setOrder(order ?: 0)
+                    setStatus(status ?: 0)
+                    setType(type ?: 0)
+                })
+            }
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+
+        return Result.success(categories)
+    }
+
+
+    fun listTasks(categoryId: Long?): Result<List<Task>> {
         val tasks = mutableListOf<Task>()
         try {
             val uri = buildString {
@@ -20,7 +55,7 @@ class TasksApi(private val context: Context) {
                     append("/$categoryId")
                 }
             }
-            context.queryContent(uri) {
+            context.forEachContent(uri) {
                 val id = it.getLongOrNull(0)
                 val gid = it.getLongOrNull(1)
                 val name = it.getStringOrNull(2)
@@ -50,7 +85,6 @@ class TasksApi(private val context: Context) {
                     setRemindTime(remindTime ?: 0)
                     setFrequency(frequency ?: 0)
                     setExp(exp ?: 0)
-                    // skillIds JSON -> List<Long>
                     Json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
                         setSkillIds(it)
                     }

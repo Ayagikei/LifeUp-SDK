@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
+import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
@@ -15,15 +16,18 @@ object LifeUpApi : LifeUpApiDef {
 
     private lateinit var appCtx: Context
 
-    // FIXME: better init implementation, only for testing now
-    lateinit var tasksApi: TasksApi
-    lateinit var achievementApi: AchievementApi
-
+    private var contentProviderApis = emptyList<ContentProviderApi>()
 
     override fun init(context: Context) {
         appCtx = context.applicationContext ?: context
-        tasksApi = TasksApi(appCtx)
-        achievementApi = AchievementApi(appCtx)
+        contentProviderApis = buildContentProviderApis()
+    }
+
+    private fun buildContentProviderApis(): List<ContentProviderApi> {
+        return listOf(
+            TasksApi(appCtx),
+            AchievementApi(appCtx)
+        )
     }
 
 
@@ -49,6 +53,13 @@ object LifeUpApi : LifeUpApiDef {
         activity.startActivityForResult(action, requestCode)
     }
 
+    override fun <T : ContentProviderApi> getContentProviderApi(clazz: Class<T>): T {
+        return contentProviderApis.first { it.javaClass == clazz } as T
+    }
+
+    inline fun <reified T : ContentProviderApi> getContentProviderApi(): T {
+        return getContentProviderApi(T::class.java)
+    }
 
     @Throws
     private fun parseUriIntent(uriString: String): Intent {

@@ -48,6 +48,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/include_overlay_config" />
 
+
+        <include
+            android:id="@+id/include_port_config"
+            layout="@layout/item_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/include_battery_config" />
+
+
+        <include
+            android:id="@+id/include_lifeup_link"
+            layout="@layout/item_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/include_port_config" />
+
+
         <TextView
             android:id="@+id/tv_server"
             style="@style/Title"
@@ -57,7 +86,7 @@
             android:layout_marginTop="36dp"
             android:text="@string/title_server"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/include_battery_config" />
+            app:layout_constraintTop_toBottomOf="@id/include_lifeup_link" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_start_service"

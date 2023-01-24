@@ -3,7 +3,7 @@ package net.lifeupapp.lifeup.api.content
 import android.content.Context
 import net.lifeupapp.lifeup.api.exception.NullCursorException
 
-internal inline fun Context.queryContent(
+internal inline fun Context.forEachContent(
     url: String,
     onEachCursor: (cursor: android.database.Cursor) -> Unit
 ) {

@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             binding.includeBatteryConfig.btn.isGone = true
         }
+
         binding.includeBatteryConfig.apply {
             this.tvTitle.setText(R.string.ignore_battery_optimizations)
             this.tvDesc.setText(R.string.ignore_battery_optimizations_desc)
@@ -83,6 +84,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        binding.includePortConfig.apply {
+            this.tvTitle.setText(R.string.port_config)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -102,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         // TODO: dynamic changed the port if 13276 is occupied
         val localIpAddress =
             getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
-                "$it:13276"
+                "$it:${KtorService.port}"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)

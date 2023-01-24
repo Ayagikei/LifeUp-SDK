@@ -36,6 +36,8 @@ import kotlinx.html.i
 import kotlinx.html.p
 import kotlinx.html.stream.appendHTML
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
@@ -44,8 +46,8 @@ import java.util.logging.Logger
 
 object KtorService : LifeUpService {
 
-    // FIXME: random the port if the port is occupied
-    private val port = 13276
+    var port = 13276
+        private set
 
     private val logger = Logger.getLogger("LifeUp-Http")
 
@@ -164,24 +166,52 @@ object KtorService : LifeUpService {
                     // get all tasks
                     get {
                         call.respondResult(
-                            LifeUpApi.tasksApi.getTasks(null)
+                            LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null)
                         )
                     }
                     route("/{id}") {
                         // get tasks in a specific category
                         get {
                             call.respondResult(
-                                LifeUpApi.tasksApi.getTasks(call.parameters["id"]?.toLongOrNull())
+                                LifeUpApi.getContentProviderApi<TasksApi>()
+                                    .listTasks(call.parameters["id"]?.toLongOrNull())
                             )
                         }
                     }
                 }
 
-                route("/achievement/categories") {
+                route("/tasks_categories") {
                     get {
                         call.respondResult(
-                            LifeUpApi.achievementApi.getCategories()
+                            LifeUpApi.getContentProviderApi<TasksApi>().listCategories()
                         )
+                    }
+                }
+
+                route("/achievement_categories") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<AchievementApi>().listCategories()
+                        )
+                    }
+                }
+
+
+
+                route("/achievements") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<AchievementApi>().listAchievements()
+                        )
+                    }
+                    route("/{id}") {
+                        // get tasks in a specific category
+                        get {
+                            call.respondResult(
+                                LifeUpApi.getContentProviderApi<AchievementApi>()
+                                    .listAchievements(call.parameters["id"]?.toLongOrNull())
+                            )
+                        }
                     }
                 }
             }
@@ -207,6 +237,10 @@ object KtorService : LifeUpService {
             }.onFailure {
                 _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
                 _errorMessage.value = it
+                port++
+                if (port > 65535) {
+                    port = 1024
+                }
             }
         }
     }
