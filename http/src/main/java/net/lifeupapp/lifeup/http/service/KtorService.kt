@@ -3,6 +3,7 @@
 package net.lifeupapp.lifeup.http.service
 
 import android.net.Uri
+import android.os.Bundle
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -40,6 +41,7 @@ import kotlinx.html.stream.appendHTML
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
+import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
@@ -234,6 +236,14 @@ object KtorService : LifeUpService {
                     }
                 }
 
+                route("/skills") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<SkillsApi>().listSkills()
+                        )
+                    }
+                }
+
                 route("/achievements") {
                     get {
                         call.respondResult(
@@ -241,13 +251,21 @@ object KtorService : LifeUpService {
                         )
                     }
                     route("/{id}") {
-                        // get tasks in a specific category
                         get {
                             call.respondResult(
                                 LifeUpApi.getContentProviderApi<AchievementApi>()
                                     .listAchievements(call.parameters["id"]?.toLongOrNull())
                             )
                         }
+                    }
+                }
+
+                route("/coin") {
+                    get {
+                        call.respondText(
+                            LifeUpApi.startApiWithContentProvider("query", "key=coin")?.toJson()
+                                ?: "{}"
+                        )
                     }
                 }
             }
@@ -302,6 +320,16 @@ object KtorService : LifeUpService {
             respond(it)
         }.onFailure {
             respond(HttpStatusCode.InternalServerError, it.message ?: "Unknown error")
+        }
+    }
+
+    private suspend fun Bundle.toJson(): String {
+        return buildString {
+            append("{\n")
+            keySet().forEach { key ->
+                append("  \"$key\": \"${get(key)}\",\n")
+            }
+            append("}\n")
         }
     }
 }

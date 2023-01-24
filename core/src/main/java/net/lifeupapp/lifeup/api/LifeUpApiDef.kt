@@ -2,6 +2,7 @@ package net.lifeupapp.lifeup.api
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 
 interface LifeUpApiDef {
@@ -31,7 +32,7 @@ interface LifeUpApiDef {
 
     fun startApiActivityWithResult(activity: Activity, url: String, requestCode: Int)
 
-    fun startApiWithContentProvider(url: String)
+    fun startApiWithContentProvider(method: String, arg: String): Bundle?
 
     fun <T : ContentProviderApi> getContentProviderApi(clazz: Class<T>): T
 }

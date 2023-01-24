@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
+import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
@@ -28,7 +31,8 @@ object LifeUpApi : LifeUpApiDef {
         return listOf(
             TasksApi(appCtx),
             AchievementApi(appCtx),
-            ItemsApi(appCtx)
+            ItemsApi(appCtx),
+            SkillsApi(appCtx)
         )
     }
 
@@ -55,8 +59,13 @@ object LifeUpApi : LifeUpApiDef {
         activity.startActivityForResult(action, requestCode)
     }
 
-    override fun startApiWithContentProvider(url: String) {
-        TODO("Not yet implemented")
+    override fun startApiWithContentProvider(method: String, arg: String): Bundle? {
+        return appCtx.contentResolver.call(
+            Uri.parse("content://net.sarasarasa.lifeup.provider.api/"),
+            method,
+            arg,
+            null
+        )
     }
 
     override fun <T : ContentProviderApi> getContentProviderApi(clazz: Class<T>): T {
