@@ -1,5 +1,6 @@
 package net.lifeupapp.lifeup.http.service
 
+import android.net.Uri
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -12,6 +13,7 @@ import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondOutputStream
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -147,6 +149,17 @@ object KtorService : LifeUpService {
                     call.respond("success")
                 }
 
+                get("/files/{url}") {
+                    call.parameters["url"]!!.let { url ->
+                        logger.info("Got url: $url")
+                        call.respondOutputStream {
+                            appCtx.contentResolver.openInputStream(Uri.parse(url))?.use {
+                                it.copyTo(this)
+                            }
+                        }
+                    }
+                }
+
                 route("/tasks") {
                     // get all tasks
                     get {
@@ -161,6 +174,14 @@ object KtorService : LifeUpService {
                                 LifeUpApi.tasksApi.getTasks(call.parameters["id"]?.toLongOrNull())
                             )
                         }
+                    }
+                }
+
+                route("/achievement/categories") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.achievementApi.getCategories()
+                        )
                     }
                 }
             }
@@ -206,7 +227,7 @@ object KtorService : LifeUpService {
         }
     }
 
-    suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: Result<T>) {
+    private suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: Result<T>) {
         result.onSuccess {
             respond(it)
         }.onFailure {

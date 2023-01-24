@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
+import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
@@ -16,11 +17,13 @@ object LifeUpApi : LifeUpApiDef {
 
     // FIXME: better init implementation, only for testing now
     lateinit var tasksApi: TasksApi
+    lateinit var achievementApi: AchievementApi
 
 
     override fun init(context: Context) {
         appCtx = context.applicationContext ?: context
         tasksApi = TasksApi(appCtx)
+        achievementApi = AchievementApi(appCtx)
     }
 
 

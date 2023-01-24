@@ -36,7 +36,9 @@ data class Task(
         private var coin: Long = 0
         private var coinVariable: Long = 0
         private var itemId: Long? = null
+        private var itemAmount: Int = 0
         private var words: String = ""
+        private var categoryId: Long? = null
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -64,7 +66,11 @@ data class Task(
 
         fun setItemId(itemId: Long?) = apply { this.itemId = itemId }
 
+        fun setItemAmount(itemAmount: Int) = apply { this.itemAmount = itemAmount }
+
         fun setWords(words: String) = apply { this.words = words }
+
+        fun setCategoryId(categoryId: Long?) = apply { this.categoryId = categoryId }
 
         fun build(): Task {
             return Task(

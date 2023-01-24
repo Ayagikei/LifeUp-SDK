@@ -35,7 +35,9 @@ class TasksApi(private val context: Context) {
                 val coin = it.getLongOrNull(11)
                 val coinVariable = it.getLongOrNull(12)
                 val itemId = it.getLongOrNull(13)
-                val words = it.getStringOrNull(14)
+                val itemAmount = it.getIntOrNull(14)
+                val words = it.getStringOrNull(15)
+                val itemCategoryId = it.getLongOrNull(16)
 
                 tasks.add(Task.builder {
                     setId(id)
@@ -55,7 +57,9 @@ class TasksApi(private val context: Context) {
                     setCoin(coin ?: 0L)
                     setCoinVariable(coinVariable ?: 0L)
                     setItemId(itemId ?: 0)
+                    setItemAmount(itemAmount ?: 0)
                     setWords(words ?: "")
+                    setCategoryId(itemCategoryId)
                 })
             }
         } catch (e: Exception) {
