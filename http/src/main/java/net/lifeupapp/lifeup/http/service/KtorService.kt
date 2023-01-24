@@ -39,6 +39,7 @@ import kotlinx.html.p
 import kotlinx.html.stream.appendHTML
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
@@ -192,6 +193,23 @@ object KtorService : LifeUpService {
                     }
                 }
 
+                route("/items") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null)
+                        )
+                    }
+                    route("/{id}") {
+                        get {
+                            val id = call.parameters["id"]?.toLongOrNull()
+                            call.respondResult(
+                                LifeUpApi.getContentProviderApi<ItemsApi>()
+                                    .listItems(id)
+                            )
+                        }
+                    }
+                }
+
                 route("/tasks_categories") {
                     get {
                         call.respondResult(
@@ -208,7 +226,13 @@ object KtorService : LifeUpService {
                     }
                 }
 
-
+                route("/items_categories") {
+                    get {
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<ItemsApi>().listCategories()
+                        )
+                    }
+                }
 
                 route("/achievements") {
                     get {

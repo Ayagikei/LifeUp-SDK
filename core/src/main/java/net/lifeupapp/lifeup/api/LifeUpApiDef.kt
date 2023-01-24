@@ -31,5 +31,7 @@ interface LifeUpApiDef {
 
     fun startApiActivityWithResult(activity: Activity, url: String, requestCode: Int)
 
+    fun startApiWithContentProvider(url: String)
+
     fun <T : ContentProviderApi> getContentProviderApi(clazz: Class<T>): T
 }

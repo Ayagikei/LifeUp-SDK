@@ -8,6 +8,7 @@ import android.os.Build
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
@@ -26,7 +27,8 @@ object LifeUpApi : LifeUpApiDef {
     private fun buildContentProviderApis(): List<ContentProviderApi> {
         return listOf(
             TasksApi(appCtx),
-            AchievementApi(appCtx)
+            AchievementApi(appCtx),
+            ItemsApi(appCtx)
         )
     }
 
@@ -51,6 +53,10 @@ object LifeUpApi : LifeUpApiDef {
         val action = parseUriIntent(url)
         action.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         activity.startActivityForResult(action, requestCode)
+    }
+
+    override fun startApiWithContentProvider(url: String) {
+        TODO("Not yet implemented")
     }
 
     override fun <T : ContentProviderApi> getContentProviderApi(clazz: Class<T>): T {

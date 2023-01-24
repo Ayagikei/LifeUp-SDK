@@ -8,11 +8,16 @@ internal object ContentProviderUrl {
 
     const val HISTORY = "$PREFIX/history"
 
+    const val ITEMS = "$PREFIX/items"
+
     const val ACHIEVEMENT_CATEGORIES =
         "$PREFIX/achievement_categories"
 
     const val TASKS_CATEGORIES =
         "$PREFIX/tasks_categories"
+
+    const val SHOP_CATEGORIES =
+        "$PREFIX/items_categories"
 
     const val ACHIEVEMENTS = "$PREFIX/achievements"
 }
