@@ -1,3 +1,5 @@
+@file:Suppress("ObjectPropertyName")
+
 package net.lifeupapp.lifeup.http.service
 
 import android.net.Uri
@@ -177,6 +179,16 @@ object KtorService : LifeUpService {
                                     .listTasks(call.parameters["id"]?.toLongOrNull())
                             )
                         }
+                    }
+                }
+
+                route("/history") {
+                    get {
+                        val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                        call.respondResult(
+                            LifeUpApi.getContentProviderApi<TasksApi>().listHistory(offset, limit)
+                        )
                     }
                 }
 

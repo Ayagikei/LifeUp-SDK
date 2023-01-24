@@ -6,6 +6,8 @@ internal object ContentProviderUrl {
 
     const val TASK = "$PREFIX/tasks"
 
+    const val HISTORY = "$PREFIX/history"
+
     const val ACHIEVEMENT_CATEGORIES =
         "$PREFIX/achievement_categories"
 
