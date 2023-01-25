@@ -19,7 +19,9 @@ data class Task(
     val coin: Long,
     val coinVariable: Long,
     val itemId: Long,
-    val words: String
+    val words: String,
+    val categoryId: Long,
+    val order: Int
 ) {
     class Builder {
         private var id: Long? = null
@@ -39,6 +41,7 @@ data class Task(
         private var itemAmount: Int = 0
         private var words: String = ""
         private var categoryId: Long? = null
+        private var order: Int = 0
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -72,6 +75,8 @@ data class Task(
 
         fun setCategoryId(categoryId: Long?) = apply { this.categoryId = categoryId }
 
+        fun setOrder(order: Int) = apply { this.order = order }
+
         fun build(): Task {
             return Task(
                 id = id,
@@ -88,7 +93,9 @@ data class Task(
                 coin = coin,
                 coinVariable = coinVariable,
                 itemId = itemId ?: 0,
-                words = words
+                words = words,
+                categoryId = categoryId ?: 0,
+                order = order
             )
         }
     }

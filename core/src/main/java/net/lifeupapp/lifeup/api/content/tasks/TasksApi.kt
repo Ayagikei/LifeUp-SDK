@@ -130,6 +130,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val itemAmount = it.getIntOrNull(14)
                 val words = it.getStringOrNull(15)
                 val itemCategoryId = it.getLongOrNull(16)
+                val order = it.getIntOrNull(17)
 
                 tasks.add(Task.builder {
                     setId(id)
@@ -151,6 +152,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                     setItemAmount(itemAmount ?: 0)
                     setWords(words ?: "")
                     setCategoryId(itemCategoryId)
+                    setOrder(order ?: 0)
                 })
             }
         } catch (e: Exception) {

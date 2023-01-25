@@ -47,7 +47,10 @@ import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.logging.Logger
+
 
 object KtorService : LifeUpService {
 
@@ -323,13 +326,16 @@ object KtorService : LifeUpService {
         }
     }
 
-    private suspend fun Bundle.toJson(): String {
-        return buildString {
-            append("{\n")
-            keySet().forEach { key ->
-                append("  \"$key\": \"${get(key)}\",\n")
+    private fun Bundle.toJson(): String {
+        val json = JSONObject()
+        val keys: Set<String> = keySet()
+        for (key in keys) {
+            try {
+                json.put(key, JSONObject.wrap(get(key)))
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            append("}\n")
         }
+        return json.toString()
     }
 }
