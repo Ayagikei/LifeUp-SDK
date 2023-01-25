@@ -5,9 +5,7 @@ package net.lifeupapp.lifeup.http.service
 import android.net.Uri
 import android.os.Bundle
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -38,6 +36,10 @@ import kotlinx.html.html
 import kotlinx.html.i
 import kotlinx.html.p
 import kotlinx.html.stream.appendHTML
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
@@ -46,9 +48,10 @@ import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
+import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
+import net.lifeupapp.lifeup.http.vo.wrapAsResponse
 import org.json.JSONException
-import org.json.JSONObject
 import java.util.logging.Logger
 
 
@@ -146,17 +149,29 @@ object KtorService : LifeUpService {
                 }
 
                 get("/api") {
-                    call.request.queryParameters["url"]?.let { url ->
-                        logger.info("Got url: $url")
-                        LifeUpApi.call(appCtx, url)
+                    kotlin.runCatching {
+                        call.request.queryParameters["url"]?.let { url ->
+                            logger.info("Got url: $url")
+                            LifeUpApi.call(appCtx, url)
+                        }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
                     }
-                    call.respond("success\ncheck your phone!")
                 }
 
                 post<RawQueryVo>("/api") {
-                    logger.info("Got url: ${it.url}")
-                    LifeUpApi.call(appCtx, it.url)
-                    call.respond("success")
+                    kotlin.runCatching {
+                        logger.info("Got url: ${it.url}")
+                        LifeUpApi.call(appCtx, it.url)
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
                 }
 
                 get("/files/{url}") {
@@ -173,17 +188,21 @@ object KtorService : LifeUpService {
                 route("/tasks") {
                     // get all tasks
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null)
-                        )
+                        LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                     route("/{id}") {
                         // get tasks in a specific category
                         get {
-                            call.respondResult(
-                                LifeUpApi.getContentProviderApi<TasksApi>()
-                                    .listTasks(call.parameters["id"]?.toLongOrNull())
-                            )
+                            LifeUpApi.getContentProviderApi<TasksApi>()
+                                .listTasks(call.parameters["id"]?.toLongOrNull()).onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
                         }
                     }
                 }
@@ -192,83 +211,110 @@ object KtorService : LifeUpService {
                     get {
                         val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
                         val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<TasksApi>().listHistory(offset, limit)
-                        )
+                        LifeUpApi.getContentProviderApi<TasksApi>().listHistory(offset, limit)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
 
                 route("/items") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null)
-                        )
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                     route("/{id}") {
                         get {
                             val id = call.parameters["id"]?.toLongOrNull()
-                            call.respondResult(
-                                LifeUpApi.getContentProviderApi<ItemsApi>()
-                                    .listItems(id)
-                            )
+
+                            LifeUpApi.getContentProviderApi<ItemsApi>().listItems(id).onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
                         }
                     }
                 }
 
                 route("/tasks_categories") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<TasksApi>().listCategories()
-                        )
+                        LifeUpApi.getContentProviderApi<TasksApi>().listCategories().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
 
                 route("/achievement_categories") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<AchievementApi>().listCategories()
-                        )
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listCategories()
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
                     }
                 }
 
                 route("/items_categories") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<ItemsApi>().listCategories()
-                        )
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listCategories().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
 
                 route("/skills") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<SkillsApi>().listSkills()
-                        )
+                        LifeUpApi.getContentProviderApi<SkillsApi>().listSkills().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
 
                 route("/achievements") {
                     get {
-                        call.respondResult(
-                            LifeUpApi.getContentProviderApi<AchievementApi>().listAchievements()
-                        )
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listAchievements()
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                     route("/{id}") {
                         get {
-                            call.respondResult(
-                                LifeUpApi.getContentProviderApi<AchievementApi>()
-                                    .listAchievements(call.parameters["id"]?.toLongOrNull())
-                            )
+                            LifeUpApi.getContentProviderApi<AchievementApi>()
+                                .listAchievements(call.parameters["id"]?.toLongOrNull()).onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
                         }
                     }
                 }
 
                 route("/coin") {
                     get {
-                        call.respondText(
-                            LifeUpApi.startApiWithContentProvider("query", "key=coin")?.toJson()
-                                ?: "{}"
-                        )
+                        kotlin.runCatching {
+                            (LifeUpApi.startApiWithContentProvider("query", "key=coin")?.toJson())
+                                ?: JsonObject(
+                                    emptyMap()
+                                )
+                        }.onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
             }
@@ -318,24 +364,53 @@ object KtorService : LifeUpService {
         }
     }
 
-    private suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: Result<T>) {
-        result.onSuccess {
-            respond(it)
-        }.onFailure {
-            respond(HttpStatusCode.InternalServerError, it.message ?: "Unknown error")
-        }
-    }
 
-    private fun Bundle.toJson(): String {
-        val json = JSONObject()
+    private fun Bundle.toJson(): JsonObject {
+        val map = mutableMapOf<String, JsonElement>()
         val keys: Set<String> = keySet()
         for (key in keys) {
             try {
-                json.put(key, JSONObject.wrap(get(key)))
+                val value = get(key)
+                when (value) {
+                    is Int -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Long -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Double -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is String -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Boolean -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Bundle -> {
+                        map[key] = value.toJson()
+                    }
+
+                    is Array<*> -> {
+                        map[key] = JsonArray(value.map { JsonPrimitive(it.toString()) })
+                    }
+
+                    else -> {
+                        map[key] = JsonPrimitive(value.toString())
+                    }
+                }
+            } catch (e: ClassCastException) {
+                e.printStackTrace()
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
         }
-        return json.toString()
+        return JsonObject(map)
     }
+
 }
