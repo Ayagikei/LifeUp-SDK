@@ -91,12 +91,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!Settings.canDrawOverlays(this)) {
-                binding.includeOverlayConfig.btn.setOnClickListener {
-                    val intent = Intent(ACTION_MANAGE_OVERLAY_PERMISSION)
-                    intent.data = android.net.Uri.parse("package:$packageName")
-                    startActivity(intent)
-                }
+            binding.includeOverlayConfig.btn.setOnClickListener {
+                val intent = Intent(ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.data = android.net.Uri.parse("package:$packageName")
+                startActivity(intent)
             }
         } else {
             binding.includeOverlayConfig.btn.isGone = true

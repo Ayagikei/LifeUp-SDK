@@ -28,7 +28,7 @@ interface LifeUpApiDef {
     )
     fun call(context: Context?, url: String)
 
-    fun startApiActivity(url: String)
+    fun startApiActivity(context: Context?, url: String)
 
     fun startApiActivityWithResult(activity: Activity, url: String, requestCode: Int)
 

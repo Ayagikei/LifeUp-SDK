@@ -43,14 +43,14 @@ object LifeUpApi : LifeUpApiDef {
 
 
     override fun call(context: Context?, url: String) {
-        startApiActivity(url)
+        startApiActivity(context, url)
     }
 
 
-    override fun startApiActivity(url: String) {
+    override fun startApiActivity(context: Context?, url: String) {
         val action = parseUriIntent(url)
         action.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        appCtx.startActivity(action)
+        (context ?: appCtx).startActivity(action)
     }
 
     override fun startApiActivityWithResult(activity: Activity, url: String, requestCode: Int) {

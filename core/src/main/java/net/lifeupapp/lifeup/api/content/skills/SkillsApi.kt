@@ -20,6 +20,11 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
                 val icon = it.getStringOrNull(3)
                 val order = it.getIntOrNull(4)
                 val color = it.getIntOrNull(5)
+                val exp = it.getIntOrNull(6)
+                val level = it.getIntOrNull(7)
+                val untilNextLevelExp = it.getIntOrNull(8)
+                val currentLevelExp = it.getIntOrNull(9)
+                val type = it.getIntOrNull(10)
 
                 categories.add(Skill.builder {
                     setId(id)
@@ -28,6 +33,11 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
                     setIconUri(icon ?: "")
                     setOrder(order ?: 0)
                     setColorInt(color ?: 0)
+                    setExp(exp ?: 0)
+                    setLevel(level ?: 1)
+                    setUntilNextLevelExp(untilNextLevelExp ?: 0)
+                    setCurrentLevelExp(currentLevelExp ?: 0)
+                    setType(type ?: 0)
                 })
             }
         } catch (e: Exception) {
