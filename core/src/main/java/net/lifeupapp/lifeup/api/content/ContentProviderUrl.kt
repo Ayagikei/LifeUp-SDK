@@ -12,6 +12,10 @@ internal object ContentProviderUrl {
 
     const val SKILLS = "$PREFIX/skills"
 
+    const val INFO = "$PREFIX/info"
+
+    const val FEELINGS = "$PREFIX/feelings"
+
     const val ACHIEVEMENT_CATEGORIES =
         "$PREFIX/achievement_categories"
 

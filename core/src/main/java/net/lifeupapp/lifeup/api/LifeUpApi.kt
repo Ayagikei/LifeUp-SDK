@@ -7,9 +7,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
+import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
@@ -32,7 +35,9 @@ object LifeUpApi : LifeUpApiDef {
             TasksApi(appCtx),
             AchievementApi(appCtx),
             ItemsApi(appCtx),
-            SkillsApi(appCtx)
+            SkillsApi(appCtx),
+            InfoApi(appCtx),
+            FeelingsApi(appCtx)
         )
     }
 
@@ -59,12 +64,19 @@ object LifeUpApi : LifeUpApiDef {
         activity.startActivityForResult(action, requestCode)
     }
 
-    override fun startApiWithContentProvider(method: String, arg: String): Bundle? {
+    override fun callApiWithContentProvider(method: String, arg: String): Bundle? {
         return appCtx.contentResolver.call(
             Uri.parse("content://net.sarasarasa.lifeup.provider.api/"),
             method,
             arg,
             null
+        )
+    }
+
+    override fun callApiWithContentProvider(url: String): Bundle? {
+        return callApiWithContentProvider(
+            url.substringBefore("?").replace("lifeup://api/", ""),
+            url.substringAfter("?")
         )
     }
 
@@ -91,4 +103,9 @@ object LifeUpApi : LifeUpApiDef {
         intent.selector = null
         return intent
     }
+}
+
+internal val json = Json {
+    ignoreUnknownKeys = true
+    isLenient = true
 }

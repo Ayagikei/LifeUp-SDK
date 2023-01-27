@@ -18,7 +18,8 @@ data class Achievement(
     val progress: Int,
     val order: Int,
     val itemId: Long,
-    val itemAmount: Int
+    val itemAmount: Int,
+    val unlockedTime: Long
 ) {
     class Builder {
         private var id: Long? = null
@@ -35,6 +36,7 @@ data class Achievement(
         private var order: Int = 0
         private var itemId: Long = 0
         private var itemAmount: Int = 0
+        private var unlockedTime: Long = 0
 
 
         fun setId(id: Long?) = apply { this.id = id }
@@ -52,6 +54,8 @@ data class Achievement(
         fun setItemId(itemId: Long) = apply { this.itemId = itemId }
         fun setItemAmount(itemAmount: Int) = apply { this.itemAmount = itemAmount }
 
+        fun setUnlockedTime(unlockedTime: Long) = apply { this.unlockedTime = unlockedTime }
+
 
         fun build(): Achievement {
             return Achievement(
@@ -68,7 +72,8 @@ data class Achievement(
                 progress = progress,
                 order = order,
                 itemId = itemId,
-                itemAmount = itemAmount
+                itemAmount = itemAmount,
+                unlockedTime = unlockedTime
             )
         }
     }

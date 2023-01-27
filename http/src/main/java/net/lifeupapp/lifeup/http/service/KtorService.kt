@@ -42,6 +42,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
+import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
@@ -52,6 +54,7 @@ import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
 import net.lifeupapp.lifeup.http.vo.wrapAsResponse
 import org.json.JSONException
+import java.util.logging.Level
 import java.util.logging.Logger
 
 
@@ -150,9 +153,23 @@ object KtorService : LifeUpService {
 
                 get("/api") {
                     kotlin.runCatching {
-                        call.request.queryParameters["url"]?.let { url ->
+                        call.request.queryParameters.getAll("url")?.forEach { url ->
                             logger.info("Got url: $url")
                             LifeUpApi.call(appCtx, url)
+                        }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
+                get("/api/contentprovider") {
+                    kotlin.runCatching {
+                        call.request.queryParameters.getAll("url")?.forEach { url ->
+                            logger.info("Got url: $url")
+                            LifeUpApi.callApiWithContentProvider(url)
                         }
                         HttpResponse.success("success")
                     }.onSuccess {
@@ -165,7 +182,27 @@ object KtorService : LifeUpService {
                 post<RawQueryVo>("/api") {
                     kotlin.runCatching {
                         logger.info("Got url: ${it.url}")
-                        LifeUpApi.call(appCtx, it.url)
+                        it.urls?.forEach {
+                            logger.info("Got url: $it")
+                            LifeUpApi.call(appCtx, it)
+                        }
+                        it.url?.let { it1 -> LifeUpApi.call(appCtx, it1) }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
+                post<RawQueryVo>("/api/contentprovider") {
+                    kotlin.runCatching {
+                        logger.info("Got url: ${it.url}")
+                        it.urls?.forEach {
+                            logger.info("Got url: $it")
+                            LifeUpApi.callApiWithContentProvider(it)
+                        }
+                        it.url?.let { it1 -> LifeUpApi.callApiWithContentProvider(it1) }
                         HttpResponse.success("success")
                     }.onSuccess {
                         call.respond(it)
@@ -215,8 +252,8 @@ object KtorService : LifeUpService {
                             .onSuccess {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {
-                            call.respond(HttpResponse.error<String>(it))
-                        }
+                                call.respond(HttpResponse.error<String>(it))
+                            }
                     }
                 }
 
@@ -272,6 +309,14 @@ object KtorService : LifeUpService {
                     }
                 }
 
+                get("/info") {
+                    LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess {
+                        call.respond(it.wrapAsResponse())
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
                 route("/skills") {
                     get {
                         LifeUpApi.getContentProviderApi<SkillsApi>().listSkills().onSuccess {
@@ -288,8 +333,8 @@ object KtorService : LifeUpService {
                             .onSuccess {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {
-                            call.respond(HttpResponse.error<String>(it))
-                        }
+                                call.respond(HttpResponse.error<String>(it))
+                            }
                     }
                     route("/{id}") {
                         get {
@@ -303,10 +348,25 @@ object KtorService : LifeUpService {
                     }
                 }
 
+                route("/feelings") {
+                    get {
+                        val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+
+                        LifeUpApi.getContentProviderApi<FeelingsApi>().listFeelings(offset, limit)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                logger.log(Level.WARNING, "Failed to get feelings", it)
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                }
+
                 route("/coin") {
                     get {
                         kotlin.runCatching {
-                            (LifeUpApi.startApiWithContentProvider("query", "key=coin")?.toJson())
+                            (LifeUpApi.callApiWithContentProvider("query", "key=coin")?.toJson())
                                 ?: JsonObject(
                                     emptyMap()
                                 )

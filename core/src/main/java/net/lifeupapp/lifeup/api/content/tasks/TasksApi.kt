@@ -11,6 +11,7 @@ import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.tasks.category.TaskCategory
+import net.lifeupapp.lifeup.api.json
 
 class TasksApi(private val context: Context) : ContentProviderApi {
 
@@ -74,6 +75,8 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val itemAmount = it.getIntOrNull(14)
                 val words = it.getStringOrNull(15)
                 val itemCategoryId = it.getLongOrNull(16)
+                val order = it.getIntOrNull(17)
+                val nameExtended = it.getStringOrNull(18)
 
                 tasks.add(Task.builder {
                     setId(id)
@@ -86,7 +89,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                     setRemindTime(remindTime ?: 0)
                     setFrequency(frequency ?: 0)
                     setExp(exp ?: 0)
-                    Json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
+                    json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
                         setSkillIds(it)
                     }
                     setCoin(coin ?: 0L)
@@ -95,6 +98,8 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                     setItemAmount(itemAmount ?: 0)
                     setWords(words ?: "")
                     setCategoryId(itemCategoryId)
+                    setOrder(order ?: 0)
+                    setNameExtended(nameExtended ?: "")
                 })
             }
         } catch (e: Exception) {

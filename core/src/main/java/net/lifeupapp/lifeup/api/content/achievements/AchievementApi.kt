@@ -69,6 +69,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val order = it.getIntOrNull(11)
                 val itemId = it.getLongOrNull(12)
                 val itemAmount = it.getIntOrNull(13)
+                val unlockedTime = it.getLongOrNull(14)
 
                 achievements.add(Achievement.builder {
                     setId(id)
@@ -85,6 +86,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                     setOrder(order ?: 0)
                     setItemId(itemId ?: 0)
                     setItemAmount(itemAmount ?: 0)
+                    setUnlockedTime(unlockedTime ?: 0)
                 })
             }
         } catch (e: Exception) {
