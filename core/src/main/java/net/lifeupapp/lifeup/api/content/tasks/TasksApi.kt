@@ -15,7 +15,6 @@ import net.lifeupapp.lifeup.api.json
 
 class TasksApi(private val context: Context) : ContentProviderApi {
 
-
     fun listCategories(): Result<List<TaskCategory>> {
         val categories = mutableListOf<TaskCategory>()
         try {
@@ -29,16 +28,18 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val status = it.getIntOrNull(6)
                 val type = it.getIntOrNull(7)
 
-                categories.add(TaskCategory.builder {
-                    setId(id)
-                    setName(name ?: "ERROR: name is null")
-                    setIsAsc(isAsc == 1)
-                    setSort(sort ?: "")
-                    setFilter(filter ?: "")
-                    setOrder(order ?: 0)
-                    setStatus(status ?: 0)
-                    setType(type ?: 0)
-                })
+                categories.add(
+                    TaskCategory.builder {
+                        setId(id)
+                        setName(name ?: "ERROR: name is null")
+                        setIsAsc(isAsc == 1)
+                        setSort(sort ?: "")
+                        setFilter(filter ?: "")
+                        setOrder(order ?: 0)
+                        setStatus(status ?: 0)
+                        setType(type ?: 0)
+                    }
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -46,7 +47,6 @@ class TasksApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(categories)
     }
-
 
     fun listTasks(categoryId: Long?): Result<List<Task>> {
         val tasks = mutableListOf<Task>()
@@ -78,29 +78,31 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val order = it.getIntOrNull(17)
                 val nameExtended = it.getStringOrNull(18)
 
-                tasks.add(Task.builder {
-                    setId(id)
-                    setGid(gid)
-                    setName(name ?: "ERROR: name is null")
-                    setNotes(notes ?: "")
-                    setStatus(status ?: 0)
-                    setStartTime(startTime ?: 0)
-                    setDeadline(deadline ?: 0)
-                    setRemindTime(remindTime ?: 0)
-                    setFrequency(frequency ?: 0)
-                    setExp(exp ?: 0)
-                    json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
-                        setSkillIds(it)
+                tasks.add(
+                    Task.builder {
+                        setId(id)
+                        setGid(gid)
+                        setName(name ?: "ERROR: name is null")
+                        setNotes(notes ?: "")
+                        setStatus(status ?: 0)
+                        setStartTime(startTime ?: 0)
+                        setDeadline(deadline ?: 0)
+                        setRemindTime(remindTime ?: 0)
+                        setFrequency(frequency ?: 0)
+                        setExp(exp ?: 0)
+                        json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
+                            setSkillIds(it)
+                        }
+                        setCoin(coin ?: 0L)
+                        setCoinVariable(coinVariable ?: 0L)
+                        setItemId(itemId ?: 0)
+                        setItemAmount(itemAmount ?: 0)
+                        setWords(words ?: "")
+                        setCategoryId(itemCategoryId)
+                        setOrder(order ?: 0)
+                        setNameExtended(nameExtended ?: "")
                     }
-                    setCoin(coin ?: 0L)
-                    setCoinVariable(coinVariable ?: 0L)
-                    setItemId(itemId ?: 0)
-                    setItemAmount(itemAmount ?: 0)
-                    setWords(words ?: "")
-                    setCategoryId(itemCategoryId)
-                    setOrder(order ?: 0)
-                    setNameExtended(nameExtended ?: "")
-                })
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -137,28 +139,30 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val itemCategoryId = it.getLongOrNull(16)
                 val order = it.getIntOrNull(17)
 
-                tasks.add(Task.builder {
-                    setId(id)
-                    setGid(gid)
-                    setName(name ?: "ERROR: name is null")
-                    setNotes(notes ?: "")
-                    setStatus(status ?: 0)
-                    setStartTime(startTime ?: 0)
-                    setDeadline(deadline ?: 0)
-                    setRemindTime(remindTime ?: 0)
-                    setFrequency(frequency ?: 0)
-                    setExp(exp ?: 0)
-                    Json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
-                        setSkillIds(it)
+                tasks.add(
+                    Task.builder {
+                        setId(id)
+                        setGid(gid)
+                        setName(name ?: "ERROR: name is null")
+                        setNotes(notes ?: "")
+                        setStatus(status ?: 0)
+                        setStartTime(startTime ?: 0)
+                        setDeadline(deadline ?: 0)
+                        setRemindTime(remindTime ?: 0)
+                        setFrequency(frequency ?: 0)
+                        setExp(exp ?: 0)
+                        Json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
+                            setSkillIds(it)
+                        }
+                        setCoin(coin ?: 0L)
+                        setCoinVariable(coinVariable ?: 0L)
+                        setItemId(itemId ?: 0)
+                        setItemAmount(itemAmount ?: 0)
+                        setWords(words ?: "")
+                        setCategoryId(itemCategoryId)
+                        setOrder(order ?: 0)
                     }
-                    setCoin(coin ?: 0L)
-                    setCoinVariable(coinVariable ?: 0L)
-                    setItemId(itemId ?: 0)
-                    setItemAmount(itemAmount ?: 0)
-                    setWords(words ?: "")
-                    setCategoryId(itemCategoryId)
-                    setOrder(order ?: 0)
-                })
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)

@@ -13,7 +13,6 @@ import net.lifeupapp.lifeup.api.json
 
 class FeelingsApi(private val context: Context) : ContentProviderApi {
 
-
     fun listFeelings(offset: Int = 0, limit: Int = 100): Result<List<Feelings>> {
         val feelings = mutableListOf<Feelings>()
         try {
@@ -32,17 +31,19 @@ class FeelingsApi(private val context: Context) : ContentProviderApi {
                 val attachments = it.getStringOrNull(5)
                 val type = it.getIntOrNull(6)
 
-                feelings.add(Feelings.builder {
-                    setId(id)
-                    setContent(content ?: "ERROR: content is null")
-                    setIsFav(isFav == 1)
-                    setTitle(title ?: "ERROR: title is null")
-                    setTime(time ?: 0)
-                    json.decodeFromString<List<String>?>(attachments ?: "[]")?.let {
-                        setAttachments(it)
+                feelings.add(
+                    Feelings.builder {
+                        setId(id)
+                        setContent(content ?: "ERROR: content is null")
+                        setIsFav(isFav == 1)
+                        setTitle(title ?: "ERROR: title is null")
+                        setTime(time ?: 0)
+                        json.decodeFromString<List<String>?>(attachments ?: "[]")?.let {
+                            setAttachments(it)
+                        }
+                        setType(type ?: 0)
                     }
-                    setType(type ?: 0)
-                })
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -50,5 +51,4 @@ class FeelingsApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(feelings)
     }
-
 }

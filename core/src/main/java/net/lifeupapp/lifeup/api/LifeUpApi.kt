@@ -41,16 +41,13 @@ object LifeUpApi : LifeUpApiDef {
         )
     }
 
-
     override fun isLifeUpInstalled(): Boolean {
         return isAppInstalled(appCtx, LIFEUP_PACKAGE_NAME)
     }
 
-
     override fun call(context: Context?, url: String) {
         startApiActivity(context, url)
     }
-
 
     override fun startApiActivity(context: Context?, url: String) {
         val action = parseUriIntent(url)

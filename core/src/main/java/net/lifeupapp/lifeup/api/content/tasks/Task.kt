@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.tasks
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class Task(
     val id: Long?,

@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.info
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class Info(
     val appVersion: Int,

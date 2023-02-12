@@ -1,6 +1,5 @@
 package net.lifeupapp.lifeup.api.content.feelings
 
-
 import kotlinx.serialization.Serializable
 
 @Serializable

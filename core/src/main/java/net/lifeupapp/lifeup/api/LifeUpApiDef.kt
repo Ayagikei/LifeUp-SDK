@@ -22,7 +22,8 @@ interface LifeUpApiDef {
      * call lifeup to open the [uri], which will not return any result
      */
     @Deprecated(
-        "use startApiActivity instead", ReplaceWith(
+        "use startApiActivity instead",
+        ReplaceWith(
             "startApiActivity(url)", "net.lifeupapp.lifeup.api.LifeUpApi.startApiActivity"
         )
     )
