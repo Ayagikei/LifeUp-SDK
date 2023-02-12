@@ -26,19 +26,21 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
                 val currentLevelExp = it.getIntOrNull(9)
                 val type = it.getIntOrNull(10)
 
-                categories.add(Skill.builder {
-                    setId(id)
-                    setName(name ?: "ERROR: name is null")
-                    setDesc(desc ?: "")
-                    setIconUri(icon ?: "")
-                    setOrder(order ?: 0)
-                    setColorInt(color ?: 0)
-                    setExp(exp ?: 0)
-                    setLevel(level ?: 1)
-                    setUntilNextLevelExp(untilNextLevelExp ?: 0)
-                    setCurrentLevelExp(currentLevelExp ?: 0)
-                    setType(type ?: 0)
-                })
+                categories.add(
+                    Skill.builder {
+                        setId(id)
+                        setName(name ?: "ERROR: name is null")
+                        setDesc(desc ?: "")
+                        setIconUri(icon ?: "")
+                        setOrder(order ?: 0)
+                        setColorInt(color ?: 0)
+                        setExp(exp ?: 0)
+                        setLevel(level ?: 1)
+                        setUntilNextLevelExp(untilNextLevelExp ?: 0)
+                        setCurrentLevelExp(currentLevelExp ?: 0)
+                        setType(type ?: 0)
+                    }
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -46,6 +48,5 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(categories)
     }
-
 
 }

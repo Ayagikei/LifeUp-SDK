@@ -25,17 +25,19 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val order = it.getIntOrNull(7)
                 val type = it.getIntOrNull(8)
 
-                categories.add(AchievementCategory.builder {
-                    setId(id)
-                    setName(name ?: "ERROR: name is null")
-                    setDesc(desc ?: "")
-                    setIconUri(icon ?: "")
-                    setIsAsc(isAsc == 1)
-                    setSort(sort ?: "")
-                    setFilter(filter ?: "")
-                    setOrder(order ?: 0)
-                    setType(type ?: 0)
-                })
+                categories.add(
+                    AchievementCategory.builder {
+                        setId(id)
+                        setName(name ?: "ERROR: name is null")
+                        setDesc(desc ?: "")
+                        setIconUri(icon ?: "")
+                        setIsAsc(isAsc == 1)
+                        setSort(sort ?: "")
+                        setFilter(filter ?: "")
+                        setOrder(order ?: 0)
+                        setType(type ?: 0)
+                    }
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -43,7 +45,6 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(categories)
     }
-
 
     fun listAchievements(categoryId: Long? = null): Result<List<Achievement>> {
         val uri = buildString {
@@ -71,23 +72,25 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val itemAmount = it.getIntOrNull(13)
                 val unlockedTime = it.getLongOrNull(14)
 
-                achievements.add(Achievement.builder {
-                    setId(id)
-                    setName(name ?: "ERROR: name is null")
-                    setDesc(desc ?: "")
-                    setIconUri(icon ?: "")
-                    setCategoryId(contentCategoryId ?: 0)
-                    setStatus(status ?: 0)
-                    setExp(exp ?: 0)
-                    setCoin(coin ?: 0)
-                    setCoinVariable(coinVariable ?: 0)
-                    setType(type ?: 0)
-                    setProgress(progress ?: 0)
-                    setOrder(order ?: 0)
-                    setItemId(itemId ?: 0)
-                    setItemAmount(itemAmount ?: 0)
-                    setUnlockedTime(unlockedTime ?: 0)
-                })
+                achievements.add(
+                    Achievement.builder {
+                        setId(id)
+                        setName(name ?: "ERROR: name is null")
+                        setDesc(desc ?: "")
+                        setIconUri(icon ?: "")
+                        setCategoryId(contentCategoryId ?: 0)
+                        setStatus(status ?: 0)
+                        setExp(exp ?: 0)
+                        setCoin(coin ?: 0)
+                        setCoinVariable(coinVariable ?: 0)
+                        setType(type ?: 0)
+                        setProgress(progress ?: 0)
+                        setOrder(order ?: 0)
+                        setItemId(itemId ?: 0)
+                        setItemAmount(itemAmount ?: 0)
+                        setUnlockedTime(unlockedTime ?: 0)
+                    }
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)

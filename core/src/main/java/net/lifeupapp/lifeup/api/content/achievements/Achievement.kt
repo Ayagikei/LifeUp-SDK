@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.achievements
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class Achievement(
     val id: Long?,
@@ -38,7 +37,6 @@ data class Achievement(
         private var itemAmount: Int = 0
         private var unlockedTime: Long = 0
 
-
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -55,7 +53,6 @@ data class Achievement(
         fun setItemAmount(itemAmount: Int) = apply { this.itemAmount = itemAmount }
 
         fun setUnlockedTime(unlockedTime: Long) = apply { this.unlockedTime = unlockedTime }
-
 
         fun build(): Achievement {
             return Achievement(

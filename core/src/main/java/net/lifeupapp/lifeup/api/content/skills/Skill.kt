@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.skills
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class Skill(
     val id: Long?,

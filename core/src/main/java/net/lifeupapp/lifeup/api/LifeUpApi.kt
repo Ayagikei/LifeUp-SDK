@@ -41,11 +41,9 @@ object LifeUpApi : LifeUpApiDef {
         )
     }
 
-
     override fun isLifeUpInstalled(): Boolean {
         return isAppInstalled(appCtx, LIFEUP_PACKAGE_NAME)
     }
-
 
     override fun call(context: Context?, url: String) {
         startApiActivity(context, url)
@@ -73,13 +71,17 @@ object LifeUpApi : LifeUpApiDef {
 
     override fun callApiWithContentProvider(method: String, arg: String): Bundle? {
         return appCtx.contentResolver.call(
-            Uri.parse("content://net.sarasarasa.lifeup.provider.api/"), method, arg, null
+            Uri.parse("content://net.sarasarasa.lifeup.provider.api/"),
+            method,
+            arg,
+            null
         )
     }
 
     override fun callApiWithContentProvider(url: String): Bundle? {
         return callApiWithContentProvider(
-            url.substringBefore("?").replace("lifeup://api/", ""), url.substringAfter("?")
+            url.substringBefore("?").replace("lifeup://api/", ""),
+            url.substringAfter("?")
         )
     }
 

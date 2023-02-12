@@ -16,11 +16,13 @@ class InfoApi(private val context: Context) : ContentProviderApi {
                 val appVersionName = it.getStringOrNull(1)
                 val apiVersion = it.getIntOrNull(2)
 
-                return Result.success(Info.builder {
-                    setAppVersion(appVersion ?: 0)
-                    setAppVersionName(appVersionName ?: "")
-                    setApiVersion(apiVersion ?: 0)
-                })
+                return Result.success(
+                    Info.builder {
+                        setAppVersion(appVersion ?: 0)
+                        setAppVersionName(appVersionName ?: "")
+                        setApiVersion(apiVersion ?: 0)
+                    }
+                )
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -28,5 +30,4 @@ class InfoApi(private val context: Context) : ContentProviderApi {
 
         return Result.failure(IllegalAccessException())
     }
-
 }

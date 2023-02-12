@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.shop
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class ShopItem(
     val id: Long?,
