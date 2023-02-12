@@ -51,6 +51,13 @@ object LifeUpApi : LifeUpApiDef {
         startApiActivity(context, url)
     }
 
+    override fun requestContentProviderPermission(appName: String) {
+        startApiActivity(
+            appCtx,
+            "lifeup://api/request_permission?request_content_provider=true&app_name=${appName}&package_name=${appCtx.packageName}"
+        )
+    }
+
 
     override fun startApiActivity(context: Context?, url: String) {
         val action = parseUriIntent(url)
@@ -66,17 +73,13 @@ object LifeUpApi : LifeUpApiDef {
 
     override fun callApiWithContentProvider(method: String, arg: String): Bundle? {
         return appCtx.contentResolver.call(
-            Uri.parse("content://net.sarasarasa.lifeup.provider.api/"),
-            method,
-            arg,
-            null
+            Uri.parse("content://net.sarasarasa.lifeup.provider.api/"), method, arg, null
         )
     }
 
     override fun callApiWithContentProvider(url: String): Bundle? {
         return callApiWithContentProvider(
-            url.substringBefore("?").replace("lifeup://api/", ""),
-            url.substringAfter("?")
+            url.substringBefore("?").replace("lifeup://api/", ""), url.substringAfter("?")
         )
     }
 

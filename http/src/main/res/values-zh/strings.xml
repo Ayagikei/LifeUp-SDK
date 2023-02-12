@@ -29,4 +29,6 @@
 <br/><b># 开源：</b>
 <br/>这是开源项目 <a href="https://github.com/Ayagikei/LifeUp">https://github.com/Ayagikei/LifeUp</a>，欢迎向我们贡献代码。]]></string>
     <string name="port_config">服务端口: %1$s</string>
+    <string name="content_provider_permission">读取「人升」数据权限</string>
+    <string name="content_provider_permission_desc">授权以便读取「人升」中的内部数据，如任务列表、商品列表等</string>
 </resources>
