@@ -57,7 +57,6 @@ import org.json.JSONException
 import java.util.logging.Level
 import java.util.logging.Logger
 
-
 object KtorService : LifeUpService {
 
     var port = 13276
@@ -424,7 +423,6 @@ object KtorService : LifeUpService {
         }
     }
 
-
     private fun Bundle.toJson(): JsonObject {
         val map = mutableMapOf<String, JsonElement>()
         val keys: Set<String> = keySet()
@@ -472,5 +470,4 @@ object KtorService : LifeUpService {
         }
         return JsonObject(map)
     }
-
 }
