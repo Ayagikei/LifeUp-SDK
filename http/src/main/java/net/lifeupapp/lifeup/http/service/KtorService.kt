@@ -1,5 +1,9 @@
+@file:Suppress("ObjectPropertyName")
+
 package net.lifeupapp.lifeup.http.service
 
+import android.net.Uri
+import android.os.Bundle
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
@@ -10,9 +14,11 @@ import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondOutputStream
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.Dispatchers
@@ -30,17 +36,32 @@ import kotlinx.html.html
 import kotlinx.html.i
 import kotlinx.html.p
 import kotlinx.html.stream.appendHTML
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
+import net.lifeupapp.lifeup.api.content.info.InfoApi
+import net.lifeupapp.lifeup.api.content.shop.ItemsApi
+import net.lifeupapp.lifeup.api.content.skills.SkillsApi
+import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
+import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
+import net.lifeupapp.lifeup.http.vo.wrapAsResponse
+import org.json.JSONException
+import java.util.logging.Level
 import java.util.logging.Logger
+
 
 object KtorService : LifeUpService {
 
-    // FIXME: random the port if the port is occupied
-    private val port = 13276
+    var port = 13276
+        private set
 
     private val logger = Logger.getLogger("LifeUp-Http")
 
@@ -69,7 +90,7 @@ object KtorService : LifeUpService {
 
     private var server: NettyApplicationEngine? = newService
 
-    val newService
+    private val newService
         get() = embeddedServer(Netty, port, watchPaths = emptyList()) {
             install(WebSockets)
             install(CallLogging)
@@ -131,17 +152,230 @@ object KtorService : LifeUpService {
                 }
 
                 get("/api") {
-                    call.request.queryParameters["url"]?.let { url ->
-                        logger.info("Got url: $url")
-                        LifeUpApi.call(appCtx, url)
+                    kotlin.runCatching {
+                        call.request.queryParameters.getAll("url")?.forEach { url ->
+                            logger.info("Got url: $url")
+                            LifeUpApi.call(appCtx, url)
+                        }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
                     }
-                    call.respond("success\ncheck your phone!")
+                }
+
+                get("/api/contentprovider") {
+                    kotlin.runCatching {
+                        call.request.queryParameters.getAll("url")?.forEach { url ->
+                            logger.info("Got url: $url")
+                            LifeUpApi.callApiWithContentProvider(url)
+                        }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
                 }
 
                 post<RawQueryVo>("/api") {
-                    logger.info("Got url: ${it.url}")
-                    LifeUpApi.call(appCtx, it.url)
-                    call.respond("success")
+                    kotlin.runCatching {
+                        logger.info("Got url: ${it.url}")
+                        it.urls?.forEach {
+                            logger.info("Got url: $it")
+                            LifeUpApi.call(appCtx, it)
+                        }
+                        it.url?.let { it1 -> LifeUpApi.call(appCtx, it1) }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
+                post<RawQueryVo>("/api/contentprovider") {
+                    kotlin.runCatching {
+                        logger.info("Got url: ${it.url}")
+                        it.urls?.forEach {
+                            logger.info("Got url: $it")
+                            LifeUpApi.callApiWithContentProvider(it)
+                        }
+                        it.url?.let { it1 -> LifeUpApi.callApiWithContentProvider(it1) }
+                        HttpResponse.success("success")
+                    }.onSuccess {
+                        call.respond(it)
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
+                get("/files/{url}") {
+                    call.parameters["url"]!!.let { url ->
+                        logger.info("Got url: $url")
+                        call.respondOutputStream {
+                            appCtx.contentResolver.openInputStream(Uri.parse(url))?.use {
+                                it.copyTo(this)
+                            }
+                        }
+                    }
+                }
+
+                route("/tasks") {
+                    // get all tasks
+                    get {
+                        LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                    route("/{id}") {
+                        // get tasks in a specific category
+                        get {
+                            LifeUpApi.getContentProviderApi<TasksApi>()
+                                .listTasks(call.parameters["id"]?.toLongOrNull()).onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
+                        }
+                    }
+                }
+
+                route("/history") {
+                    get {
+                        val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                        LifeUpApi.getContentProviderApi<TasksApi>().listHistory(offset, limit)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                }
+
+                route("/items") {
+                    get {
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                    route("/{id}") {
+                        get {
+                            val id = call.parameters["id"]?.toLongOrNull()
+
+                            LifeUpApi.getContentProviderApi<ItemsApi>().listItems(id).onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                        }
+                    }
+                }
+
+                route("/tasks_categories") {
+                    get {
+                        LifeUpApi.getContentProviderApi<TasksApi>().listCategories().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                }
+
+                route("/achievement_categories") {
+                    get {
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listCategories()
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                }
+
+                route("/items_categories") {
+                    get {
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listCategories().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                }
+
+                get("/info") {
+                    LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess {
+                        call.respond(it.wrapAsResponse())
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+
+                route("/skills") {
+                    get {
+                        LifeUpApi.getContentProviderApi<SkillsApi>().listSkills().onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                }
+
+                route("/achievements") {
+                    get {
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listAchievements()
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                    route("/{id}") {
+                        get {
+                            LifeUpApi.getContentProviderApi<AchievementApi>()
+                                .listAchievements(call.parameters["id"]?.toLongOrNull()).onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
+                        }
+                    }
+                }
+
+                route("/feelings") {
+                    get {
+                        val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+
+                        LifeUpApi.getContentProviderApi<FeelingsApi>().listFeelings(offset, limit)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                logger.log(Level.WARNING, "Failed to get feelings", it)
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                }
+
+                route("/coin") {
+                    get {
+                        kotlin.runCatching {
+                            (LifeUpApi.callApiWithContentProvider("query", "key=coin")?.toJson())
+                                ?: JsonObject(
+                                    emptyMap()
+                                )
+                        }.onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
                 }
             }
         }
@@ -166,6 +400,10 @@ object KtorService : LifeUpService {
             }.onFailure {
                 _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
                 _errorMessage.value = it
+                port++
+                if (port > 65535) {
+                    port = 1024
+                }
             }
         }
     }
@@ -185,4 +423,54 @@ object KtorService : LifeUpService {
             }
         }
     }
+
+
+    private fun Bundle.toJson(): JsonObject {
+        val map = mutableMapOf<String, JsonElement>()
+        val keys: Set<String> = keySet()
+        for (key in keys) {
+            try {
+                val value = get(key)
+                when (value) {
+                    is Int -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Long -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Double -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is String -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Boolean -> {
+                        map[key] = JsonPrimitive(value)
+                    }
+
+                    is Bundle -> {
+                        map[key] = value.toJson()
+                    }
+
+                    is Array<*> -> {
+                        map[key] = JsonArray(value.map { JsonPrimitive(it.toString()) })
+                    }
+
+                    else -> {
+                        map[key] = JsonPrimitive(value.toString())
+                    }
+                }
+            } catch (e: ClassCastException) {
+                e.printStackTrace()
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
+        return JsonObject(map)
+    }
+
 }

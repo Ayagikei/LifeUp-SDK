@@ -28,4 +28,5 @@
 <br/><br/>
 <br/><b># 开源：</b>
 <br/>这是开源项目 <a href="https://github.com/Ayagikei/LifeUp">https://github.com/Ayagikei/LifeUp</a>，欢迎向我们贡献代码。]]></string>
+    <string name="port_config">服务端口: %1$s</string>
 </resources>

@@ -3,6 +3,7 @@ package net.lifeupapp.lifeup.http.base
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.http.service.notification.NotificationChannels
 
 class App : Application() {
@@ -10,11 +11,14 @@ class App : Application() {
         super.onCreate()
         app = this
         appCtx = this
-        runStartupTasks()
+        runStartupTasks(this)
     }
 
-    private fun runStartupTasks() {
-        NotificationChannels.createChannels(this)
+    private fun runStartupTasks(context: Context) {
+        // 1. create the notification channels
+        NotificationChannels.createChannels(context)
+        // 2. init lifeup sdk
+        LifeUpApi.init(context)
     }
 }
 
