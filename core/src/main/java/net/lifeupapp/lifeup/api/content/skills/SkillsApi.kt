@@ -48,5 +48,4 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(categories)
     }
-
 }

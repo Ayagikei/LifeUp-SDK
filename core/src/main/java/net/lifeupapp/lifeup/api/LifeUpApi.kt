@@ -52,10 +52,9 @@ object LifeUpApi : LifeUpApiDef {
     override fun requestContentProviderPermission(appName: String) {
         startApiActivity(
             appCtx,
-            "lifeup://api/request_permission?request_content_provider=true&app_name=${appName}&package_name=${appCtx.packageName}"
+            "lifeup://api/request_permission?request_content_provider=true&app_name=$appName&package_name=${appCtx.packageName}"
         )
     }
-
 
     override fun startApiActivity(context: Context?, url: String) {
         val action = parseUriIntent(url)

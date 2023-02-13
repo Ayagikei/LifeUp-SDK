@@ -29,7 +29,6 @@ interface LifeUpApiDef {
     )
     fun call(context: Context?, url: String)
 
-
     fun requestContentProviderPermission(appName: String)
 
     fun startApiActivity(context: Context?, url: String)
