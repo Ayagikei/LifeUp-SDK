@@ -29,4 +29,6 @@
 <br/><b># Open Source:</b>
 <br/>This is an open source project <a href="https://github.com/Ayagikei/LifeUp">https://github.com/Ayagikei/LifeUp</a>, welcome to contribute code to us.]]></string>
     <string name="port_config">Service port: %1$s</string>
+    <string name="content_provider_permission">Content provider permission</string>
+    <string name="content_provider_permission_desc">Grant permission to read the data of LifeUp</string>
 </resources>

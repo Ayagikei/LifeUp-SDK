@@ -49,6 +49,14 @@ object LifeUpApi : LifeUpApiDef {
         startApiActivity(context, url)
     }
 
+    override fun requestContentProviderPermission(appName: String) {
+        startApiActivity(
+            appCtx,
+            "lifeup://api/request_permission?request_content_provider=true&app_name=${appName}&package_name=${appCtx.packageName}"
+        )
+    }
+
+
     override fun startApiActivity(context: Context?, url: String) {
         val action = parseUriIntent(url)
         action.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

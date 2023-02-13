@@ -11,6 +11,7 @@ import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
@@ -86,8 +87,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.includePortConfig.apply {
-            this.tvTitle.setText(R.string.port_config)
+        binding.includeContentProviderPermission.apply {
+            this.tvTitle.setText(R.string.content_provider_permission)
+            this.tvDesc.setText(R.string.content_provider_permission_desc)
+            this.btn.setOnClickListener {
+                LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
