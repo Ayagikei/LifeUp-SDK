@@ -7,6 +7,7 @@ import android.os.Bundle
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
+import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -49,6 +50,7 @@ import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
+import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
 import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
@@ -56,6 +58,8 @@ import net.lifeupapp.lifeup.http.vo.wrapAsResponse
 import org.json.JSONException
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 
 object KtorService : LifeUpService {
 
@@ -74,20 +78,30 @@ object KtorService : LifeUpService {
         get() = _errorMessage
 
     private val mutex = Mutex()
+    private val wakeLockManager = WakeLockManager("KtorService")
 
     init {
         AppScope.launch {
             _isRunning.collect {
                 if (LifeUpService.RunningState.RUNNING == it) {
                     ServerNotificationService.start(appCtx)
+                    wakeLockManager.stayAwake(10.minutes.toLong(DurationUnit.MILLISECONDS))
                 } else {
                     ServerNotificationService.cancel(appCtx)
+                    wakeLockManager.release()
                 }
             }
         }
     }
 
     private var server: NettyApplicationEngine? = newService
+
+    private val RequestMoreWakeLockPlugin = createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
+        onCall { call ->
+            logger.info("Requesting wake lock")
+            wakeLockManager.stayAwake()
+        }
+    }
 
     private val newService
         get() = embeddedServer(Netty, port, watchPaths = emptyList()) {
@@ -96,6 +110,7 @@ object KtorService : LifeUpService {
             install(ContentNegotiation) {
                 json()
             }
+            install(RequestMoreWakeLockPlugin)
 
             routing {
                 get("/") {

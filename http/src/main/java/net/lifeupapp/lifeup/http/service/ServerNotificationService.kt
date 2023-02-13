@@ -12,9 +12,12 @@ import androidx.core.content.ContextCompat
 import net.lifeupapp.lifeup.http.MainActivity
 import net.lifeupapp.lifeup.http.R
 import net.lifeupapp.lifeup.http.service.notification.NotificationChannels
+import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.compactAndFlagImmutable
 
 class ServerNotificationService : Service() {
+
+    private val wakeLockManager = WakeLockManager("ServerNotificationService")
 
     override fun onCreate() {
     }
