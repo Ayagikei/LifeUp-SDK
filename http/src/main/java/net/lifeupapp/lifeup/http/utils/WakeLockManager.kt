@@ -6,7 +6,6 @@ import net.lifeupapp.lifeup.http.base.appCtx
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
-
 class WakeLockManager(
     tag: String
 ) {
