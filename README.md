@@ -38,6 +38,11 @@ the <b>[LifeUp: Gamify To-Do & Habit app](https://play.google.com/store/apps/det
 
 ### Data Query
 
+<p align="center">
+ <img src="https://github.com/Ayagikei/LifeUp-Desktop/raw/main/imgs/cloud.png" style="height:600px" />
+</p>
+
+
 In the 1.1.x version, **it supports querying the complete data list in LifeUp, such as task and
 product data**, and uses it as the data source of the desktop version.
 
