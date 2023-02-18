@@ -25,19 +25,43 @@
 ### What's it?
 
 This small extended tool can turn your mobile phone into an HTTP server.
-So that you can send API commands (URL Scheme) from the LAN computer to trigger various actions of the <b>[LifeUp: Gamify To-Do & Habit app](https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup)</b>.
-
-
+So that you can send API commands (URL Scheme) from the LAN computer to trigger various actions of
+the <b>[LifeUp: Gamify To-Do & Habit app](https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup)</b>
+.
 
 <b>This can achieve the following effects:</b>
 
-1. Judging the usage time on the computer, the amount of text input, and the drawing time to trigger the completion of tasks, rewards, or punishments of the LifeUp application.
+1. Judging the usage time on the computer, the amount of text input, and the drawing time to trigger
+   the completion of tasks, rewards, or punishments of the LifeUp application.
 2. Implement a simple web page version to create tasks from the computer web page.
 3. And everything you can do with computer programming!
 
+### Data Query
 
+In the 1.1.x version, **it supports querying the complete data list in LifeUp, such as task and
+product data**, and uses it as the data source of the desktop version.
 
-> <b>Check [LifeUp APIs documents](https://docs.lifeupapp.fun/en/#/guide/api) here.</b>
+You can also use these data for secondary development of LifeUp.
+
+### Document
+
+#### LifeUp APIs
+
+[https://docs.lifeupapp.fun/en/#/guide/api](https://docs.lifeupapp.fun/en/#/guide/api)
+
+#### LifeUp SDK
+
+We haven't written the documentation yet, but you can check it out in the source code.
+
+[https://github.com/Ayagikei/LifeUp-SDK/blob/main/core/src/main/java/net/lifeupapp/lifeup/api/LifeUpApiDef.kt](https://github.com/Ayagikei/LifeUp-SDK/blob/main/core/src/main/java/net/lifeupapp/lifeup/api/LifeUpApiDef.kt)
+
+#### LifeUp Cloud (HTTP Interface Documentation)
+
+[https://docs.lifeupapp.fun/en/#/guide/api_cloud](https://docs.lifeupapp.fun/en/#/guide/api_cloud)
+
+or check our source code:
+
+[https://github.com/Ayagikei/LifeUp-SDK/blob/main/http/src/main/java/net/lifeupapp/lifeup/http/service/KtorService.kt](https://github.com/Ayagikei/LifeUp-SDK/blob/main/http/src/main/java/net/lifeupapp/lifeup/http/service/KtorService.kt)
 
 <br/>
 
