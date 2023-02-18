@@ -39,7 +39,7 @@ the <b>[LifeUp: Gamify To-Do & Habit app](https://play.google.com/store/apps/det
 ### Data Query
 
 <p align="center">
- <img src="https://github.com/Ayagikei/LifeUp-Desktop/raw/master/imgs/cloud.png" style="height:600px" />
+ <img src="https://github.com/Ayagikei/LifeUp-Desktop/raw/master/imgs/cloud.png"/>
 </p>
 
 
