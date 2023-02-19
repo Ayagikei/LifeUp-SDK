@@ -44,7 +44,7 @@ the <b>[LifeUp: Gamify To-Do & Habit app](https://play.google.com/store/apps/det
 
 
 In the 1.1.x version, **it supports querying the complete data list in LifeUp, such as task and
-product data**, and uses it as the data source of the desktop version.
+shop item data**, and uses it as the data source of the desktop version.
 
 You can also use these data for secondary development of LifeUp.
 
