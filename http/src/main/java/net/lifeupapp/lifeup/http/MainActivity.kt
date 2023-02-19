@@ -107,10 +107,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateLocalIpAddress() {
-        // TODO: dynamic changed the port if 13276 is occupied
         val localIpAddress =
-            getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
-                "$it:${KtorService.port}"
+            getIpAddressListInLocalNetwork().joinToString {
+                "$it:${KtorService.port}" + "\n"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)
