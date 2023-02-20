@@ -3,7 +3,7 @@
     <string name="server_status">Service is not running...</string>
     <string name="serverStartedMessage">Server started</string>
     <string name="ipAddressUnknown">No IP address (connected to WiFi?)</string>
-    <string name="localIpAddressMessage">Connected to the following IP(s): [%1$s]\n\nAccording to your networking situation, there may be multiple IP addresses here, and you should choose the address in the form of 192.168.x.x for general LAN.\nWhen service started, you can open it on your computer which connected to the same WIFI.\n\nIf the IP address displayed here is not accurate, you can also go to the WIFI settings to confirm your local IP and the server port is 13276.\n\nIf there are multiple IPs here, they may belong to different network segments.</string>
+    <string name="localIpAddressMessage">Connected to the following IP(s):\n%1$s\n\nAccording to your networking situation, there may be multiple IP addresses here, and you should choose the address in the form of 192.168.x.x for general LAN.\nWhen service started, you can open it on your computer which connected to the same WIFI.\n\nIf the IP address displayed here is not accurate, you can also go to the WIFI settings to confirm your local IP and the server port is 13276.\n\nIf there are multiple IPs here, they may belong to different network segments.</string>
     <string name="overlay_permission">Overlay Permission</string>
     <string name="overlay_permission_desc">Grant permission to execute API in background (Android 10+)</string>
     <string name="title_config">Config</string>
@@ -31,4 +31,5 @@
     <string name="port_config">Service port: %1$s</string>
     <string name="content_provider_permission">Content provider permission</string>
     <string name="content_provider_permission_desc">Grant permission to read the data of LifeUp</string>
+    <string name="qrcode_scanning">Scanning...</string>
 </resources>

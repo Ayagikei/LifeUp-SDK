@@ -1,11 +1,14 @@
 package net.lifeupapp.lifeup.http
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +16,7 @@ import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import net.lifeupapp.lifeup.api.LifeUpApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
+import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
@@ -25,6 +29,19 @@ class MainActivity : AppCompatActivity() {
     private val powerManager by lazy {
         getSystemService(POWER_SERVICE) as PowerManager
     }
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val myData: Intent? = result.data
+                if (myData != null) {
+                    myData.getStringExtra(BarcodeScanningActivity.SCAN_RESULT)?.let {
+                        Log.i("MainActivity", "scan result: $it")
+                        LifeUpApi.startApiActivity(this, it)
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +120,10 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             binding.includeOverlayConfig.btn.isGone = true
+        }
+
+        binding.btnQrcodeScan.setOnClickListener {
+            resultLauncher.launch(Intent(this, BarcodeScanningActivity::class.java))
         }
     }
 
