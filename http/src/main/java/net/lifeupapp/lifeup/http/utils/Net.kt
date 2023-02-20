@@ -12,8 +12,7 @@ fun getIpAddressListInLocalNetwork(): List<String> {
     return networkInterfaces?.flatMap {
         it.inetAddresses.asSequence()
             .filter { inetAddress ->
-                inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":") &&
-                    inetAddress.hostAddress != "127.0.0.1"
+                inetAddress.isSiteLocalAddress && inetAddress.isLoopbackAddress.not()
             }
             .map { inetAddress -> inetAddress.hostAddress }
     }?.toList() ?: emptyList()
