@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Rect
 import android.graphics.RectF
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.util.Size
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -18,6 +20,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import net.lifeupapp.lifeup.http.databinding.ActivityBarcodeScanningBinding
 import java.util.concurrent.Executors
 
@@ -38,6 +44,39 @@ class BarcodeScanningActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBarcodeScanningBinding
 
+    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        // Handle the returned Uri
+        // scan from gallery
+        uri?.let {
+            Log.i(TAG, "scan from gallery: $it")
+            // analyze the image
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(
+                    Barcode.FORMAT_QR_CODE,
+                    Barcode.FORMAT_AZTEC
+                )
+                .build()
+            val detector = BarcodeScanning.getClient(options)
+            val image = InputImage.fromFilePath(this, it)
+            detector.process(image)
+                .addOnSuccessListener { barCodes ->
+                    if (barCodes.size > 0) {
+                        val result = barCodes[0]
+                        detector.close()
+
+                        Handler(mainLooper).postDelayed({
+                            val intent = Intent()
+                            intent.putExtra(SCAN_RESULT, result.rawValue)
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }, 150)
+                    }
+                }
+                .addOnFailureListener { Log.d(TAG, "Error: ${it.message}") }
+
+        }
+    }
+
     companion object {
         const val SCAN_RESULT = "BarcodeScanningActivity.scan_result"
         const val REQUEST_PERMISSION = 12345
@@ -51,7 +90,7 @@ class BarcodeScanningActivity : AppCompatActivity() {
         setContentView(view)
 
         ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            this, arrayOf(Manifest.permission.CAMERA),
             REQUEST_PERMISSION
         )
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -92,8 +131,14 @@ class BarcodeScanningActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
+        // scan from gallery
+        binding.ivGallery.setOnClickListener {
+            getContent.launch("image/*")
+        }
+
         // bind image analysis
-        imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(),
+        imageAnalysis.setAnalyzer(
+            Executors.newSingleThreadExecutor(),
             QRCodeAnalyser { barcode, imageWidth, imageHeight ->
                 cameraProvider.unbindAll()
                 initScale(imageWidth, imageHeight)
