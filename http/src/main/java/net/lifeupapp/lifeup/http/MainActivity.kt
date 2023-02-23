@@ -153,6 +153,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnQrcodeScan.setOnClickListener {
             resultLauncher.launch(Intent(this, BarcodeScanningActivity::class.java))
         }
+
+        binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
     }
 
     private fun updateLocalIpAddress() {

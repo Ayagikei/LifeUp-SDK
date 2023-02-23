@@ -16,7 +16,7 @@
     <string name="switch_start_service">启动服务</string>
     <string name="title_about">关于</string>
     <string name="about_text"><![CDATA[这是个能让你的手机变成一台 HTTP 服务器的小工具。从而使得你能从局域网电脑上发送API命令（URL Scheme）到手机上，来触发<a href="https://www.lifeupapp.fun/">《人升》</a>应用的各种动作。
-<br/><br/><b># 它可以用于以下场景（需要额外的 Web、Python 等开发）：</b>
+<br/><br/><b># 它可以用于以下场景（需要额外的 Web、Python 等开发）:</b>
 <br/>1. 判断电脑上的使用时长、输入文本量、绘画时长来触发LifeUp应用的完成任务、奖励或者惩罚。<br/>还有你能通过电脑编程实现的一切！
 <br/>
 <br/>2. 实现简单的网页版本，从电脑网页上创建任务。
@@ -36,4 +36,5 @@
     <string name="lifeup_status_normal">《人升》已经成功运行中...</string>
     <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
     <string name="lifeup_status">人升状态</string>
+    <string name="cloud_version">版本: %1$s</string>
 </resources>

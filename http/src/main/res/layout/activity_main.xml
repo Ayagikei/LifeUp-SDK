@@ -178,7 +178,7 @@
             app:layout_constraintTop_toBottomOf="@+id/lifeup_status_text" />
 
         <TextView
-            android:id="@+id/tv_about_desc"
+            android:id="@+id/tv_about_version"
             style="@style/Item_Desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -187,9 +187,24 @@
             android:layout_marginEnd="16dp"
             android:lineSpacingExtra="2dp"
             android:text="@string/about_text"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_about" />
+
+        <TextView
+            android:id="@+id/tv_about_desc"
+            style="@style/Item_Desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/about_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_about_version" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
