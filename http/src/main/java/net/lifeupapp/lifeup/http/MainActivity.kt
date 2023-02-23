@@ -8,13 +8,18 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
@@ -68,6 +73,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            lifecycleScope.launchWhenResumed {
+                withContext(Dispatchers.IO) {
+                    while (true) {
+                        val isRunning = checkContentProviderAvailable()
+                        binding.lifeupStatusText.text = if (isRunning) {
+                            getString(R.string.lifeup_status_normal)
+                        } else {
+                            getString(R.string.lifeup_status_unknown)
+                        }
+                        delay(5000L)
+                    }
+                }
+            }
+
             launch {
                 ConnectStatusManager.networkChangedEvent.sample(500L).collect {
                     updateLocalIpAddress()
@@ -108,7 +127,16 @@ class MainActivity : AppCompatActivity() {
             this.tvTitle.setText(R.string.content_provider_permission)
             this.tvDesc.setText(R.string.content_provider_permission_desc)
             this.btn.setOnClickListener {
-                LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                val hasPermission = checkContentProviderAvailable()
+                if (!hasPermission) {
+                    LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.lifeup_permission_granted),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
 
@@ -142,4 +170,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         binding.tvAboutDesc.linksClickable = true
     }
+
+    private fun checkContentProviderAvailable() =
+        (LifeUpApi.getContentProviderApi<InfoApi>().getInfo().getOrNull()?.appVersion ?: 0) > 0
 }
