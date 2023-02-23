@@ -2,6 +2,7 @@ package net.lifeupapp.lifeup.http
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -13,12 +14,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import io.ktor.util.toLowerCasePreservingASCIIRules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN_HANT
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
@@ -155,6 +160,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
+
+        binding.btnDocument.setOnClickListener {
+            // get current locale
+            val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                resources.configuration.locales.get(0)
+            } else {
+                resources.configuration.locale
+            }
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = when {
+                locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
+                    DOCUMENT_LINK_CN
+                }
+
+                locale.language == "zh" -> {
+                    DOCUMENT_LINK_CN_HANT
+                }
+
+                else -> {
+                    DOCUMENT_LINK
+                }
+            }
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
     }
 
     private fun updateLocalIpAddress() {

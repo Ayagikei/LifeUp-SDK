@@ -23,10 +23,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_qrcode_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@null"
             android:src="@drawable/qrcode_scan"
             android:tint="?android:attr/textColorPrimary"
@@ -176,6 +177,18 @@
             android:text="@string/title_about"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lifeup_status_text" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_document"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/ic_help"
+            android:tint="?android:attr/textColorPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_about"
+            app:layout_constraintEnd_toEndOf="@+id/include_overlay_config"
+            app:layout_constraintTop_toTopOf="@+id/tv_about" />
+
 
         <TextView
             android:id="@+id/tv_about_version"
