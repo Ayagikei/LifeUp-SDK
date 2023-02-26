@@ -82,10 +82,12 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) {
                     while (true) {
                         val isRunning = checkContentProviderAvailable()
-                        binding.lifeupStatusText.text = if (isRunning) {
-                            getString(R.string.lifeup_status_normal)
-                        } else {
-                            getString(R.string.lifeup_status_unknown)
+                        withContext(Dispatchers.Main) {
+                            binding.lifeupStatusText.text = if (isRunning) {
+                                getString(R.string.lifeup_status_normal)
+                            } else {
+                                getString(R.string.lifeup_status_unknown)
+                            }
                         }
                         delay(5000L)
                     }
