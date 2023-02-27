@@ -4,6 +4,7 @@ package net.lifeupapp.lifeup.http.service
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
@@ -95,11 +96,15 @@ object KtorService : LifeUpService {
     }
 
     private var server: NettyApplicationEngine? = newService
+    private var lastRequestTime = 0L
 
     private val RequestMoreWakeLockPlugin = createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
-        onCall { call ->
-            logger.info("Requesting wake lock")
-            wakeLockManager.stayAwake()
+        onCall { _ ->
+            if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
+                logger.info("Requesting wake lock")
+                lastRequestTime = SystemClock.elapsedRealtime()
+                wakeLockManager.stayAwake()
+            }
         }
     }
 
