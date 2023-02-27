@@ -29,7 +29,6 @@ interface LifeUpApiDef {
     )
     fun call(context: Context?, url: String)
 
-
     /**
      * start the [url] in LifeUp
      *
@@ -44,14 +43,12 @@ interface LifeUpApiDef {
 
     fun startApiActivityWithResult(activity: Activity, url: String, requestCode: Int)
 
-
     /**
      * before using the content provider, you need to request the permission
      *
      * @param appName the name of your app, which will be shown in the permission dialog
      */
     fun requestContentProviderPermission(appName: String)
-
 
     /**
      * call the [url] in LifeUp, and return the result in [Bundle]
@@ -63,7 +60,6 @@ interface LifeUpApiDef {
      */
     fun callApiWithContentProvider(url: String): Bundle?
 
-
     /**
      * call the [method] in LifeUp, and return the result in [Bundle]
      *
@@ -73,7 +69,6 @@ interface LifeUpApiDef {
      * @param arg the argument to pass to the method, for example, "key=coin"
      */
     fun callApiWithContentProvider(method: String, arg: String): Bundle?
-
 
     /**
      * get the api for the specific [ContentProviderApi], and then you can get detailed information from LifeUp
