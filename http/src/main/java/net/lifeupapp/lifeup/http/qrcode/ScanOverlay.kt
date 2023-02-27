@@ -12,7 +12,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import net.lifeupapp.lifeup.http.R
 
-
 class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private var paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -52,7 +51,6 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
                 paint
             )
         }
-
     }
 
     private fun getAnimator(): ObjectAnimator {
@@ -64,7 +62,7 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
                 1f
             )
             animator?.duration = 5000
-            animator?.repeatCount = -1 //-1 means infinite loop
+            animator?.repeatCount = -1 // -1 means infinite loop
         }
         return animator!!
     }
@@ -75,6 +73,4 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
         getAnimator().cancel()
         invalidate()
     }
-
-
 }

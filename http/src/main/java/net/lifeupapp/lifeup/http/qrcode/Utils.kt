@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.TypedValue
 
-
 fun Float.toPx(): Int {
     val resources = Resources.getSystem()
     return TypedValue.applyDimension(
@@ -14,7 +13,6 @@ fun Float.toPx(): Int {
         resources.displayMetrics
     ).toInt()
 }
-
 
 fun isPortraitMode(context: Context): Boolean {
     val mConfiguration: Configuration = context.resources.configuration

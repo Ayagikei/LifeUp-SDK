@@ -27,7 +27,6 @@ import com.google.mlkit.vision.common.InputImage
 import net.lifeupapp.lifeup.http.databinding.ActivityBarcodeScanningBinding
 import java.util.concurrent.Executors
 
-
 class BarcodeScanningActivity : AppCompatActivity() {
 
     private val TAG = "BarcodeScanningActivity"
@@ -73,7 +72,6 @@ class BarcodeScanningActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { Log.d(TAG, "Error: ${it.message}") }
-
         }
     }
 
@@ -156,7 +154,8 @@ class BarcodeScanningActivity : AppCompatActivity() {
                     setResult(RESULT_OK, intent)
                     finish()
                 }, 150)
-            })
+            }
+        )
         // bind camera to lifecycle
         camera = cameraProvider.bindToLifecycle(
             this as LifecycleOwner,

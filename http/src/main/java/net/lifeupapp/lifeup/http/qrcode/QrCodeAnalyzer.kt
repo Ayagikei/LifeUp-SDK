@@ -35,13 +35,11 @@ class QRCodeAnalyser(private val listener: (Barcode, Int, Int) -> Unit) : ImageA
             .addOnSuccessListener { barCodes ->
                 if (barCodes.size > 0) {
                     listener.invoke(barCodes[0], imageProxy.width, imageProxy.height)
-                    //接收到结果后，就关闭解析
+                    // 接收到结果后，就关闭解析
                     detector.close()
                 }
             }
             .addOnFailureListener { Log.d(TAG, "Error: ${it.message}") }
             .addOnCompleteListener { imageProxy.close() }
-
     }
-
 }
