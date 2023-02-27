@@ -1,18 +1,32 @@
 package net.lifeupapp.lifeup.http
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import io.ktor.util.toLowerCasePreservingASCIIRules
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN_HANT
+import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
+import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
@@ -25,6 +39,19 @@ class MainActivity : AppCompatActivity() {
     private val powerManager by lazy {
         getSystemService(POWER_SERVICE) as PowerManager
     }
+
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val myData: Intent? = result.data
+                if (myData != null) {
+                    myData.getStringExtra(BarcodeScanningActivity.SCAN_RESULT)?.let {
+                        Log.i("MainActivity", "scan result: $it")
+                        LifeUpApi.startApiActivity(this, it)
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +74,22 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         binding.serverStatusText.text = getString(R.string.server_status)
                         binding.switchStartService.isChecked = false
+                    }
+                }
+            }
+
+            lifecycleScope.launchWhenResumed {
+                withContext(Dispatchers.IO) {
+                    while (true) {
+                        val isRunning = checkContentProviderAvailable()
+                        withContext(Dispatchers.Main) {
+                            binding.lifeupStatusText.text = if (isRunning) {
+                                getString(R.string.lifeup_status_normal)
+                            } else {
+                                getString(R.string.lifeup_status_unknown)
+                            }
+                        }
+                        delay(5000L)
                     }
                 }
             }
@@ -91,7 +134,16 @@ class MainActivity : AppCompatActivity() {
             this.tvTitle.setText(R.string.content_provider_permission)
             this.tvDesc.setText(R.string.content_provider_permission_desc)
             this.btn.setOnClickListener {
-                LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                val hasPermission = checkContentProviderAvailable()
+                if (!hasPermission) {
+                    LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.lifeup_permission_granted),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
 
@@ -104,13 +156,43 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.includeOverlayConfig.btn.isGone = true
         }
+
+        binding.btnQrcodeScan.setOnClickListener {
+            resultLauncher.launch(Intent(this, BarcodeScanningActivity::class.java))
+        }
+
+        binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
+
+        binding.btnDocument.setOnClickListener {
+            // get current locale
+            val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                resources.configuration.locales.get(0)
+            } else {
+                resources.configuration.locale
+            }
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = when {
+                locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
+                    DOCUMENT_LINK_CN
+                }
+
+                locale.language == "zh" -> {
+                    DOCUMENT_LINK_CN_HANT
+                }
+
+                else -> {
+                    DOCUMENT_LINK
+                }
+            }
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
     }
 
     private fun updateLocalIpAddress() {
-        // TODO: dynamic changed the port if 13276 is occupied
         val localIpAddress =
-            getIpAddressListInLocalNetwork().filter { !it.startsWith("10.") }.joinToString {
-                "$it:${KtorService.port}"
+            getIpAddressListInLocalNetwork().joinToString {
+                "$it:${KtorService.port}" + "\n"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)
@@ -122,4 +204,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         binding.tvAboutDesc.linksClickable = true
     }
+
+    private fun checkContentProviderAvailable() =
+        (LifeUpApi.getContentProviderApi<InfoApi>().getInfo().getOrNull()?.appVersion ?: 0) > 0
 }

@@ -3,7 +3,7 @@
     <string name="server_status">服务未启动...</string>
     <string name="serverStartedMessage">服务器已开启</string>
     <string name="ipAddressUnknown">未获取到 IP 地址 (没有连接到 WIFI?)</string>
-    <string name="localIpAddressMessage">连接到了以下IP：%1$s\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。\n\n如果这里有多个IP，它们可能分属不同网段。</string>
+    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n%1$s\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。</string>
     <string name="overlay_permission">悬浮窗权限</string>
     <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
     <string name="title_config">配置</string>
@@ -16,7 +16,7 @@
     <string name="switch_start_service">启动服务</string>
     <string name="title_about">关于</string>
     <string name="about_text"><![CDATA[这是个能让你的手机变成一台 HTTP 服务器的小工具。从而使得你能从局域网电脑上发送API命令（URL Scheme）到手机上，来触发<a href="https://www.lifeupapp.fun/">《人升》</a>应用的各种动作。
-<br/><br/><b># 它可以用于以下场景（需要额外的 Web、Python 等开发）：</b>
+<br/><br/><b># 它可以用于以下场景（需要额外的 Web、Python 等开发）:</b>
 <br/>1. 判断电脑上的使用时长、输入文本量、绘画时长来触发LifeUp应用的完成任务、奖励或者惩罚。<br/>还有你能通过电脑编程实现的一切！
 <br/>
 <br/>2. 实现简单的网页版本，从电脑网页上创建任务。
@@ -31,4 +31,10 @@
     <string name="port_config">服务端口: %1$s</string>
     <string name="content_provider_permission">读取「人升」数据权限</string>
     <string name="content_provider_permission_desc">授权以便读取「人升」中的内部数据，如任务列表、商品列表等</string>
+    <string name="qrcode_scanning">正在扫描，请稍后...</string>
+    <string name="lifeup_status_unknown">《人升》的运行状态未知...\n请确定你已经授权了“读取「人升」数据权限”，并且《人升》正在运行</string>
+    <string name="lifeup_status_normal">《人升》正在成功运行中...</string>
+    <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
+    <string name="lifeup_status">人升状态</string>
+    <string name="cloud_version">版本: %1$s</string>
 </resources>
