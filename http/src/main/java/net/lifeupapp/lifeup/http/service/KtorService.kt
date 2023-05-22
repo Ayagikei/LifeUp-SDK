@@ -62,6 +62,7 @@ import java.util.logging.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
+
 object KtorService : LifeUpService {
 
     var port = 13276
@@ -80,6 +81,7 @@ object KtorService : LifeUpService {
 
     private val mutex = Mutex()
     private val wakeLockManager = WakeLockManager("KtorService")
+    private val mdnsService = MdnsService(AppScope)
 
     init {
         AppScope.launch {
@@ -87,13 +89,16 @@ object KtorService : LifeUpService {
                 if (LifeUpService.RunningState.RUNNING == it) {
                     ServerNotificationService.start(appCtx)
                     wakeLockManager.stayAwake(10.minutes.toLong(DurationUnit.MILLISECONDS))
+                    mdnsService.register(port.toString())
                 } else {
                     ServerNotificationService.cancel(appCtx)
                     wakeLockManager.release()
+                    mdnsService.unregister()
                 }
             }
         }
     }
+
 
     private var server: NettyApplicationEngine? = newService
     private var lastRequestTime = 0L
