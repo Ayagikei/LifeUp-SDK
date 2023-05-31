@@ -2,7 +2,10 @@
 
 package net.lifeupapp.lifeup.http.service
 
+import android.content.Context
 import android.net.Uri
+import android.net.nsd.NsdManager
+import android.net.nsd.NsdServiceInfo
 import android.os.Bundle
 import android.os.SystemClock
 import io.ktor.http.ContentType
@@ -81,21 +84,70 @@ object KtorService : LifeUpService {
 
     private val mutex = Mutex()
     private val wakeLockManager = WakeLockManager("KtorService")
-    private val mdnsService = MdnsService(AppScope)
 
     init {
         AppScope.launch {
             _isRunning.collect {
+                logger.info("KtorService is running: $it")
                 if (LifeUpService.RunningState.RUNNING == it) {
                     ServerNotificationService.start(appCtx)
                     wakeLockManager.stayAwake(10.minutes.toLong(DurationUnit.MILLISECONDS))
-                    mdnsService.register(port.toString())
+                    // mdnsService.register(port.toString())
+                    registerNsdService(1234 /*FIXME: get a available port instead of a fixed one */)
                 } else {
                     ServerNotificationService.cancel(appCtx)
                     wakeLockManager.release()
-                    mdnsService.unregister()
+                    // mdnsService.unregister()
                 }
             }
+        }
+    }
+
+    private val registrationListener = object : NsdManager.RegistrationListener {
+
+        override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
+            // Save the service name. Android may have changed it in order to
+            // resolve a conflict, so update the name you initially requested
+            // with the name Android actually used.
+            // mServiceName = NsdServiceInfo.serviceName
+            logger.info("registered service: ${NsdServiceInfo.serviceName}")
+        }
+
+        override fun onRegistrationFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
+            // Registration failed! Put debugging code here to determine why.
+        }
+
+        override fun onServiceUnregistered(arg0: NsdServiceInfo) {
+            // Service has been unregistered. This only happens when you call
+            // NsdManager.unregisterService() and pass in this listener.
+        }
+
+        override fun onUnregistrationFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
+            // Unregistration failed. Put debugging code here to determine why.
+        }
+    }
+
+    private val ndsManager: NsdManager? by lazy {
+        appCtx.getSystemService(Context.NSD_SERVICE) as NsdManager?
+    }
+
+    private fun registerNsdService(port: Int) {
+        try {
+            // Create the NsdServiceInfo object, and populate it.
+            val serviceInfo = NsdServiceInfo().apply {
+                // The name is subject to change based on conflicts
+                // with other services advertised on the same network.
+                serviceName = "lifeup_cloud"
+                serviceType = "_lifeup._tcp"
+                setPort(port)
+                setAttribute("port", port.toString())
+            }
+
+            ndsManager?.apply {
+                registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener)
+            }
+        } catch (t: Throwable) {
+            logger.log(Level.SEVERE, "Failed to register NSD service", t)
         }
     }
 
@@ -103,9 +155,10 @@ object KtorService : LifeUpService {
     private var server: NettyApplicationEngine? = newService
     private var lastRequestTime = 0L
 
-    private val RequestMoreWakeLockPlugin = createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
-        onCall { _ ->
-            if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
+    private val RequestMoreWakeLockPlugin =
+        createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
+            onCall { _ ->
+                if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
                 logger.info("Requesting wake lock")
                 lastRequestTime = SystemClock.elapsedRealtime()
                 wakeLockManager.stayAwake()
