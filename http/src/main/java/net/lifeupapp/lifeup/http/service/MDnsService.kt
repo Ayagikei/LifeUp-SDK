@@ -17,6 +17,7 @@ import java.util.logging.Logger
 class MDnsService {
 
     private val logger = Logger.getLogger("MDnsService")
+    private var hasRegistered = false
 
     private val ndsManager: NsdManager? by lazy {
         appCtx.getSystemService(Context.NSD_SERVICE) as NsdManager?
@@ -48,6 +49,9 @@ class MDnsService {
 
 
     fun registerNsdService(port: Int) {
+        if (hasRegistered) {
+            return
+        }
         try {
             // Create the NsdServiceInfo object, and populate it.
             val serviceInfo = NsdServiceInfo().apply {
@@ -65,9 +69,23 @@ class MDnsService {
                     registrationListener
                 )
             }
+            hasRegistered = true
         } catch (t: Throwable) {
             logger.log(Level.SEVERE, "Failed to register NSD service", t)
         }
+    }
+
+    fun unregisterNsdService() {
+        if (hasRegistered.not()) {
+            return
+        }
+        try {
+            ndsManager?.unregisterService(registrationListener)
+        } catch (t: Throwable) {
+            logger.log(Level.SEVERE, "Failed to unregister NSD service", t)
+        }
+
+        hasRegistered = false
     }
 
     fun getAvailablePort(): Int {

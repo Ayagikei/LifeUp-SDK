@@ -96,6 +96,7 @@ object KtorService : LifeUpService {
                 } else {
                     ServerNotificationService.cancel(appCtx)
                     wakeLockManager.release()
+                    mDnsService.unregisterNsdService()
                     // mdnsService.unregister()
                 }
             }
