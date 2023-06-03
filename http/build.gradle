@@ -98,6 +98,6 @@ dependencies {
     // If you want to additionally use the CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha22"
 
-    implementation 'org.jmdns:jmdns:3.5.8'
+    // implementation 'org.jmdns:jmdns:3.5.8'
 
 }
