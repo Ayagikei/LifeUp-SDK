@@ -26,8 +26,8 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_qrcode_scan"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@null"
             android:src="@drawable/qrcode_scan"
             android:tint="?android:attr/textColorPrimary"
