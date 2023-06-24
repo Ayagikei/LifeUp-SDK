@@ -1,6 +1,7 @@
 package net.lifeupapp.lifeup.http
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.Val
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN_HANT
@@ -136,7 +138,18 @@ class MainActivity : AppCompatActivity() {
             this.btn.setOnClickListener {
                 val hasPermission = checkContentProviderAvailable()
                 if (!hasPermission) {
-                    LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                    try {
+                        LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
+                    } catch (e: ActivityNotFoundException) {
+                        val uri = Uri.parse("market://details?id=" + Val.LIFEUP_PACKAGE_NAME)
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        runCatching {
+                            this@MainActivity.startActivity(intent)
+                        }.onFailure {
+                            Log.w(this.javaClass.simpleName, it.stackTraceToString())
+                        }
+                    }
                 } else {
                     Toast.makeText(
                         this@MainActivity,
@@ -150,7 +163,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             binding.includeOverlayConfig.btn.setOnClickListener {
                 val intent = Intent(ACTION_MANAGE_OVERLAY_PERMISSION)
-                intent.data = android.net.Uri.parse("package:$packageName")
+                intent.data = Uri.parse("package:$packageName")
                 startActivity(intent)
             }
         } else {
