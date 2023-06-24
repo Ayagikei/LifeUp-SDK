@@ -53,6 +53,7 @@ import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
+import net.lifeupapp.lifeup.http.vo.CallUrlResult
 import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
 import net.lifeupapp.lifeup.http.vo.wrapAsResponse
@@ -61,6 +62,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
+
 
 object KtorService : LifeUpService {
 
@@ -80,33 +82,41 @@ object KtorService : LifeUpService {
 
     private val mutex = Mutex()
     private val wakeLockManager = WakeLockManager("KtorService")
+    private val mDnsService = MDnsService()
 
     init {
         AppScope.launch {
             _isRunning.collect {
+                logger.info("KtorService is running: $it")
                 if (LifeUpService.RunningState.RUNNING == it) {
                     ServerNotificationService.start(appCtx)
                     wakeLockManager.stayAwake(10.minutes.toLong(DurationUnit.MILLISECONDS))
+                    // mdnsService.register(port.toString())
+                    mDnsService.registerNsdService(port)
                 } else {
                     ServerNotificationService.cancel(appCtx)
                     wakeLockManager.release()
+                    mDnsService.unregisterNsdService()
+                    // mdnsService.unregister()
                 }
             }
         }
     }
 
+
     private var server: NettyApplicationEngine? = newService
     private var lastRequestTime = 0L
 
-    private val RequestMoreWakeLockPlugin = createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
-        onCall { _ ->
-            if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
-                logger.info("Requesting wake lock")
-                lastRequestTime = SystemClock.elapsedRealtime()
-                wakeLockManager.stayAwake()
+    private val RequestMoreWakeLockPlugin =
+        createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
+            onCall { _ ->
+                if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
+                    logger.info("Requesting wake lock")
+                    lastRequestTime = SystemClock.elapsedRealtime()
+                    wakeLockManager.stayAwake()
+                }
             }
         }
-    }
 
     private val newService
         get() = embeddedServer(Netty, port, watchPaths = emptyList()) {
@@ -186,11 +196,10 @@ object KtorService : LifeUpService {
 
                 get("/api/contentprovider") {
                     kotlin.runCatching {
-                        call.request.queryParameters.getAll("url")?.forEach { url ->
+                        call.request.queryParameters.getAll("url")?.map { url ->
                             logger.info("Got url: $url")
-                            LifeUpApi.callApiWithContentProvider(url)
-                        }
-                        HttpResponse.success("success")
+                            CallUrlResult(url, LifeUpApi.callApiWithContentProvider(url)?.toJson())
+                        }?.wrapAsResponse() ?: HttpResponse.error("No url found")
                     }.onSuccess {
                         call.respond(it)
                     }.onFailure {
@@ -217,12 +226,19 @@ object KtorService : LifeUpService {
                 post<RawQueryVo>("/api/contentprovider") {
                     kotlin.runCatching {
                         logger.info("Got url: ${it.url}")
-                        it.urls?.forEach {
+                        val resultList = (it.urls?.map {
                             logger.info("Got url: $it")
-                            LifeUpApi.callApiWithContentProvider(it)
+                            CallUrlResult(it, LifeUpApi.callApiWithContentProvider(it)?.toJson())
+                        } ?: emptyList()).toMutableList()
+                        it.url?.let { url ->
+                            resultList.add(
+                                CallUrlResult(
+                                    url,
+                                    LifeUpApi.callApiWithContentProvider(url)?.toJson()
+                                )
+                            )
                         }
-                        it.url?.let { it1 -> LifeUpApi.callApiWithContentProvider(it1) }
-                        HttpResponse.success("success")
+                        resultList.wrapAsResponse()
                     }.onSuccess {
                         call.respond(it)
                     }.onFailure {
@@ -448,8 +464,7 @@ object KtorService : LifeUpService {
         val keys: Set<String> = keySet()
         for (key in keys) {
             try {
-                val value = get(key)
-                when (value) {
+                when (val value = get(key)) {
                     is Int -> {
                         map[key] = JsonPrimitive(value)
                     }
