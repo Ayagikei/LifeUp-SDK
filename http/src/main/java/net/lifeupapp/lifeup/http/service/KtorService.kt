@@ -63,7 +63,6 @@ import java.util.logging.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
-
 object KtorService : LifeUpService {
 
     var port = 13276
@@ -102,7 +101,6 @@ object KtorService : LifeUpService {
             }
         }
     }
-
 
     private var server: NettyApplicationEngine? = newService
     private var lastRequestTime = 0L
@@ -226,10 +224,12 @@ object KtorService : LifeUpService {
                 post<RawQueryVo>("/api/contentprovider") {
                     kotlin.runCatching {
                         logger.info("Got url: ${it.url}")
-                        val resultList = (it.urls?.map {
-                            logger.info("Got url: $it")
-                            CallUrlResult(it, LifeUpApi.callApiWithContentProvider(it)?.toJson())
-                        } ?: emptyList()).toMutableList()
+                        val resultList = (
+                            it.urls?.map {
+                                logger.info("Got url: $it")
+                                CallUrlResult(it, LifeUpApi.callApiWithContentProvider(it)?.toJson())
+                            } ?: emptyList()
+                            ).toMutableList()
                         it.url?.let { url ->
                             resultList.add(
                                 CallUrlResult(

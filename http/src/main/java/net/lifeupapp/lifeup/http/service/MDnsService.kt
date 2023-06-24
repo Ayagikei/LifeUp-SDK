@@ -47,7 +47,6 @@ class MDnsService {
         }
     }
 
-
     fun registerNsdService(port: Int) {
         if (hasRegistered) {
             return
