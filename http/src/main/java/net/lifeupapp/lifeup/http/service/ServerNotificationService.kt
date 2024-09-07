@@ -16,7 +16,6 @@ import net.lifeupapp.lifeup.http.utils.compactAndFlagImmutable
 
 class ServerNotificationService : Service() {
 
-
     override fun onCreate() {
     }
 
