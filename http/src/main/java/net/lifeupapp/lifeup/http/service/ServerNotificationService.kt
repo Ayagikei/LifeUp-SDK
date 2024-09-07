@@ -12,12 +12,10 @@ import androidx.core.content.ContextCompat
 import net.lifeupapp.lifeup.http.MainActivity
 import net.lifeupapp.lifeup.http.R
 import net.lifeupapp.lifeup.http.service.notification.NotificationChannels
-import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.compactAndFlagImmutable
 
 class ServerNotificationService : Service() {
 
-    private val wakeLockManager = WakeLockManager("ServerNotificationService")
 
     override fun onCreate() {
     }
@@ -51,7 +49,6 @@ class ServerNotificationService : Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .setColor(ContextCompat.getColor(this, R.color.md_theme_light_primary))
-            .setGroup(GROUP_KEY_QUICK_ADD)
             .setOngoing(true)
             .setShowWhen(false)
 
@@ -74,7 +71,6 @@ class ServerNotificationService : Service() {
     companion object {
 
         const val TASK_INFORMATION_NOTIFICATION_ID = 416
-        const val GROUP_KEY_QUICK_ADD = "quick_add"
 
         fun start(context: Context) {
             val serviceIntent =
