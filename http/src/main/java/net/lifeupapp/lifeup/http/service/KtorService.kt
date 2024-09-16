@@ -2,10 +2,15 @@
 
 package net.lifeupapp.lifeup.http.service
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import androidx.core.content.FileProvider
 import io.ktor.http.ContentType
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.streamProvider
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
 import io.ktor.server.application.createApplicationPlugin
@@ -15,6 +20,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.response.respondText
@@ -43,7 +49,9 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.lifeupapp.lifeup.api.LifeUpApi
+import net.lifeupapp.lifeup.api.Val
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
@@ -58,6 +66,7 @@ import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
 import net.lifeupapp.lifeup.http.vo.wrapAsResponse
 import org.json.JSONException
+import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.Duration.Companion.minutes
@@ -247,10 +256,13 @@ object KtorService : LifeUpService {
                 }
 
                 get("/files/{url}") {
-                    call.parameters["url"]!!.let { url ->
-                        logger.info("Got url: $url")
+                    val param = call.parameters["url"]
+                    if (param.isNullOrBlank()) {
+                        call.respond(HttpResponse.error<String>(IllegalArgumentException("url is required")))
+                    } else {
+                        logger.info("Got url: $param")
                         call.respondOutputStream {
-                            appCtx.contentResolver.openInputStream(Uri.parse(url))?.use {
+                            appCtx.contentResolver.openInputStream(Uri.parse(param))?.use {
                                 it.copyTo(this)
                             }
                         }
@@ -397,6 +409,82 @@ object KtorService : LifeUpService {
                                 logger.log(Level.WARNING, "Failed to get feelings", it)
                                 call.respond(HttpResponse.error<String>(it))
                             }
+                    }
+                }
+
+                route("/data/export") {
+                    get {
+                        val withMedia =
+                            call.request.queryParameters["withMedia"]?.toBoolean() ?: true
+                        LifeUpApi.getContentProviderApi<DataApi>().exportBackup(withMedia)
+                            .onSuccess {
+                                if (it == null) {
+                                    call.respond(
+                                        HttpResponse.error<String>(
+                                            IllegalArgumentException(
+                                                "Failed to export backup"
+                                            )
+                                        )
+                                    )
+                                } else {
+                                    call.respond(it.toJson())
+                                }
+                            }.onFailure {
+                            logger.log(Level.WARNING, "Failed to export backup", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                    }
+                }
+
+                route("/data/import") {
+                    post {
+                        val multipart = call.receiveMultipart()
+                        var fileDescription = ""
+                        var fileName = ""
+                        var fileBytes: ByteArray? = null
+
+                        multipart.forEachPart { part ->
+                            when (part) {
+                                is PartData.FormItem -> {
+                                    if (part.name == "description") {
+                                        fileDescription = part.value
+                                    }
+                                }
+
+                                is PartData.FileItem -> {
+                                    fileName = part.originalFileName ?: "backup.lfbak"
+                                    fileBytes = part.streamProvider().readBytes()
+                                }
+
+                                else -> {}
+                            }
+                            part.dispose()
+                        }
+
+                        if (fileBytes != null) {
+                            val tempFile = File(appCtx.cacheDir, "temp_$fileName")
+                            tempFile.writeBytes(fileBytes)
+
+                            // 使用 FileProvider 创建内容 URI
+                            val contentUri = FileProvider.getUriForFile(
+                                appCtx,
+                                "${appCtx.packageName}.fileprovider",
+                                tempFile
+                            )
+
+                            val intent = Intent().apply {
+                                action = Intent.ACTION_VIEW
+                                setDataAndType(contentUri, "application/octet-stream")
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                setPackage(Val.LIFEUP_PACKAGE_NAME) // 设置目标应用的包名
+                            }
+                            appCtx.startActivity(intent)
+                            call.respond(HttpResponse.success("File uploaded and BackupActivity launched"))
+                        } else {
+                            call.respond(HttpResponse.error<String>("No file received"))
+                        }
+
                     }
                 }
 

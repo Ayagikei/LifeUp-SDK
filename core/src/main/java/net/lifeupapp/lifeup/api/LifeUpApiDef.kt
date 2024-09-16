@@ -58,6 +58,7 @@ interface LifeUpApiDef {
      * @param method the method to call, for example, "query"
      * @param arg the argument to pass to the method, for example, "key=coin"
      */
+    @Throws(Exception::class)
     fun callApiWithContentProvider(method: String, arg: String): Bundle?
 
     /**
