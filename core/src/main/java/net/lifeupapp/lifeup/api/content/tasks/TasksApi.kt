@@ -2,9 +2,6 @@ package net.lifeupapp.lifeup.api.content.tasks
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getLongOrNull
-import androidx.core.database.getStringOrNull
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
@@ -12,6 +9,9 @@ import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.tasks.category.TaskCategory
 import net.lifeupapp.lifeup.api.json
+import net.lifeupapp.lifeup.api.utils.getIntOrNull
+import net.lifeupapp.lifeup.api.utils.getLongOrNull
+import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class TasksApi(private val context: Context) : ContentProviderApi {
 
@@ -19,14 +19,14 @@ class TasksApi(private val context: Context) : ContentProviderApi {
         val categories = mutableListOf<TaskCategory>()
         try {
             context.forEachContent(ContentProviderUrl.TASKS_CATEGORIES) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val isAsc = it.getIntOrNull(2)
-                val sort = it.getStringOrNull(3)
-                val filter = it.getStringOrNull(4)
-                val order = it.getIntOrNull(5)
-                val status = it.getIntOrNull(6)
-                val type = it.getIntOrNull(7)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val isAsc = it.getIntOrNull("isAsc")
+                val sort = it.getStringOrNull("sort")
+                val filter = it.getStringOrNull("filter")
+                val order = it.getIntOrNull("order")
+                val status = it.getIntOrNull("status")
+                val type = it.getIntOrNull("type")
 
                 categories.add(
                     TaskCategory.builder {
@@ -58,25 +58,25 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 }
             }
             context.forEachContent(uri) {
-                val id = it.getLongOrNull(0)
-                val gid = it.getLongOrNull(1)
-                val name = it.getStringOrNull(2)
-                val notes = it.getStringOrNull(3)
-                val status = it.getIntOrNull(4)
-                val startTime = it.getLongOrNull(5)
-                val deadline = it.getLongOrNull(6)
-                val remindTime = it.getLongOrNull(7)
-                val frequency = it.getIntOrNull(8)
-                val exp = it.getIntOrNull(9)
-                val skillIds = it.getStringOrNull(10)
-                val coin = it.getLongOrNull(11)
-                val coinVariable = it.getLongOrNull(12)
-                val itemId = it.getLongOrNull(13)
-                val itemAmount = it.getIntOrNull(14)
-                val words = it.getStringOrNull(15)
-                val itemCategoryId = it.getLongOrNull(16)
-                val order = it.getIntOrNull(17)
-                val nameExtended = it.getStringOrNull(18)
+                val id = it.getLongOrNull("_ID")
+                val gid = it.getLongOrNull("_GID")
+                val name = it.getStringOrNull("name")
+                val notes = it.getStringOrNull("notes")
+                val status = it.getIntOrNull("status")
+                val startTime = it.getLongOrNull("startTime")
+                val deadline = it.getLongOrNull("deadline")
+                val remindTime = it.getLongOrNull("remindTime")
+                val frequency = it.getIntOrNull("frequency")
+                val exp = it.getIntOrNull("exp")
+                val skillIds = it.getStringOrNull("skillIds")
+                val coin = it.getLongOrNull("coin")
+                val coinVariable = it.getLongOrNull("coinVariable")
+                val itemId = it.getLongOrNull("itemId")
+                val itemAmount = it.getIntOrNull("itemCount")
+                val words = it.getStringOrNull("words")
+                val itemCategoryId = it.getLongOrNull("categoryId")
+                val order = it.getIntOrNull("order")
+                val nameExtended = it.getStringOrNull("name_extended")
 
                 tasks.add(
                     Task.builder {
@@ -111,33 +111,42 @@ class TasksApi(private val context: Context) : ContentProviderApi {
         return Result.success(tasks)
     }
 
-    fun listHistory(offset: Int = 0, limit: Int = 100): Result<List<Task>> {
+    fun listHistory(
+        offset: Int = 0,
+        limit: Int = 100,
+        filterGid: Long? = null
+    ): Result<List<Task>> {
         val tasks = mutableListOf<Task>()
         try {
             val uri = Uri.parse(ContentProviderUrl.HISTORY).buildUpon()
                 .appendQueryParameter("offset", offset.toString())
                 .appendQueryParameter("limit", limit.toString())
+                .apply {
+                    if (filterGid != null) {
+                        appendQueryParameter("gid", filterGid.toString())
+                    }
+                }
                 .build()
 
             context.forEachContent(uri.toString()) {
-                val id = it.getLongOrNull(0)
-                val gid = it.getLongOrNull(1)
-                val name = it.getStringOrNull(2)
-                val notes = it.getStringOrNull(3)
-                val status = it.getIntOrNull(4)
-                val startTime = it.getLongOrNull(5)
-                val deadline = it.getLongOrNull(6)
-                val remindTime = it.getLongOrNull(7)
-                val frequency = it.getIntOrNull(8)
-                val exp = it.getIntOrNull(9)
-                val skillIds = it.getStringOrNull(10)
-                val coin = it.getLongOrNull(11)
-                val coinVariable = it.getLongOrNull(12)
-                val itemId = it.getLongOrNull(13)
-                val itemAmount = it.getIntOrNull(14)
-                val words = it.getStringOrNull(15)
-                val itemCategoryId = it.getLongOrNull(16)
-                val order = it.getIntOrNull(17)
+                val id = it.getLongOrNull("_ID")
+                val gid = it.getLongOrNull("_GID")
+                val name = it.getStringOrNull("name")
+                val notes = it.getStringOrNull("notes")
+                val status = it.getIntOrNull("status")
+                val startTime = it.getLongOrNull("startTime")
+                val deadline = it.getLongOrNull("deadline")
+                val remindTime = it.getLongOrNull("remindTime")
+                val frequency = it.getIntOrNull("frequency")
+                val exp = it.getIntOrNull("exp")
+                val skillIds = it.getStringOrNull("skillIds")
+                val coin = it.getLongOrNull("coin")
+                val coinVariable = it.getLongOrNull("coinVariable")
+                val itemId = it.getLongOrNull("itemId")
+                val itemAmount = it.getIntOrNull("itemCount")
+                val words = it.getStringOrNull("words")
+                val categoryId = it.getLongOrNull("categoryId")
+                val endTime = it.getLongOrNull("endTime")
 
                 tasks.add(
                     Task.builder {
@@ -159,8 +168,8 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                         setItemId(itemId ?: 0)
                         setItemAmount(itemAmount ?: 0)
                         setWords(words ?: "")
-                        setCategoryId(itemCategoryId)
-                        setOrder(order ?: 0)
+                        setCategoryId(categoryId)
+                        setEndTime(endTime ?: 0)
                     }
                 )
             }

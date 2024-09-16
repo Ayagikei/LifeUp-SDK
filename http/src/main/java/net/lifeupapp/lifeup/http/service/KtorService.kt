@@ -182,7 +182,7 @@ object KtorService : LifeUpService {
                     kotlin.runCatching {
                         call.request.queryParameters.getAll("url")?.forEach { url ->
                             logger.info("Got url: $url")
-                            LifeUpApi.call(appCtx, url)
+                            LifeUpApi.startApiActivity(appCtx, url)
                         }
                         HttpResponse.success("success")
                     }.onSuccess {
@@ -210,9 +210,9 @@ object KtorService : LifeUpService {
                         logger.info("Got url: ${it.url}")
                         it.urls?.forEach {
                             logger.info("Got url: $it")
-                            LifeUpApi.call(appCtx, it)
+                            LifeUpApi.startApiActivity(appCtx, it)
                         }
-                        it.url?.let { it1 -> LifeUpApi.call(appCtx, it1) }
+                        it.url?.let { it1 -> LifeUpApi.startApiActivity(appCtx, it1) }
                         HttpResponse.success("success")
                     }.onSuccess {
                         call.respond(it)
@@ -283,7 +283,9 @@ object KtorService : LifeUpService {
                     get {
                         val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
                         val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
-                        LifeUpApi.getContentProviderApi<TasksApi>().listHistory(offset, limit)
+                        val filterGid = call.request.queryParameters["gid"]?.toLongOrNull()
+                        LifeUpApi.getContentProviderApi<TasksApi>()
+                            .listHistory(offset, limit, filterGid)
                             .onSuccess {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {

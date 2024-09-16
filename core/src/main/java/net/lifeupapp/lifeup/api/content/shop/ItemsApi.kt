@@ -1,13 +1,13 @@
 package net.lifeupapp.lifeup.api.content.shop
 
 import android.content.Context
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getLongOrNull
-import androidx.core.database.getStringOrNull
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.shop.category.ShopCategory
+import net.lifeupapp.lifeup.api.utils.getIntOrNull
+import net.lifeupapp.lifeup.api.utils.getLongOrNull
+import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class ItemsApi(private val context: Context) : ContentProviderApi {
 
@@ -15,11 +15,11 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
         val categories = mutableListOf<ShopCategory>()
         try {
             context.forEachContent(ContentProviderUrl.SHOP_CATEGORIES) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val isAsc = it.getIntOrNull(2)
-                val sort = it.getStringOrNull(3)
-                val order = it.getIntOrNull(4)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val isAsc = it.getIntOrNull("isAsc")
+                val sort = it.getStringOrNull("sort")
+                val order = it.getIntOrNull("order")
 
                 categories.add(
                     ShopCategory.builder {
@@ -48,16 +48,16 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                 }
             }
             context.forEachContent(uri) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val desc = it.getStringOrNull(2)
-                val icon = it.getStringOrNull(3)
-                val itemCategoryId = it.getLongOrNull(4)
-                val stockNumber = it.getIntOrNull(5)
-                val ownNumber = it.getIntOrNull(6)
-                val price = it.getLongOrNull(7)
-                val order = it.getIntOrNull(8)
-                val disablePurchase = it.getIntOrNull(9)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val desc = it.getStringOrNull("desc")
+                val icon = it.getStringOrNull("icon")
+                val itemCategoryId = it.getLongOrNull("categoryId")
+                val stockNumber = it.getIntOrNull("stockNumber")
+                val ownNumber = it.getIntOrNull("ownNumber")
+                val price = it.getLongOrNull("price")
+                val order = it.getIntOrNull("order")
+                val disablePurchase = it.getIntOrNull("disablePurchase")
 
                 items.add(
                     ShopItem.builder {

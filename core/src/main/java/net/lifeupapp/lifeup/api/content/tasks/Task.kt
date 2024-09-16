@@ -21,7 +21,8 @@ data class Task(
     val words: String,
     val categoryId: Long,
     val order: Int,
-    val nameExtended: String
+    val nameExtended: String,
+    val endTime: Long
 ) {
     class Builder {
         private var id: Long? = null
@@ -43,6 +44,7 @@ data class Task(
         private var categoryId: Long? = null
         private var order: Int = 0
         private var nameExtended: String = ""
+        private var endTime: Long = 0
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -80,6 +82,8 @@ data class Task(
 
         fun setNameExtended(nameExtended: String) = apply { this.nameExtended = nameExtended }
 
+        fun setEndTime(endTime: Long) = apply { this.endTime = endTime }
+
         fun build(): Task {
             return Task(
                 id = id,
@@ -99,7 +103,8 @@ data class Task(
                 words = words,
                 categoryId = categoryId ?: 0,
                 order = order,
-                nameExtended = nameExtended
+                nameExtended = nameExtended,
+                endTime = endTime
             )
         }
     }

@@ -45,10 +45,6 @@ object LifeUpApi : LifeUpApiDef {
         return isAppInstalled(appCtx, LIFEUP_PACKAGE_NAME)
     }
 
-    override fun call(context: Context?, url: String) {
-        startApiActivity(context, url)
-    }
-
     override fun requestContentProviderPermission(appName: String) {
         startApiActivity(
             appCtx,
