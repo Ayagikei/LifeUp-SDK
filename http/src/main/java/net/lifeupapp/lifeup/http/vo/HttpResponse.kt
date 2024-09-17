@@ -21,7 +21,11 @@ data class HttpResponse<T>(
         }
 
         fun <T> error(throwable: Throwable): HttpResponse<T?> {
-            return HttpResponse(ERROR, throwable.message ?: "unknown error", null)
+            return HttpResponse(
+                ERROR,
+                "${throwable.message}:\n\n${throwable.stackTraceToString()}",
+                null
+            )
         }
     }
 }

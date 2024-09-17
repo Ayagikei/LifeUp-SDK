@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
@@ -37,7 +38,8 @@ object LifeUpApi : LifeUpApiDef {
             ItemsApi(appCtx),
             SkillsApi(appCtx),
             InfoApi(appCtx),
-            FeelingsApi(appCtx)
+            FeelingsApi(appCtx),
+            DataApi(appCtx)
         )
     }
 

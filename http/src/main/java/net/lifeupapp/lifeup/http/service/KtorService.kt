@@ -6,8 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.core.content.FileProvider
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
@@ -20,6 +20,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
@@ -61,6 +62,7 @@ import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
+import net.lifeupapp.lifeup.http.utils.getUriForFile
 import net.lifeupapp.lifeup.http.vo.CallUrlResult
 import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
@@ -133,6 +135,16 @@ object KtorService : LifeUpService {
                 json()
             }
             install(RequestMoreWakeLockPlugin)
+
+            install(StatusPages) {
+                exception<Throwable> { call, cause ->
+                    logger.log(Level.WARNING, "Unhandled exception", cause)
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        HttpResponse.error<String>(cause)
+                    )
+                }
+            }
 
             routing {
                 get("/") {
@@ -234,11 +246,14 @@ object KtorService : LifeUpService {
                     kotlin.runCatching {
                         logger.info("Got url: ${it.url}")
                         val resultList = (
-                            it.urls?.map {
-                                logger.info("Got url: $it")
-                                CallUrlResult(it, LifeUpApi.callApiWithContentProvider(it)?.toJson())
-                            } ?: emptyList()
-                            ).toMutableList()
+                                it.urls?.map {
+                                    logger.info("Got url: $it")
+                                    CallUrlResult(
+                                        it,
+                                        LifeUpApi.callApiWithContentProvider(it)?.toJson()
+                                    )
+                                } ?: emptyList()
+                                ).toMutableList()
                         it.url?.let { url ->
                             resultList.add(
                                 CallUrlResult(
@@ -266,6 +281,36 @@ object KtorService : LifeUpService {
                                 it.copyTo(this)
                             }
                         }
+                    }
+                }
+
+                post("/files/upload") {
+                    val multipart = call.receiveMultipart()
+                    val uploadedFiles = mutableListOf<Uri>()
+
+                    multipart.forEachPart { part ->
+                        when (part) {
+                            is PartData.FileItem -> {
+                                val fileName = part.originalFileName
+                                    ?: "uploaded_image_${System.currentTimeMillis()}.jpg"
+                                val fileBytes = part.streamProvider().readBytes()
+                                val tempFile = File(appCtx.externalCacheDir, fileName)
+                                tempFile.writeBytes(fileBytes)
+
+                                // 使用 FileProvider 创建内容 URI
+                                val contentUri = tempFile.getUriForFile()
+                                uploadedFiles.add(contentUri)
+                            }
+
+                            else -> {}
+                        }
+                        part.dispose()
+                    }
+
+                    if (uploadedFiles.isNotEmpty()) {
+                        call.respond(HttpResponse.success(uploadedFiles.map { it.toString() }))
+                    } else {
+                        call.respond(HttpResponse.error<List<String>>("No files received"))
                     }
                 }
 
@@ -427,12 +472,12 @@ object KtorService : LifeUpService {
                                         )
                                     )
                                 } else {
-                                    call.respond(it.toJson())
+                                    call.respond(it.toJson().wrapAsResponse())
                                 }
                             }.onFailure {
-                            logger.log(Level.WARNING, "Failed to export backup", it)
-                            call.respond(HttpResponse.error<String>(it))
-                        }
+                                logger.log(Level.WARNING, "Failed to export backup", it)
+                                call.respond(HttpResponse.error<String>(it))
+                            }
                     }
                 }
 
@@ -462,16 +507,10 @@ object KtorService : LifeUpService {
                         }
 
                         if (fileBytes != null) {
-                            val tempFile = File(appCtx.cacheDir, "temp_$fileName")
+                            val tempFile = File(appCtx.externalCacheDir, "temp_$fileName")
                             tempFile.writeBytes(fileBytes)
 
-                            // 使用 FileProvider 创建内容 URI
-                            val contentUri = FileProvider.getUriForFile(
-                                appCtx,
-                                "${appCtx.packageName}.fileprovider",
-                                tempFile
-                            )
-
+                            val contentUri = tempFile.getUriForFile()
                             val intent = Intent().apply {
                                 action = Intent.ACTION_VIEW
                                 setDataAndType(contentUri, "application/octet-stream")
