@@ -38,7 +38,7 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
         getAnimator().start()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (showLine) {
             canvas?.drawBitmap(bitmap, (width - bitmap.width) / 2f, height * floatYFraction, paint)

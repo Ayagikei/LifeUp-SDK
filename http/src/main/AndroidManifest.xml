@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
     <queries>
         <package android:name="net.sarasarasa.lifeup" />
@@ -42,9 +43,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".qrcode.BarcodeScanningActivity"></activity>
+        <activity android:name=".qrcode.BarcodeScanningActivity" />
 
-        <service android:name=".service.ServerNotificationService" />
+        <service
+            android:name=".service.ServerNotificationService"
+            android:foregroundServiceType="connectedDevice" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
