@@ -77,6 +77,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
     testImplementation "io.ktor:ktor-websockets:$ktorVersion"
     testImplementation "io.ktor:ktor-client-websockets:$ktorVersion"
     testImplementation "io.ktor:ktor-client-cio:$ktorVersion"

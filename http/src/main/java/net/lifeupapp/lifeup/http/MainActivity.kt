@@ -41,16 +41,17 @@ class MainActivity : AppCompatActivity() {
     private val powerManager by lazy {
         getSystemService(POWER_SERVICE) as PowerManager
     }
+    private val settings by lazy {
+        net.lifeupapp.lifeup.http.utils.Settings.getInstance(this)
+    }
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val myData: Intent? = result.data
-                if (myData != null) {
-                    myData.getStringExtra(BarcodeScanningActivity.SCAN_RESULT)?.let {
-                        Log.i("MainActivity", "scan result: $it")
-                        LifeUpApi.startApiActivity(this, it)
-                    }
+                myData?.getStringExtra(BarcodeScanningActivity.SCAN_RESULT)?.let {
+                    Log.i("MainActivity", "scan result: $it")
+                    LifeUpApi.startApiActivity(this, it)
                 }
             }
         }
@@ -77,6 +78,17 @@ class MainActivity : AppCompatActivity() {
                         binding.serverStatusText.text = getString(R.string.server_status)
                         binding.switchStartService.isChecked = false
                     }
+                }
+            }
+
+            // 初始化跨域开关状态
+            binding.switchCors.isChecked = settings.enableCors
+            binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
+                settings.enableCors = isChecked
+                // 如果服务正在运行，重启服务以应用新设置
+                if (binding.switchStartService.isChecked) {
+                    KtorService.stop()
+                    KtorService.start()
                 }
             }
 

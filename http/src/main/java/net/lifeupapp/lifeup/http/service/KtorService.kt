@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -21,6 +23,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
@@ -63,6 +66,7 @@ import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
+import net.lifeupapp.lifeup.http.utils.Settings
 import net.lifeupapp.lifeup.http.utils.WakeLockManager
 import net.lifeupapp.lifeup.http.utils.getIpAddressInLocalNetwork
 import net.lifeupapp.lifeup.http.utils.getUriForFile
@@ -138,6 +142,20 @@ object KtorService : LifeUpService {
                 json()
             }
             install(RequestMoreWakeLockPlugin)
+
+            if (Settings.getInstance(appCtx).enableCors) {
+                install(CORS) {
+                    allowMethod(HttpMethod.Options)
+                    allowMethod(HttpMethod.Get)
+                    allowMethod(HttpMethod.Post)
+                    allowMethod(HttpMethod.Put)
+                    allowMethod(HttpMethod.Delete)
+                    allowHeader(HttpHeaders.ContentType)
+                    allowHeader(HttpHeaders.Authorization)
+                    allowHeader(HttpHeaders.AccessControlAllowOrigin)
+                    anyHost()
+                }
+            }
 
             install(StatusPages) {
                 exception<Throwable> { call, cause ->
