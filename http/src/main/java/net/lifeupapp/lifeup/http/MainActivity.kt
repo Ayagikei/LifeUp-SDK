@@ -204,8 +204,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateLocalIpAddress() {
         val localIpAddress =
-            getIpAddressListInLocalNetwork().joinToString {
-                "$it:${KtorService.port}" + "\n"
+            getIpAddressListInLocalNetwork().joinToString("\n") {
+                "$it:${KtorService.port}"
             }
         if (localIpAddress.isNotBlank()) {
             binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)

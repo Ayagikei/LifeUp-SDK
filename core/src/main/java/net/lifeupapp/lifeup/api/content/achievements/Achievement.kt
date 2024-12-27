@@ -1,6 +1,7 @@
 package net.lifeupapp.lifeup.api.content.achievements
 
 import kotlinx.serialization.Serializable
+import net.lifeupapp.lifeup.api.content.common.RewardItem
 
 @Serializable
 data class Achievement(
@@ -18,7 +19,8 @@ data class Achievement(
     val order: Int,
     val itemId: Long,
     val itemAmount: Int,
-    val unlockedTime: Long
+    val unlockedTime: Long,
+    val items: List<RewardItem>
 ) {
     class Builder {
         private var id: Long? = null
@@ -36,7 +38,7 @@ data class Achievement(
         private var itemId: Long = 0
         private var itemAmount: Int = 0
         private var unlockedTime: Long = 0
-
+        private var items: List<RewardItem> = emptyList()
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -51,7 +53,7 @@ data class Achievement(
         fun setOrder(order: Int) = apply { this.order = order }
         fun setItemId(itemId: Long) = apply { this.itemId = itemId }
         fun setItemAmount(itemAmount: Int) = apply { this.itemAmount = itemAmount }
-
+        fun setItems(items: List<RewardItem>) = apply { this.items = items }
         fun setUnlockedTime(unlockedTime: Long) = apply { this.unlockedTime = unlockedTime }
 
         fun build(): Achievement {
@@ -70,7 +72,8 @@ data class Achievement(
                 order = order,
                 itemId = itemId,
                 itemAmount = itemAmount,
-                unlockedTime = unlockedTime
+                unlockedTime = unlockedTime,
+                items = items
             )
         }
     }

@@ -1,6 +1,7 @@
 package net.lifeupapp.lifeup.api.content.tasks
 
 import kotlinx.serialization.Serializable
+import net.lifeupapp.lifeup.api.content.common.RewardItem
 
 @Serializable
 data class Task(
@@ -22,7 +23,9 @@ data class Task(
     val categoryId: Long,
     val order: Int,
     val nameExtended: String,
-    val endTime: Long
+    val endTime: Long,
+    val items: List<RewardItem>,
+    val subTasks: List<SubTask>
 ) {
     class Builder {
         private var id: Long? = null
@@ -45,6 +48,8 @@ data class Task(
         private var order: Int = 0
         private var nameExtended: String = ""
         private var endTime: Long = 0
+        private var items: List<RewardItem> = emptyList()
+        private var subTasks: List<SubTask> = emptyList()
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -84,6 +89,10 @@ data class Task(
 
         fun setEndTime(endTime: Long) = apply { this.endTime = endTime }
 
+        fun setItems(items: List<RewardItem>) = apply { this.items = items }
+
+        fun setSubTasks(subTasks: List<SubTask>) = apply { this.subTasks = subTasks }
+
         fun build(): Task {
             return Task(
                 id = id,
@@ -104,7 +113,9 @@ data class Task(
                 categoryId = categoryId ?: 0,
                 order = order,
                 nameExtended = nameExtended,
-                endTime = endTime
+                endTime = endTime,
+                items = items,
+                subTasks = subTasks
             )
         }
     }

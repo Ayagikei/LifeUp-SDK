@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
@@ -107,7 +106,3 @@ object LifeUpApi : LifeUpApiDef {
     }
 }
 
-internal val json = Json {
-    ignoreUnknownKeys = true
-    isLenient = true
-}

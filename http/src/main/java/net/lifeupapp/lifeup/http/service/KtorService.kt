@@ -506,9 +506,10 @@ object KtorService : LifeUpService {
                             part.dispose()
                         }
 
-                        if (fileBytes != null) {
+                        val finalFileBytes = fileBytes
+                        if (finalFileBytes != null) {
                             val tempFile = File(appCtx.externalCacheDir, "temp_$fileName")
-                            tempFile.writeBytes(fileBytes)
+                            tempFile.writeBytes(finalFileBytes)
 
                             val contentUri = tempFile.getUriForFile()
                             val intent = Intent().apply {

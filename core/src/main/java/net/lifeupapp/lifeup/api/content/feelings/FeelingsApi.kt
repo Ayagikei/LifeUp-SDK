@@ -6,10 +6,10 @@ import kotlinx.serialization.decodeFromString
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
-import net.lifeupapp.lifeup.api.json
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
+import net.lifeupapp.lifeup.api.utils.json
 
 class FeelingsApi(private val context: Context) : ContentProviderApi {
 

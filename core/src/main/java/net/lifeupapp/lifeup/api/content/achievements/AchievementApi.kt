@@ -4,7 +4,9 @@ import android.content.Context
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.achievements.category.AchievementCategory
+import net.lifeupapp.lifeup.api.content.common.RewardItem
 import net.lifeupapp.lifeup.api.content.forEachContent
+import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
@@ -71,6 +73,8 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val itemId = it.getLongOrNull("itemId")
                 val itemAmount = it.getIntOrNull("itemAmount")
                 val unlockedTime = it.getLongOrNull("unlocked_time")
+                val itemsJson = it.getStringOrNull("items")
+                val items = itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
 
                 achievements.add(
                     Achievement.builder {
@@ -89,6 +93,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                         setItemId(itemId ?: 0)
                         setItemAmount(itemAmount ?: 0)
                         setUnlockedTime(unlockedTime ?: 0)
+                        setItems(items)
                     }
                 )
             }

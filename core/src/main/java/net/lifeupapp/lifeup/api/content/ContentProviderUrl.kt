@@ -26,4 +26,11 @@ internal object ContentProviderUrl {
         "$PREFIX/items_categories"
 
     const val ACHIEVEMENTS = "$PREFIX/achievements"
+
+    const val SYNTHESIS = "$PREFIX/synthesis"
+
+    const val SYNTHESIS_CATEGORIES =
+        "$PREFIX/synthesis_categories"
+
+    const val POMODORO_RECORDS = "$PREFIX/pomodoro_records"
 }

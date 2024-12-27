@@ -6,12 +6,14 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
+import net.lifeupapp.lifeup.api.content.common.RewardItem
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.tasks.category.TaskCategory
-import net.lifeupapp.lifeup.api.json
+import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
+import net.lifeupapp.lifeup.api.utils.json
 
 class TasksApi(private val context: Context) : ContentProviderApi {
 
@@ -77,6 +79,8 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val itemCategoryId = it.getLongOrNull("categoryId")
                 val order = it.getIntOrNull("order")
                 val nameExtended = it.getStringOrNull("name_extended")
+                val itemsJson = it.getStringOrNull("items")
+                val subTasksJson = it.getStringOrNull("subTasks")
 
                 tasks.add(
                     Task.builder {
@@ -101,6 +105,12 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                         setCategoryId(itemCategoryId)
                         setOrder(order ?: 0)
                         setNameExtended(nameExtended ?: "")
+                        setItems(
+                            itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
+                        )
+                        setSubTasks(
+                            subTasksJson?.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
+                        )
                     }
                 )
             }
@@ -147,6 +157,8 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 val words = it.getStringOrNull("words")
                 val categoryId = it.getLongOrNull("categoryId")
                 val endTime = it.getLongOrNull("endTime")
+                val itemsJson = it.getStringOrNull("items")
+                val subTasksJson = it.getStringOrNull("subTasks")
 
                 tasks.add(
                     Task.builder {
@@ -170,6 +182,12 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                         setWords(words ?: "")
                         setCategoryId(categoryId)
                         setEndTime(endTime ?: 0)
+                        setItems(
+                            itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
+                        )
+                        setSubTasks(
+                            subTasksJson?.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
+                        )
                     }
                 )
             }

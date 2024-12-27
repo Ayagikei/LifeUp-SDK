@@ -3,7 +3,7 @@
     <string name="server_status">服务未启动...</string>
     <string name="serverStartedMessage">服务器已开启</string>
     <string name="ipAddressUnknown">未获取到 IP 地址 (没有连接到 WIFI?)</string>
-    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n%1$s\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。</string>
+    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n\n%1$s\n\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。</string>
     <string name="overlay_permission">悬浮窗权限</string>
     <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
     <string name="title_config">配置</string>

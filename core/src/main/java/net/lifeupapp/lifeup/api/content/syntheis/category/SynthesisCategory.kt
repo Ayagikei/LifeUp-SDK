@@ -1,10 +1,9 @@
-package net.lifeupapp.lifeup.api.content.shop.category
+package net.lifeupapp.lifeup.api.content.syntheis.category
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class ShopCategory(
+data class SynthesisCategory(
     val id: Long?,
     val name: String,
     val isAsc: Boolean,
@@ -24,20 +23,20 @@ data class ShopCategory(
         fun setSort(sort: String) = apply { this.sort = sort }
         fun setOrder(order: Int) = apply { this.order = order }
 
-        fun build(): ShopCategory {
-            return ShopCategory(
+        fun build(): SynthesisCategory {
+            return SynthesisCategory(
                 id = id,
                 name = name,
                 isAsc = isAsc,
                 sort = sort,
-                order = order,
+                order = order
             )
         }
     }
 
     companion object {
-        fun builder(block: Builder.() -> Unit): ShopCategory {
+        fun builder(block: Builder.() -> Unit): SynthesisCategory {
             return Builder().apply(block).build()
         }
     }
-}
+} 
