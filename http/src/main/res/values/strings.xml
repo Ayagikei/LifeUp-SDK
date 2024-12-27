@@ -37,4 +37,5 @@
     <string name="lifeup_permission_granted">You have successfully obtained permission.</string>
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
+    <string name="switch_cors">Allow Cross-Origin Access (CORS)</string>
 </resources>

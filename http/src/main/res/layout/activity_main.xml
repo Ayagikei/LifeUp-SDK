@@ -123,7 +123,7 @@
             android:text="@string/switch_cors"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_start_service" />
+            app:layout_constraintTop_toBottomOf="@+id/ipAddressText" />
 
         <TextView
             android:id="@+id/serverStatusText"
@@ -162,7 +162,7 @@
             android:text="@string/lifeup_status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ipAddressText" />
+            app:layout_constraintTop_toBottomOf="@+id/switch_cors" />
 
         <TextView
             android:id="@+id/lifeup_status_text"

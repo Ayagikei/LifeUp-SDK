@@ -144,6 +144,7 @@ object KtorService : LifeUpService {
             install(RequestMoreWakeLockPlugin)
 
             if (Settings.getInstance(appCtx).enableCors) {
+                Log.i("KtorService", "enableCors is true")
                 install(CORS) {
                     allowMethod(HttpMethod.Options)
                     allowMethod(HttpMethod.Get)
@@ -155,6 +156,8 @@ object KtorService : LifeUpService {
                     allowHeader(HttpHeaders.AccessControlAllowOrigin)
                     anyHost()
                 }
+            } else {
+                Log.i("KtorService", "enableCors is false")
             }
 
             install(StatusPages) {
