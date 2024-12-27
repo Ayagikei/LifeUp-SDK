@@ -13,8 +13,10 @@ import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
+import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
+import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
@@ -38,7 +40,9 @@ object LifeUpApi : LifeUpApiDef {
             SkillsApi(appCtx),
             InfoApi(appCtx),
             FeelingsApi(appCtx),
-            DataApi(appCtx)
+            DataApi(appCtx),
+            SynthesisApi(appCtx),
+            PomodoroApi(appCtx)
         )
     }
 

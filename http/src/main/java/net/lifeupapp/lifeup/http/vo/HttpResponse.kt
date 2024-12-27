@@ -1,6 +1,7 @@
 package net.lifeupapp.lifeup.http.vo
 
 import kotlinx.serialization.Serializable
+import net.lifeupapp.lifeup.api.exception.CloudException
 
 @Serializable
 data class HttpResponse<T>(
@@ -21,11 +22,19 @@ data class HttpResponse<T>(
         }
 
         fun <T> error(throwable: Throwable): HttpResponse<T?> {
-            return HttpResponse(
-                ERROR,
-                "${throwable.message}:\n\n${throwable.stackTraceToString()}",
-                null
-            )
+            return when (throwable) {
+                is CloudException -> HttpResponse(
+                    throwable.errorCode,
+                    throwable.message ?: "Unknown error",
+                    null
+                )
+
+                else -> HttpResponse(
+                    ERROR,
+                    "${throwable.message}:\n\n${throwable.stackTraceToString()}",
+                    null
+                )
+            }
         }
     }
 }

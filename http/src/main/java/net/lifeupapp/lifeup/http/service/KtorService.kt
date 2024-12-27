@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -55,8 +56,10 @@ import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
 import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
+import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
+import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.base.appCtx
@@ -452,6 +455,71 @@ object KtorService : LifeUpService {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {
                                 logger.log(Level.WARNING, "Failed to get feelings", it)
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                }
+
+                route("/synthesis") {
+                    get {
+                        LifeUpApi.getContentProviderApi<SynthesisApi>().listSynthesis(null)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                Log.e("LifeUp-Http", "Failed to get synthesis", it)
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                    route("/{id}") {
+                        get {
+                            val id = call.parameters["id"]?.toLongOrNull()
+                            LifeUpApi.getContentProviderApi<SynthesisApi>().listSynthesis(id)
+                                .onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
+                        }
+                    }
+                }
+
+                route("/synthesis_categories") {
+                    get {
+                        LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories()
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                call.respond(HttpResponse.error<String>(it))
+                            }
+                    }
+                    route("/{id}") {
+                        get {
+                            val id = call.parameters["id"]?.toLongOrNull()
+                            LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id)
+                                .onSuccess {
+                                    call.respond(it.wrapAsResponse())
+                                }.onFailure {
+                                    call.respond(HttpResponse.error<String>(it))
+                                }
+                        }
+                    }
+                }
+
+                route("/pomodoro_records") {
+                    get {
+                        val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                        val timeRangeStart =
+                            call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                        val timeRangeEnd =
+                            call.request.queryParameters["time_range_end"]?.toLongOrNull()
+
+                        LifeUpApi.getContentProviderApi<PomodoroApi>()
+                            .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                            .onSuccess {
+                                call.respond(it.wrapAsResponse())
+                            }.onFailure {
+                                logger.log(Level.WARNING, "Failed to get pomodoro records", it)
                                 call.respond(HttpResponse.error<String>(it))
                             }
                     }
