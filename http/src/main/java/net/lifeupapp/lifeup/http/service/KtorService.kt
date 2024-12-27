@@ -114,16 +114,15 @@ object KtorService : LifeUpService {
                 when (it) {
                     LifeUpService.RunningState.RUNNING -> {
                         ServerNotificationService.start(appCtx)
-                        wakeLockManager.stayAwake(10.minutes.toLong(DurationUnit.MILLISECONDS))
+                        val duration = Settings.getInstance(appCtx).wakeLockDuration
+                        wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
                         mDnsService.registerNsdService(port)
                     }
-
                     LifeUpService.RunningState.NOT_RUNNING -> {
                         ServerNotificationService.cancel(appCtx)
                         wakeLockManager.release()
                         mDnsService.unregisterNsdService()
                     }
-
                     else -> {}
                 }
             }
@@ -136,7 +135,8 @@ object KtorService : LifeUpService {
                 if (SystemClock.elapsedRealtime() - lastRequestTime > 3.minutes.toLong(DurationUnit.MILLISECONDS)) {
                     logger.info("Requesting wake lock")
                     lastRequestTime = SystemClock.elapsedRealtime()
-                    wakeLockManager.stayAwake()
+                    val duration = Settings.getInstance(appCtx).wakeLockDuration
+                    wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
                 }
             }
         }

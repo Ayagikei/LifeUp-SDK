@@ -10,11 +10,16 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.util.Log
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.card.MaterialCardView
 import io.ktor.util.toLowerCasePreservingASCIIRules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -81,6 +86,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            // 初始化高级设置
+            binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
+            binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    validateAndSaveWakeLockDuration()
+                }
+            }
+
             // 初始化跨域开关状态
             binding.switchCors.isChecked = settings.enableCors
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
@@ -90,6 +103,26 @@ class MainActivity : AppCompatActivity() {
                     KtorService.stop()
                     KtorService.start()
                 }
+            }
+
+            // 设置折叠面板
+            setupExpandablePanel(
+                binding.advancedHeader,
+                binding.btnToggleAdvanced,
+                binding.cardAdvanced
+            )
+            setupExpandablePanel(
+                binding.aboutHeader,
+                binding.btnToggleAbout,
+                binding.cardAbout
+            )
+
+            // 设置文档点击事件
+            binding.documentHeader.setOnClickListener {
+                openDocumentation()
+            }
+            binding.btnDocument.setOnClickListener {
+                openDocumentation()
             }
 
             lifecycleScope.launchWhenResumed {
@@ -188,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
 
-        binding.btnDocument.setOnClickListener {
+        binding.btnQrcodeScan.setOnClickListener {
             // get current locale
             val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 resources.configuration.locales.get(0)
@@ -232,4 +265,77 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkContentProviderAvailable() =
         (LifeUpApi.getContentProviderApi<InfoApi>().getInfo().getOrNull()?.appVersion ?: 0) > 0
+
+    private fun validateAndSaveWakeLockDuration() {
+        val input = binding.wakeLockDurationInput.text.toString()
+        val duration = input.toIntOrNull()
+        if (duration != null && duration in net.lifeupapp.lifeup.http.utils.Settings.MIN_WAKE_LOCK_DURATION..net.lifeupapp.lifeup.http.utils.Settings.MAX_WAKE_LOCK_DURATION) {
+            settings.wakeLockDuration = duration
+            binding.wakeLockDurationLayout.error = null
+        } else {
+            binding.wakeLockDurationLayout.error = getString(R.string.wake_lock_duration_error)
+            binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
+        }
+    }
+
+    private fun openDocumentation() {
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales.get(0)
+        } else {
+            resources.configuration.locale
+        }
+        val intent = Intent(Intent.ACTION_VIEW)
+        val url = when {
+            locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
+                DOCUMENT_LINK_CN
+            }
+
+            locale.language == "zh" -> {
+                DOCUMENT_LINK_CN_HANT
+            }
+
+            else -> {
+                DOCUMENT_LINK
+            }
+        }
+        intent.data = Uri.parse(url)
+        startActivity(intent)
+    }
+
+    private fun setupExpandablePanel(
+        headerView: View,
+        toggleButton: AppCompatImageButton,
+        contentCard: MaterialCardView
+    ) {
+        val rotateUp = RotateAnimation(
+            0f, -180f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        ).apply {
+            duration = 200
+            fillAfter = true
+        }
+
+        val rotateDown = RotateAnimation(
+            -180f, 0f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        ).apply {
+            duration = 200
+            fillAfter = true
+        }
+
+        fun togglePanel() {
+            if (contentCard.visibility == View.VISIBLE) {
+                contentCard.visibility = View.GONE
+                toggleButton.startAnimation(rotateDown)
+            } else {
+                contentCard.visibility = View.VISIBLE
+                toggleButton.startAnimation(rotateUp)
+            }
+        }
+
+        headerView.setOnClickListener { togglePanel() }
+        toggleButton.setOnClickListener { togglePanel() }
+    }
 }

@@ -10,10 +10,15 @@ class Settings private constructor(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     var enableCors: Boolean by BooleanPreference(prefs, KEY_ENABLE_CORS, false)
+    var wakeLockDuration: Int by IntPreference(prefs, KEY_WAKE_LOCK_DURATION, 10)
 
     companion object {
         private const val PREFS_NAME = "settings"
         private const val KEY_ENABLE_CORS = "enable_cors"
+        private const val KEY_WAKE_LOCK_DURATION = "wake_lock_duration"
+
+        const val MIN_WAKE_LOCK_DURATION = 1
+        const val MAX_WAKE_LOCK_DURATION = 60
 
         @Volatile
         private var instance: Settings? = null
@@ -36,6 +41,20 @@ class Settings private constructor(context: Context) {
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean) {
             preferences.edit().putBoolean(name, value).apply()
+        }
+    }
+
+    private class IntPreference(
+        private val preferences: SharedPreferences,
+        private val name: String,
+        private val defaultValue: Int
+    ) : ReadWriteProperty<Any, Int> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): Int {
+            return preferences.getInt(name, defaultValue)
+        }
+
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
+            preferences.edit().putInt(name, value).apply()
         }
     }
 } 

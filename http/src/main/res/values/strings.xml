@@ -38,4 +38,10 @@
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
     <string name="switch_cors">Allow Cross-Origin Access (CORS)</string>
+    <string name="title_advanced">Advanced Settings</string>
+    <string name="title_document">Documentation</string>
+    <string name="wake_lock_duration">Wake Lock Duration</string>
+    <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
+    <string name="wake_lock_duration_error">Please enter a number between 1-60</string>
+
 </resources>

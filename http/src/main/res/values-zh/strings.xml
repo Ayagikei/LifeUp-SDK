@@ -38,4 +38,9 @@
     <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
     <string name="lifeup_status">人升状态</string>
     <string name="cloud_version">版本: %1$s</string>
+    <string name="title_advanced">高级设置</string>
+    <string name="title_document">文档</string>
+    <string name="wake_lock_duration">唤醒锁持续时间</string>
+    <string name="wake_lock_duration_desc">设置服务保持唤醒的时长（分钟）。\n\n每次收到请求时会自动续期，所以通常不需要设置太长时间。\n\n范围：1-60 分钟</string>
+    <string name="wake_lock_duration_error">请输入 1-60 之间的数字</string>
 </resources>
