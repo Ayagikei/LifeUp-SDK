@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -102,6 +103,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            binding.tvIntroduction.movementMethod = LinkMovementMethod.getInstance()
+            binding.tvIntroduction.setHtmlText(getString(R.string.app_introduction))
 
             // 添加保存按钮
             binding.btnSaveAdvanced.setOnClickListener {

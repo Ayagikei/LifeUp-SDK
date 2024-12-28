@@ -8,6 +8,7 @@
     <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
     <string name="title_config">配置</string>
     <string name="btn_config">配置</string>
+    <string name="title_introduction">介绍</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
         \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定 app）。</string>
@@ -61,4 +62,5 @@
     <string name="btn_save">保存</string>
     <string name="api_token_setting">访问令牌</string>
     <string name="api_token_desc">设置访问令牌以保护您的服务器。设置后，所有请求都必须在 Authorization 请求头中包含此令牌。</string>
+    <string name="app_introduction"><![CDATA[这是一个《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的扩展工具，能让你从电脑或其他设备控制人升。请确保你已经安装了人升应用。]]></string>
 </resources>
