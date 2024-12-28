@@ -124,12 +124,28 @@
                     android:text="@string/status_permission" />
 
                 <TextView
-                    android:id="@+id/tv_status_permission"
+                    android:id="@+id/tv_status_permission_overlay"
                     style="@style/Item_Desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/status_permission_missing" />
+                    android:text="@string/status_permission_overlay_missing" />
+
+                <TextView
+                    android:id="@+id/tv_status_permission_battery"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/status_permission_battery_unknown" />
+
+                <TextView
+                    android:id="@+id/tv_status_permission_content_provider"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/status_permission_content_provider_missing" />
 
                 <TextView
                     android:id="@+id/tv_status_lifeup_title"
@@ -147,13 +163,6 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/lifeup_status_unknown" />
 
-                <TextView
-                    android:id="@+id/tv_status_server_title"
-                    style="@style/Item_Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/status_server" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_start_service"
@@ -265,6 +274,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/wake_lock_duration_desc" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/port_setting_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/port_setting">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/port_setting_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/port_setting_desc" />
 
             </LinearLayout>
 

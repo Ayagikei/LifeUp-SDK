@@ -85,8 +85,12 @@ import kotlin.time.DurationUnit
 
 object KtorService : LifeUpService {
 
-    var port = 13276
-        private set
+    private var _port = Settings.DEFAULT_PORT
+    var port: Int
+        get() = _port
+        private set(value) {
+            _port = value
+        }
 
     private val logger = Logger.getLogger("LifeUp-Http")
     private val scope = AppScope
@@ -161,6 +165,10 @@ object KtorService : LifeUpService {
                 // 等待一小段时间确保端口释放
                 delay(500)
 
+                // 设置端口
+                val customPort = Settings.getInstance(appCtx).customPort
+                port = if (customPort > 0) customPort else Settings.DEFAULT_PORT
+
                 // 创建并启动新服务
                 server = createServer()
                 server?.start(wait = false)
@@ -184,12 +192,13 @@ object KtorService : LifeUpService {
                 server?.stop(1000, 2000)
                 server = null
 
-                // 如果是端口被占用，尝试使用下一个端口
-                if (e is java.net.BindException) {
+                // 如果是端口被占用，且没有使用自定义端口，尝试使用下一个端口
+                if (e is java.net.BindException && Settings.getInstance(appCtx).customPort == 0) {
                     port++
-                    if (port > 65535) {
-                        port = 1024
+                    if (port > Settings.MAX_PORT) {
+                        port = Settings.MIN_PORT
                     }
+                    start() // 递归尝试下一个端口
                 }
             } finally {
                 isStarting = false

@@ -15,8 +15,15 @@
     <string name="title_server">服务</string>
     <string name="title_status">状态</string>
     <string name="status_permission">必要权限</string>
-    <string name="status_permission_granted">已获得所有必要权限</string>
-    <string name="status_permission_missing">缺少必要权限，请检查上方配置项</string>
+    <string name="status_permission_overlay">悬浮窗权限</string>
+    <string name="status_permission_overlay_granted">已获得悬浮窗权限</string>
+    <string name="status_permission_overlay_missing">缺少悬浮窗权限</string>
+    <string name="status_permission_battery">电池优化</string>
+    <string name="status_permission_battery_ignored">已忽略电池优化</string>
+    <string name="status_permission_battery_unknown">电池优化状态未知（因厂商而异）</string>
+    <string name="status_permission_content_provider">人升数据访问</string>
+    <string name="status_permission_content_provider_granted">已获得数据访问权限</string>
+    <string name="status_permission_content_provider_missing">缺少数据访问权限</string>
     <string name="status_lifeup">人升状态</string>
     <string name="status_server">服务状态</string>
     <string name="switch_start_service">启动服务</string>
@@ -49,4 +56,8 @@
     <string name="wake_lock_duration">唤醒锁持续时间</string>
     <string name="wake_lock_duration_desc">设置服务保持唤醒的时长（分钟）。\n\n每次收到请求时会自动续期，所以通常不需要设置太长时间。\n\n范围：1-60 分钟</string>
     <string name="wake_lock_duration_error">请输入 1-60 之间的数字</string>
+    <string name="port_setting">服务端口</string>
+    <string name="port_setting_desc">设置自定义服务端口。\n\n留空则使用默认端口（13276），并在端口冲突时自动重试。\n\n范围：1024-65535</string>
+    <string name="port_setting_error">请输入 1024-65535 之间的数字</string>
+    <string name="port_setting_conflict">端口 %1$d 已被占用</string>
 </resources>

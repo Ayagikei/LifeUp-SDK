@@ -15,6 +15,15 @@
     <string name="title_server">Server</string>
     <string name="title_status">Status</string>
     <string name="status_permission">Required Permissions</string>
+    <string name="status_permission_overlay">Overlay Permission</string>
+    <string name="status_permission_overlay_granted">Overlay permission granted</string>
+    <string name="status_permission_overlay_missing">Overlay permission missing</string>
+    <string name="status_permission_battery">Battery Optimization</string>
+    <string name="status_permission_battery_ignored">Battery optimization ignored</string>
+    <string name="status_permission_battery_unknown">Battery optimization status unknown (varies by manufacturer)</string>
+    <string name="status_permission_content_provider">LifeUp Data Access</string>
+    <string name="status_permission_content_provider_granted">Data access permission granted</string>
+    <string name="status_permission_content_provider_missing">Data access permission missing</string>
     <string name="status_permission_granted">All required permissions granted</string>
     <string name="status_permission_missing">Missing required permissions, please check configuration above</string>
     <string name="status_lifeup">LifeUp Status</string>
@@ -49,5 +58,9 @@
     <string name="wake_lock_duration">Wake Lock Duration</string>
     <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
     <string name="wake_lock_duration_error">Please enter a number between 1-60</string>
+    <string name="port_setting">Server Port</string>
+    <string name="port_setting_desc">Set custom server port.\n\nLeave empty to use default port (13276) with auto-retry on port conflict.\n\nRange: 1024-65535</string>
+    <string name="port_setting_error">Please enter a number between 1024-65535</string>
+    <string name="port_setting_conflict">Port %1$d is already in use</string>
 
 </resources>

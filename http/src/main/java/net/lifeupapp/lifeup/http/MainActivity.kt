@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.util.Log
 import android.view.View
@@ -38,7 +37,6 @@ import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
-import net.lifeupapp.lifeup.http.utils.setHtmlText
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,6 +70,12 @@ class MainActivity : AppCompatActivity() {
         initView()
     }
 
+    override fun onResume() {
+        super.onResume()
+        updatePermissionStatus()
+        updateLocalIpAddress()
+    }
+
     private fun initView() {
         lifecycleScope.launch {
             launch {
@@ -87,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化高级设置
+            // 初始化高���设置
             binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
             binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -148,6 +152,19 @@ class MainActivity : AppCompatActivity() {
                     updateLocalIpAddress()
                 }
             }
+
+            // 初始化端口设置
+            binding.portSettingInput.setText(
+                if (settings.customPort > 0)
+                    settings.customPort.toString()
+                else
+                    ""
+            )
+            binding.portSettingInput.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    validateAndSavePortSetting()
+                }
+            }
         }
 
         binding.switchStartService.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -156,6 +173,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 KtorService.stop()
             }
+            updateLocalIpAddress()
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -171,7 +189,8 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity.packageName
                     )
                 ) {
-                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    val intent =
+                        Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
                     intent.resolveActivity(this@MainActivity.packageManager)?.let {
                         this@MainActivity.startActivity(intent)
                     }
@@ -260,31 +279,39 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.tvStatusServerIp.text = getString(R.string.ipAddressUnknown)
         }
-
-        binding.tvAboutDesc.setHtmlText(R.string.about_text)
-        binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
-        binding.tvAboutDesc.linksClickable = true
     }
 
     private fun updatePermissionStatus() {
-        val hasContentProviderPermission = checkContentProviderAvailable()
+        // 检查悬浮窗权限
         val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Settings.canDrawOverlays(this)
+            android.provider.Settings.canDrawOverlays(this)
         } else {
             true
         }
+        binding.tvStatusPermissionOverlay.text = if (hasOverlayPermission) {
+            "✅ ${getString(R.string.status_permission_overlay_granted)}"
+        } else {
+            "❌ ${getString(R.string.status_permission_overlay_missing)}"
+        }
+
+        // 检查电池优化权限
         val hasBatteryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             powerManager.isIgnoringBatteryOptimizations(packageName)
         } else {
             true
         }
-
-        val allPermissionsGranted =
-            hasContentProviderPermission && hasOverlayPermission && hasBatteryPermission
-        binding.tvStatusPermission.text = if (allPermissionsGranted) {
-            "✅ ${getString(R.string.status_permission_granted)}"
+        binding.tvStatusPermissionBattery.text = if (hasBatteryPermission) {
+            "✅ ${getString(R.string.status_permission_battery_ignored)}"
         } else {
-            "❌ ${getString(R.string.status_permission_missing)}"
+            "❓ ${getString(R.string.status_permission_battery_unknown)}"
+        }
+
+        // 检查数据访问权限
+        val hasContentProviderPermission = checkContentProviderAvailable()
+        binding.tvStatusPermissionContentProvider.text = if (hasContentProviderPermission) {
+            "✅ ${getString(R.string.status_permission_content_provider_granted)}"
+        } else {
+            "❌ ${getString(R.string.status_permission_content_provider_missing)}"
         }
     }
 
@@ -363,4 +390,33 @@ class MainActivity : AppCompatActivity() {
         headerView.setOnClickListener { togglePanel() }
         toggleButton.setOnClickListener { togglePanel() }
     }
+
+    private fun validateAndSavePortSetting() {
+        val input = binding.portSettingInput.text.toString()
+        if (input.isEmpty()) {
+            settings.customPort = 0
+            binding.portSettingLayout.error = null
+            return
+        }
+
+        val port = input.toIntOrNull()
+        if (port != null && port in net.lifeupapp.lifeup.http.utils.Settings.MIN_PORT..net.lifeupapp.lifeup.http.utils.Settings.MAX_PORT) {
+            settings.customPort = port
+            binding.portSettingLayout.error = null
+            // 如果服务正在运行，需要重启服务以应用新端口
+            if (binding.switchStartService.isChecked) {
+                KtorService.stop()
+                KtorService.start()
+            }
+        } else {
+            binding.portSettingLayout.error = getString(R.string.port_setting_error)
+            binding.portSettingInput.setText(
+                if (settings.customPort > 0)
+                    settings.customPort.toString()
+                else
+                    ""
+            )
+        }
+    }
+
 }
