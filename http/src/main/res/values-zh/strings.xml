@@ -29,19 +29,18 @@
     <string name="switch_start_service">啟動服務</string>
     <string name="switch_cors">允許跨域存取 (CORS)</string>
     <string name="title_about">關於</string>
-    <string name="about_text"><![CDATA[這是個能讓你的手機變成一台 HTTP 伺服器的小工具。從而使得你能從區域網路電腦上發送API命令（URL Scheme）到手機上，來觸發<a href="https://www.lifeupapp.fun/">《人升》</a>應用程式的各種動作。
-<br/><br/><b># 它可以用於以下場景（需要額外的 Web、Python 等開發）:</b>
-<br/>1. 判斷電腦上的使用時長、輸入文字量、繪圖時長來觸發LifeUp應用程式的完成任務、獎勵或者懲罰。<br/>還有你能通過電腦程式設計實現的一切！
+    <string name="about_text"><![CDATA[這是一個能將手機轉變為 API 伺服器的工具，讓你能透過 HTTP API 和 Content Provider 從其他裝置與《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互動。
+<br/><br/><b># 功能特色：</b>
+<br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 提供完整的遊戲化整合介面
+<br/>• 支援自訂開發和擴充：
+<br/>  - 建立自己的桌面端/網頁端
+<br/>  - 與其他應用程式和裝置聯動
+<br/>  - 設計自動化工作流程
+<br/>  - 開發獨特的遊戲化場景
 <br/>
-<br/>2. 實現簡單的網頁版本，從電腦網頁上建立任務。
-<br/>
-<br/>3. 無限其他可能性…
-<br/>
-<br/><br/><b># 待辦項目：</b>
-<br/>目前它仍缺少查詢介面，因此只能以觸發動作為主，無法實現查詢手機上的任務列表、屬性經驗值。
-<br/><br/>
-<br/><b># 開源：</b>
-<br/>這是開源專案 <a href="https://github.com/Ayagikei/LifeUp">https://github.com/Ayagikei/LifeUp</a>，歡迎向我們貢獻程式碼。]]></string>
+<br/><b># 開源專案：</b>
+<br/>這是一個開源專案，歡迎在 <a href="https://github.com/Ayagikei/LifeUp">GitHub</a> 上貢獻程式碼！]]></string>
     <string name="port_config">服務埠口: %1$s</string>
     <string name="content_provider_permission">讀取「人升」資料權限</string>
     <string name="content_provider_permission_desc">授權以便讀取「人升」中的內部資料，如任務列表、商品列表等</string>
