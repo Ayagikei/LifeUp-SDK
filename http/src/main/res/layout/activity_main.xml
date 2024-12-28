@@ -95,85 +95,104 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="36dp"
-            android:text="@string/title_server"
+            android:text="@string/title_status"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/include_lifeup_link" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_start_service"
-            style="@style/Item_Title"
-            android:layout_width="0dp"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_status"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/switch_start_service"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_server" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_server">
 
-        <TextView
-            android:id="@+id/serverStatusText"
-            style="@style/Item_Desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/server_status"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="@+id/switch_start_service"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/switch_start_service"
-            app:layout_constraintTop_toBottomOf="@id/switch_start_service" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/ipAddressText"
-            style="@style/Item_Desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/ipAddressUnknown"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/switch_start_service"
-            app:layout_constraintTop_toBottomOf="@+id/serverStatusText" />
+                <TextView
+                    android:id="@+id/tv_status_permission_title"
+                    style="@style/Item_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status_permission" />
 
-        <TextView
-            android:id="@+id/lifeup_status_text_title"
-            style="@style/Item_Title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/lifeup_status"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ipAddressText" />
+                <TextView
+                    android:id="@+id/tv_status_permission"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/status_permission_missing" />
 
-        <TextView
-            android:id="@+id/lifeup_status_text"
-            style="@style/Item_Desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/lifeup_status_unknown"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/switch_start_service"
-            app:layout_constraintTop_toBottomOf="@+id/lifeup_status_text_title" />
+                <TextView
+                    android:id="@+id/tv_status_lifeup_title"
+                    style="@style/Item_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/status_lifeup" />
+
+                <TextView
+                    android:id="@+id/tv_status_lifeup"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/lifeup_status_unknown" />
+
+                <TextView
+                    android:id="@+id/tv_status_server_title"
+                    style="@style/Item_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/status_server" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_start_service"
+                    style="@style/Item_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/switch_start_service" />
+
+                <TextView
+                    android:id="@+id/tv_status_server"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/server_status" />
+
+                <TextView
+                    android:id="@+id/tv_status_server_ip"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/ipAddressUnknown" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/advanced_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingVertical="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/lifeup_status_text">
+            app:layout_constraintTop_toBottomOf="@+id/card_status">
 
             <TextView
                 android:id="@+id/tv_advanced"

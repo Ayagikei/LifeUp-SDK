@@ -13,6 +13,12 @@
         \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段。</string>
     <string name="notification_channel_server">服务运行中</string>
     <string name="title_server">服务</string>
+    <string name="title_status">状态</string>
+    <string name="status_permission">必要权限</string>
+    <string name="status_permission_granted">已获得所有必要权限</string>
+    <string name="status_permission_missing">缺少必要权限，请检查上方配置项</string>
+    <string name="status_lifeup">人升状态</string>
+    <string name="status_server">服务状态</string>
     <string name="switch_start_service">启动服务</string>
     <string name="switch_cors">允许跨域访问 (CORS)</string>
     <string name="title_about">关于</string>

@@ -77,10 +77,11 @@ class MainActivity : AppCompatActivity() {
             launch {
                 KtorService.isRunning.collect { running ->
                     if (running == LifeUpService.RunningState.RUNNING || running == LifeUpService.RunningState.STARTING) {
-                        binding.serverStatusText.text = getString(R.string.serverStartedMessage)
+                        binding.tvStatusServer.text =
+                            "✅ ${getString(R.string.serverStartedMessage)}"
                         binding.switchStartService.isChecked = true
                     } else {
-                        binding.serverStatusText.text = getString(R.string.server_status)
+                        binding.tvStatusServer.text = "❌ ${getString(R.string.server_status)}"
                         binding.switchStartService.isChecked = false
                     }
                 }
@@ -130,11 +131,12 @@ class MainActivity : AppCompatActivity() {
                     while (true) {
                         val isRunning = checkContentProviderAvailable()
                         withContext(Dispatchers.Main) {
-                            binding.lifeupStatusText.text = if (isRunning) {
-                                getString(R.string.lifeup_status_normal)
+                            binding.tvStatusLifeup.text = if (isRunning) {
+                                "✅ ${getString(R.string.lifeup_status_normal)}"
                             } else {
-                                getString(R.string.lifeup_status_unknown)
+                                "❌ ${getString(R.string.lifeup_status_unknown)}"
                             }
+                            updatePermissionStatus()
                         }
                         delay(5000L)
                     }
@@ -253,14 +255,37 @@ class MainActivity : AppCompatActivity() {
                 "$it:${KtorService.port}"
             }
         if (localIpAddress.isNotBlank()) {
-            binding.ipAddressText.text = getString(R.string.localIpAddressMessage, localIpAddress)
+            binding.tvStatusServerIp.text =
+                getString(R.string.localIpAddressMessage, localIpAddress)
         } else {
-            binding.ipAddressText.text = getString(R.string.ipAddressUnknown)
+            binding.tvStatusServerIp.text = getString(R.string.ipAddressUnknown)
         }
 
         binding.tvAboutDesc.setHtmlText(R.string.about_text)
         binding.tvAboutDesc.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         binding.tvAboutDesc.linksClickable = true
+    }
+
+    private fun updatePermissionStatus() {
+        val hasContentProviderPermission = checkContentProviderAvailable()
+        val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else {
+            true
+        }
+        val hasBatteryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            powerManager.isIgnoringBatteryOptimizations(packageName)
+        } else {
+            true
+        }
+
+        val allPermissionsGranted =
+            hasContentProviderPermission && hasOverlayPermission && hasBatteryPermission
+        binding.tvStatusPermission.text = if (allPermissionsGranted) {
+            "✅ ${getString(R.string.status_permission_granted)}"
+        } else {
+            "❌ ${getString(R.string.status_permission_missing)}"
+        }
     }
 
     private fun checkContentProviderAvailable() =

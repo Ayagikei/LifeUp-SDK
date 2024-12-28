@@ -13,6 +13,12 @@
         \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers.</string>
     <string name="notification_channel_server">Server Running</string>
     <string name="title_server">Server</string>
+    <string name="title_status">Status</string>
+    <string name="status_permission">Required Permissions</string>
+    <string name="status_permission_granted">All required permissions granted</string>
+    <string name="status_permission_missing">Missing required permissions, please check configuration above</string>
+    <string name="status_lifeup">LifeUp Status</string>
+    <string name="status_server">Server Status</string>
     <string name="switch_start_service">Start Service</string>
     <string name="title_about">About</string>
     <string name="about_text"><![CDATA[This is a small tool that can turn your mobile phone into an HTTP server, so that you can send API commands (URL Scheme) from the LAN computer to trigger various actions of the <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp application</a>.
