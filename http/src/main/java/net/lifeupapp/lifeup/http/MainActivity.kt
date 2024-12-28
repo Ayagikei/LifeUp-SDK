@@ -373,21 +373,10 @@ class MainActivity : AppCompatActivity() {
 
         fun togglePanel() {
             if (contentCard.visibility == View.VISIBLE) {
-                contentCard.animate()
-                    .alpha(0f)
-                    .setDuration(200)
-                    .withEndAction {
-                        contentCard.visibility = View.GONE
-                    }
-                    .start()
+                contentCard.visibility = View.GONE
                 toggleButton.startAnimation(rotateDown)
             } else {
-                contentCard.alpha = 0f
-                contentCard.visibility = View.VISIBLE
-                contentCard.animate()
-                    .alpha(1f)
-                    .setDuration(200)
-                    .start()
+                contentCard.visibility = View.VISIBLE 
                 toggleButton.startAnimation(rotateUp)
             }
         }

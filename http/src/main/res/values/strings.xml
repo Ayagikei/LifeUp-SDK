@@ -10,7 +10,7 @@
     <string name="btn_config">CONFIG</string>
     <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
     <string name="ignore_battery_optimizations_desc">In order for the service to keep running in the background stably, you need to turn off battery optimization.
-        \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers.</string>
+        \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers（like allowing “auto-start”, and locking “allow” in multi-tasking）.</string>
     <string name="notification_channel_server">Server Running</string>
     <string name="title_server">Server</string>
     <string name="title_status">Status</string>

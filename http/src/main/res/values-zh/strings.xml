@@ -10,7 +10,7 @@
     <string name="btn_config">配置</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
-        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段。</string>
+        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定“允许”）。</string>
     <string name="notification_channel_server">服务运行中</string>
     <string name="title_server">服务</string>
     <string name="title_status">状态</string>
