@@ -308,14 +308,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             "❓ ${getString(R.string.status_permission_battery_unknown)}"
         }
-
-        // 检查数据访问权限
-        val hasContentProviderPermission = checkContentProviderAvailable()
-        binding.tvStatusPermissionContentProvider.text = if (hasContentProviderPermission) {
-            "✅ ${getString(R.string.status_permission_content_provider_granted)}"
-        } else {
-            "❌ ${getString(R.string.status_permission_content_provider_missing)}"
-        }
     }
 
     private fun checkContentProviderAvailable() =

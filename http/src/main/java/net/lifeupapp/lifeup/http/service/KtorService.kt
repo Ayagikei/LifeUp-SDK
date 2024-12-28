@@ -287,7 +287,7 @@ object KtorService : LifeUpService {
                 val localAddressIp = getIpAddressInLocalNetwork() ?: "UNKNOWN"
                 call.respondText(ContentType.Text.Html) {
                     buildString {
-                        z appendHTML ().html {
+                        appendHTML().html {
                             body {
                                 h1 {
                                     +"Hello from "

@@ -22,10 +22,6 @@
     <string name="status_permission_battery_ignored">Battery optimization ignored</string>
     <string name="status_permission_battery_unknown">Battery optimization status unknown (varies by manufacturer)</string>
     <string name="status_permission_content_provider">LifeUp Data Access</string>
-    <string name="status_permission_content_provider_granted">Data access permission granted</string>
-    <string name="status_permission_content_provider_missing">Data access permission missing</string>
-    <string name="status_permission_granted">All required permissions granted</string>
-    <string name="status_permission_missing">Missing required permissions, please check configuration above</string>
     <string name="status_lifeup">LifeUp Status</string>
     <string name="status_server">Server Status</string>
     <string name="switch_start_service">Start Service</string>
@@ -48,7 +44,7 @@
     <string name="content_provider_permission_desc">Grant permission to read the data of LifeUp</string>
     <string name="qrcode_scanning">Scanning...</string>
     <string name="lifeup_status_unknown">The status of LifeUp is unknown, please make sure you have authorized the permission to read LifeUp data, and LifeUp is running</string>
-    <string name="lifeup_status_normal">LifeUp is successfully running...</string>
+    <string name="lifeup_status_normal">LifeUp is running, data permission granted...</string>
     <string name="lifeup_permission_granted">You have successfully obtained permission.</string>
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
