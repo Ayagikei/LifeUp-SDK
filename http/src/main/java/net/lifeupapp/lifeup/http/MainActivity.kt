@@ -37,6 +37,7 @@ import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
+import net.lifeupapp.lifeup.http.utils.setHtmlText
 
 class MainActivity : AppCompatActivity() {
 
@@ -84,14 +85,31 @@ class MainActivity : AppCompatActivity() {
                         binding.tvStatusServer.text =
                             "✅ ${getString(R.string.serverStartedMessage)}"
                         binding.switchStartService.isChecked = true
+                        binding.tvStatusServerIp.visibility = View.VISIBLE
                     } else {
                         binding.tvStatusServer.text = "❌ ${getString(R.string.server_status)}"
                         binding.switchStartService.isChecked = false
+                        binding.tvStatusServerIp.visibility = View.GONE
                     }
                 }
             }
 
-            // 初始化高���设置
+            // 监听端口变化
+            launch {
+                KtorService.port.collect { port ->
+                    if (port > 0) {
+                        updateLocalIpAddress()
+                    }
+                }
+            }
+
+            // 添加保存按钮
+            binding.btnSaveAdvanced.setOnClickListener {
+                validateAndSaveWakeLockDuration()
+                validateAndSavePortSetting()
+            }
+
+            // 初始化高设置
             binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
             binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -241,37 +259,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
-
-        binding.btnQrcodeScan.setOnClickListener {
-            // get current locale
-            val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                resources.configuration.locales.get(0)
-            } else {
-                resources.configuration.locale
-            }
-            val intent = Intent(Intent.ACTION_VIEW)
-            val url = when {
-                locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
-                    DOCUMENT_LINK_CN
-                }
-
-                locale.language == "zh" -> {
-                    DOCUMENT_LINK_CN_HANT
-                }
-
-                else -> {
-                    DOCUMENT_LINK
-                }
-            }
-            intent.data = Uri.parse(url)
-            startActivity(intent)
-        }
+        binding.tvAboutDesc.setHtmlText(getString(R.string.about_text))
     }
 
     private fun updateLocalIpAddress() {
         val localIpAddress =
             getIpAddressListInLocalNetwork().joinToString("\n") {
-                "$it:${KtorService.port}"
+                "$it:${KtorService.port.value}"
             }
         if (localIpAddress.isNotBlank()) {
             binding.tvStatusServerIp.text =
@@ -379,10 +373,21 @@ class MainActivity : AppCompatActivity() {
 
         fun togglePanel() {
             if (contentCard.visibility == View.VISIBLE) {
-                contentCard.visibility = View.GONE
+                contentCard.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        contentCard.visibility = View.GONE
+                    }
+                    .start()
                 toggleButton.startAnimation(rotateDown)
             } else {
+                contentCard.alpha = 0f
                 contentCard.visibility = View.VISIBLE
+                contentCard.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start()
                 toggleButton.startAnimation(rotateUp)
             }
         }

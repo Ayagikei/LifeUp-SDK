@@ -60,4 +60,5 @@
     <string name="port_setting_desc">设置自定义服务端口。\n\n留空则使用默认端口（13276），并在端口冲突时自动重试。\n\n范围：1024-65535</string>
     <string name="port_setting_error">请输入 1024-65535 之间的数字</string>
     <string name="port_setting_conflict">端口 %1$d 已被占用</string>
+    <string name="btn_save">保存</string>
 </resources>

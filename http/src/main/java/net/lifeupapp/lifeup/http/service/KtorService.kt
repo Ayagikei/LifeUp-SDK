@@ -85,12 +85,8 @@ import kotlin.time.DurationUnit
 
 object KtorService : LifeUpService {
 
-    private var _port = Settings.DEFAULT_PORT
-    var port: Int
-        get() = _port
-        private set(value) {
-            _port = value
-        }
+    private val _port = MutableStateFlow(Settings.DEFAULT_PORT)
+    val port: StateFlow<Int> = _port
 
     private val logger = Logger.getLogger("LifeUp-Http")
     private val scope = AppScope
@@ -120,7 +116,7 @@ object KtorService : LifeUpService {
                         ServerNotificationService.start(appCtx)
                         val duration = Settings.getInstance(appCtx).wakeLockDuration
                         wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
-                        mDnsService.registerNsdService(port)
+                        mDnsService.registerNsdService(port.value)
                     }
                     LifeUpService.RunningState.NOT_RUNNING -> {
                         ServerNotificationService.cancel(appCtx)
@@ -167,7 +163,7 @@ object KtorService : LifeUpService {
 
                 // 设置端口
                 val customPort = Settings.getInstance(appCtx).customPort
-                port = if (customPort > 0) customPort else Settings.DEFAULT_PORT
+                _port.value = if (customPort > 0) customPort else Settings.DEFAULT_PORT
 
                 // 创建并启动新服务
                 server = createServer()
@@ -194,9 +190,9 @@ object KtorService : LifeUpService {
 
                 // 如果是端口被占用，且没有使用自定义端口，尝试使用下一个端口
                 if (e is java.net.BindException && Settings.getInstance(appCtx).customPort == 0) {
-                    port++
-                    if (port > Settings.MAX_PORT) {
-                        port = Settings.MIN_PORT
+                    _port.value = port.value + 1
+                    if (port.value > Settings.MAX_PORT) {
+                        _port.value = Settings.MIN_PORT
                     }
                     start() // 递归尝试下一个端口
                 }
@@ -232,7 +228,7 @@ object KtorService : LifeUpService {
         }
     }
 
-    private fun createServer() = embeddedServer(Netty, port, watchPaths = emptyList()) {
+    private fun createServer() = embeddedServer(Netty, port.value, watchPaths = emptyList()) {
         install(WebSockets)
         install(CallLogging)
         install(ContentNegotiation) {
@@ -734,10 +730,10 @@ object KtorService : LifeUpService {
     private suspend fun isServerResponding(): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val socket = java.net.Socket()
-            socket.connect(java.net.InetSocketAddress("localhost", port), 500)
+            socket.connect(java.net.InetSocketAddress("localhost", port.value), 500)
             socket.close()
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

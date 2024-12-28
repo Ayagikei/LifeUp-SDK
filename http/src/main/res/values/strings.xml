@@ -62,5 +62,6 @@
     <string name="port_setting_desc">Set custom server port.\n\nLeave empty to use default port (13276) with auto-retry on port conflict.\n\nRange: 1024-65535</string>
     <string name="port_setting_error">Please enter a number between 1024-65535</string>
     <string name="port_setting_conflict">Port %1$d is already in use</string>
+    <string name="btn_save">Save</string>
 
 </resources>

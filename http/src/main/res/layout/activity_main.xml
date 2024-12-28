@@ -297,6 +297,14 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/port_setting_desc" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save_advanced"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/btn_save" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
