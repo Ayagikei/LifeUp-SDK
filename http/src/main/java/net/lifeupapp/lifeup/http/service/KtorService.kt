@@ -263,12 +263,31 @@ object KtorService : LifeUpService {
             }
         }
 
+        // 添加 API Token 验证
+        val apiToken = Settings.getInstance(appCtx).apiToken
+        if (apiToken.isNotBlank()) {
+            install(createApplicationPlugin("ApiTokenValidation") {
+                onCall { call ->
+                    val authHeader = call.request.headers[HttpHeaders.Authorization]
+                    if (authHeader != apiToken) {
+                        call.respond(
+                            HttpStatusCode.Unauthorized,
+                            HttpResponse.error<String>(
+                                "Invalid API token",
+                                HttpStatusCode.Unauthorized.value
+                            )
+                        )
+                    }
+                }
+            })
+        }
+
         routing {
             get("/") {
                 val localAddressIp = getIpAddressInLocalNetwork() ?: "UNKNOWN"
                 call.respondText(ContentType.Text.Html) {
                     buildString {
-                        appendHTML().html {
+                        z appendHTML ().html {
                             body {
                                 h1 {
                                     +"Hello from "

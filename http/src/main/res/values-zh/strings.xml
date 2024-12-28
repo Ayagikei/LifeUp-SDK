@@ -3,14 +3,14 @@
     <string name="server_status">服务未启动...</string>
     <string name="serverStartedMessage">服务器已开启</string>
     <string name="ipAddressUnknown">未获取到 IP 地址 (没有连接到 WIFI?)</string>
-    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n\n%1$s\n\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。</string>
+    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n\n%1$s\n\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP。</string>
     <string name="overlay_permission">悬浮窗权限</string>
     <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
     <string name="title_config">配置</string>
     <string name="btn_config">配置</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
-        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定“允许”）。</string>
+        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定 app）。</string>
     <string name="notification_channel_server">服务运行中</string>
     <string name="title_server">服务</string>
     <string name="title_status">状态</string>
@@ -61,4 +61,6 @@
     <string name="port_setting_error">请输入 1024-65535 之间的数字</string>
     <string name="port_setting_conflict">端口 %1$d 已被占用</string>
     <string name="btn_save">保存</string>
+    <string name="api_token_setting">访问令牌</string>
+    <string name="api_token_desc">设置访问令牌以保护您的服务器。设置后，所有请求都必须在 Authorization 请求头中包含此令牌。</string>
 </resources>

@@ -10,7 +10,7 @@
     <string name="btn_config">CONFIG</string>
     <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
     <string name="ignore_battery_optimizations_desc">In order for the service to keep running in the background stably, you need to turn off battery optimization.
-        \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers（like allowing “auto-start”, and locking “allow” in multi-tasking）.</string>
+        \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers（like allowing “auto-start”, and locking app in multi-tasking）.</string>
     <string name="notification_channel_server">Server Running</string>
     <string name="title_server">Server</string>
     <string name="title_status">Status</string>
@@ -63,5 +63,7 @@
     <string name="port_setting_error">Please enter a number between 1024-65535</string>
     <string name="port_setting_conflict">Port %1$d is already in use</string>
     <string name="btn_save">Save</string>
+    <string name="api_token_setting">API Token</string>
+    <string name="api_token_desc">Set an API token to secure your server. When set, all requests must include this token in the Authorization header.</string>
 
 </resources>

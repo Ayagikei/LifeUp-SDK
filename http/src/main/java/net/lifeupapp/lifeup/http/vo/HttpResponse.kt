@@ -17,8 +17,8 @@ data class HttpResponse<T>(
             return HttpResponse(SUCCESS, "success", data)
         }
 
-        fun <T> error(message: String): HttpResponse<T?> {
-            return HttpResponse(ERROR, message, null)
+        fun <T> error(message: String, code: Int = ERROR): HttpResponse<T?> {
+            return HttpResponse(code, message, null)
         }
 
         fun <T> error(throwable: Throwable): HttpResponse<T?> {

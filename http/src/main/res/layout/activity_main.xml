@@ -299,6 +299,29 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/port_setting_desc" />
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/api_token_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/api_token_setting"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/api_token_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/api_token_desc" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_save_advanced"
                     android:layout_width="wrap_content"

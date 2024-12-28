@@ -107,13 +107,22 @@ class MainActivity : AppCompatActivity() {
             binding.btnSaveAdvanced.setOnClickListener {
                 validateAndSaveWakeLockDuration()
                 validateAndSavePortSetting()
+                validateAndSaveApiToken()
             }
 
-            // 初始化高设置
+            // 初始化高级设置
             binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
             binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     validateAndSaveWakeLockDuration()
+                }
+            }
+
+            // 初始化 API Token
+            binding.apiTokenInput.setText(settings.apiToken)
+            binding.apiTokenInput.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    validateAndSaveApiToken()
                 }
             }
 
@@ -410,6 +419,18 @@ class MainActivity : AppCompatActivity() {
                 else
                     ""
             )
+        }
+    }
+
+    private fun validateAndSaveApiToken() {
+        val input = binding.apiTokenInput.text.toString().trim()
+        settings.apiToken = input
+        binding.apiTokenLayout.error = null
+
+        // 如果服务正在运行，需要重启服务以应用新设置
+        if (binding.switchStartService.isChecked) {
+            KtorService.stop()
+            KtorService.start()
         }
     }
 

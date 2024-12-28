@@ -12,12 +12,14 @@ class Settings private constructor(context: Context) {
     var enableCors: Boolean by BooleanPreference(prefs, KEY_ENABLE_CORS, false)
     var wakeLockDuration: Int by IntPreference(prefs, KEY_WAKE_LOCK_DURATION, 10)
     var customPort: Int by IntPreference(prefs, KEY_CUSTOM_PORT, 0)
+    var apiToken: String by StringPreference(prefs, KEY_API_TOKEN, "")
 
     companion object {
         private const val PREFS_NAME = "settings"
         private const val KEY_ENABLE_CORS = "enable_cors"
         private const val KEY_WAKE_LOCK_DURATION = "wake_lock_duration"
         private const val KEY_CUSTOM_PORT = "custom_port"
+        private const val KEY_API_TOKEN = "api_token"
 
         const val MIN_WAKE_LOCK_DURATION = 1
         const val MAX_WAKE_LOCK_DURATION = 60
@@ -60,6 +62,20 @@ class Settings private constructor(context: Context) {
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
             preferences.edit().putInt(name, value).apply()
+        }
+    }
+
+    private class StringPreference(
+        private val preferences: SharedPreferences,
+        private val name: String,
+        private val defaultValue: String
+    ) : ReadWriteProperty<Any, String> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): String {
+            return preferences.getString(name, defaultValue) ?: defaultValue
+        }
+
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: String) {
+            preferences.edit().putString(name, value).apply()
         }
     }
 } 
