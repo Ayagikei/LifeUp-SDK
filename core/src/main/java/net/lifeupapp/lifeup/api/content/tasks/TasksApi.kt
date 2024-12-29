@@ -2,7 +2,6 @@ package net.lifeupapp.lifeup.api.content.tasks
 
 import android.content.Context
 import android.net.Uri
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
@@ -105,12 +104,16 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                         setCategoryId(itemCategoryId)
                         setOrder(order ?: 0)
                         setNameExtended(nameExtended ?: "")
-                        setItems(
-                            itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
-                        )
-                        setSubTasks(
-                            subTasksJson?.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
-                        )
+                        if (itemsJson != null && itemsJson.isNotBlank()) {
+                            setItems(
+                                itemsJson.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
+                            )
+                        }
+                        if (subTasksJson != null && subTasksJson.isNotBlank()) {
+                            setSubTasks(
+                                subTasksJson.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
+                            )
+                        }
                     }
                 )
             }

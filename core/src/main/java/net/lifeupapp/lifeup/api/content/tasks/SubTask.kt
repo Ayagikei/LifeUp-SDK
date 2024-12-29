@@ -9,11 +9,11 @@ data class SubTask(
     val gid: Long,
     val todo: String,
     val status: Int,
-    val remindTime: Long?,
+    val remindTime: Long? = null,
     val exp: Int,
-    val coin: Long?,
-    val coinVariable: Long?,
-    val items: List<RewardItem>,
-    val order: Int,
-    val autoUseItem: Boolean?,
+    val coin: Long? = null,
+    val coinVariable: Long? = null,
+    val items: List<RewardItem> = emptyList<RewardItem>(),
+    val order: Int? = 0,
+    val autoUseItem: Boolean? = false
 )

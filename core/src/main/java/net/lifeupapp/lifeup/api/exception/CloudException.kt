@@ -9,6 +9,8 @@ open class CloudException(
         const val ERROR_CODE_BASE = 10000
 
         const val ERROR_NULL_CURSOR = ERROR_CODE_BASE + 1
+
+        const val ERROR_CONTENT_PROVIDER = ERROR_CODE_BASE + 2
     }
 }
 

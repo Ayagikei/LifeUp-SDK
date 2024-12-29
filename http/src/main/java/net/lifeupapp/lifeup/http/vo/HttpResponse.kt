@@ -22,10 +22,17 @@ data class HttpResponse<T>(
         }
 
         fun <T> error(throwable: Throwable): HttpResponse<T?> {
-            return when (throwable) {
-                is CloudException -> HttpResponse(
+            return when {
+                throwable is CloudException -> HttpResponse(
                     throwable.errorCode,
                     throwable.message ?: "Unknown error",
+                    null
+                )
+
+                throwable is IllegalArgumentException &&
+                        throwable.message?.contains("Unknown authority net.sarasarasa.lifeup.provider.api") == true -> HttpResponse(
+                    CloudException.ERROR_NULL_CURSOR,
+                    "Unknown authority net.sarasarasa.lifeup.provider.api, check if LifeUp is installed and running and you have granted the permission",
                     null
                 )
 

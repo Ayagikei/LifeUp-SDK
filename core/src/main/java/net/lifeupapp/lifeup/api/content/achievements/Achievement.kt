@@ -17,10 +17,10 @@ data class Achievement(
     val type: Int,
     val progress: Int,
     val order: Int,
-    val itemId: Long,
-    val itemAmount: Int,
-    val unlockedTime: Long,
-    val items: List<RewardItem>
+    val itemId: Long?,
+    val itemAmount: Int?,
+    val unlockedTime: Long?,
+    val items: List<RewardItem>?    
 ) {
     class Builder {
         private var id: Long? = null
@@ -35,10 +35,10 @@ data class Achievement(
         private var type: Int = 0
         private var progress: Int = 0
         private var order: Int = 0
-        private var itemId: Long = 0
-        private var itemAmount: Int = 0
-        private var unlockedTime: Long = 0
-        private var items: List<RewardItem> = emptyList()
+        private var itemId: Long? = null
+        private var itemAmount: Int? = null
+        private var unlockedTime: Long? = null
+        private var items: List<RewardItem>? = null
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -51,10 +51,10 @@ data class Achievement(
         fun setType(type: Int) = apply { this.type = type }
         fun setProgress(progress: Int) = apply { this.progress = progress }
         fun setOrder(order: Int) = apply { this.order = order }
-        fun setItemId(itemId: Long) = apply { this.itemId = itemId }
-        fun setItemAmount(itemAmount: Int) = apply { this.itemAmount = itemAmount }
-        fun setItems(items: List<RewardItem>) = apply { this.items = items }
-        fun setUnlockedTime(unlockedTime: Long) = apply { this.unlockedTime = unlockedTime }
+        fun setItemId(itemId: Long?) = apply { this.itemId = itemId }
+        fun setItemAmount(itemAmount: Int?) = apply { this.itemAmount = itemAmount }
+        fun setItems(items: List<RewardItem>?) = apply { this.items = items }
+        fun setUnlockedTime(unlockedTime: Long?) = apply { this.unlockedTime = unlockedTime }
 
         fun build(): Achievement {
             return Achievement(

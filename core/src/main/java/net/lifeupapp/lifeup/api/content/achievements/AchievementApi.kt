@@ -90,9 +90,9 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                         setType(type ?: 0)
                         setProgress(progress ?: 0)
                         setOrder(order ?: 0)
-                        setItemId(itemId ?: 0)
-                        setItemAmount(itemAmount ?: 0)
-                        setUnlockedTime(unlockedTime ?: 0)
+                        setItemId(itemId)
+                        setItemAmount(itemAmount)
+                        setUnlockedTime(unlockedTime)
                         setItems(items)
                     }
                 )

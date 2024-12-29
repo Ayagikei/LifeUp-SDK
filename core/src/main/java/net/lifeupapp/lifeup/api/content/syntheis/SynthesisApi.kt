@@ -5,6 +5,7 @@ import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.syntheis.category.SynthesisCategory
+import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
@@ -67,8 +68,18 @@ class SynthesisApi(private val context: Context) : ContentProviderApi {
                         setId(id)
                         setName(name ?: "ERROR: name is null")
                         setDesc(desc ?: "")
-                        setInput(inputJson ?: "[]")
-                        setOutput(outputJson ?: "[]")
+                        if (inputJson != null && inputJson.isNotBlank()) {
+                            setInput(
+                                inputJson.decodeFromStringOrNull<List<SynthesisItemInfo>>()
+                                    ?: emptyList()
+                            )
+                        }
+                        if (outputJson != null && outputJson.isNotBlank()) {
+                            setOutput(
+                                outputJson.decodeFromStringOrNull<List<SynthesisItemInfo>>()
+                                    ?: emptyList()
+                            )
+                        }
                         setCategoryId(itemCategoryId)
                         setCanSynthesisTimes(canSynthesisTimes ?: 0)
                     }

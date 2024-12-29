@@ -7,8 +7,8 @@ data class Synthesis(
     val id: Long?,
     val name: String,
     val desc: String,
-    val input: String,
-    val output: String,
+    val input: List<SynthesisItemInfo>,
+    val output: List<SynthesisItemInfo>,
     val categoryId: Long?,
     val canSynthesisTimes: Int
 ) {
@@ -16,16 +16,16 @@ data class Synthesis(
         private var id: Long? = null
         private var name: String = ""
         private var desc: String = ""
-        private var input: String = ""
-        private var output: String = ""
+        private var input: List<SynthesisItemInfo> = emptyList()
+        private var output: List<SynthesisItemInfo> = emptyList()
         private var categoryId: Long? = null
         private var canSynthesisTimes: Int = 0
 
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(desc: String) = apply { this.desc = desc }
-        fun setInput(input: String) = apply { this.input = input }
-        fun setOutput(output: String) = apply { this.output = output }
+        fun setInput(input: List<SynthesisItemInfo>) = apply { this.input = input }
+        fun setOutput(output: List<SynthesisItemInfo>) = apply { this.output = output }
         fun setCategoryId(categoryId: Long?) = apply { this.categoryId = categoryId }
         fun setCanSynthesisTimes(canSynthesisTimes: Int) =
             apply { this.canSynthesisTimes = canSynthesisTimes }
@@ -49,3 +49,12 @@ data class Synthesis(
         }
     }
 }
+
+@Serializable
+data class SynthesisItemInfo(
+    val itemId: Long,
+    val itemName: String,
+    val amount: Int,
+    val ownedNumber: Int,
+    val icon: String
+)

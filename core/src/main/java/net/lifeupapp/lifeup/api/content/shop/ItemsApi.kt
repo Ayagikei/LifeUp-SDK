@@ -58,6 +58,7 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                 val price = it.getLongOrNull("price")
                 val order = it.getIntOrNull("order")
                 val disablePurchase = it.getIntOrNull("disablePurchase")
+                val maxPurchaseNumber = it.getIntOrNull("maxPurchaseNumber")
 
                 items.add(
                     ShopItem.builder {
@@ -71,6 +72,7 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                         setPrice(price ?: 0)
                         setOrder(order ?: 0)
                         setDisablePurchase(disablePurchase == 1)
+                        setMaxPurchaseNumber(maxPurchaseNumber)
                     }
                 )
             }
