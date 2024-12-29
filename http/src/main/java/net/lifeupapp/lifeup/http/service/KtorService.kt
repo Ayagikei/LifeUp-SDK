@@ -489,17 +489,23 @@ object KtorService : LifeUpService {
 
             route("/items") {
                 get {
-                    LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null).onSuccess {
+                    val ids = call.parameters.getAll("id")?.mapNotNull { it.toLongOrNull() }
+
+                    if (ids != null) {
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listItemsByIds(ids)
+                    } else {
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null)
+                    }.onSuccess {
                         call.respond(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
                 }
-                route("/{id}") {
+                route("/{listId}") {
                     get {
-                        val id = call.parameters["id"]?.toLongOrNull()
+                        val listId = call.parameters["listId"]?.toLongOrNull()
 
-                        LifeUpApi.getContentProviderApi<ItemsApi>().listItems(id).onSuccess {
+                        LifeUpApi.getContentProviderApi<ItemsApi>().listItems(listId).onSuccess {
                             call.respond(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))

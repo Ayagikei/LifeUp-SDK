@@ -82,4 +82,49 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(items)
     }
+
+    fun listItemsByIds(ids: List<Long>): Result<List<ShopItem>> {
+        val items = mutableListOf<ShopItem>()
+        try {
+            val uri = buildString {
+                append(ContentProviderUrl.ITEMS)
+                if (ids.isNotEmpty()) {
+                    append("?${ids.joinToString("&") { "id=$it" }}")
+                }
+            }
+            context.forEachContent(uri) {
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val desc = it.getStringOrNull("desc")
+                val icon = it.getStringOrNull("icon")
+                val itemCategoryId = it.getLongOrNull("categoryId")
+                val stockNumber = it.getIntOrNull("stockNumber")
+                val ownNumber = it.getIntOrNull("ownNumber")
+                val price = it.getLongOrNull("price")
+                val order = it.getIntOrNull("order")
+                val disablePurchase = it.getIntOrNull("disablePurchase")
+                val maxPurchaseNumber = it.getIntOrNull("maxPurchaseNumber")
+
+                items.add(
+                    ShopItem.builder {
+                        setId(id)
+                        setName(name ?: "ERROR: name is null")
+                        setDesc(desc ?: "")
+                        setIconUri(icon ?: "")
+                        setCategoryId(itemCategoryId)
+                        setStockNumber(stockNumber ?: 0)
+                        setOwnNumber(ownNumber ?: 0)
+                        setPrice(price ?: 0)
+                        setOrder(order ?: 0)
+                        setDisablePurchase(disablePurchase == 1)
+                        setMaxPurchaseNumber(maxPurchaseNumber)
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+
+        return Result.success(items)
+    }
 }
