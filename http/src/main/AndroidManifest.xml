@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <queries>
         <package android:name="net.sarasarasa.lifeup" />
@@ -47,7 +47,11 @@
 
         <service
             android:name=".service.ServerNotificationService"
-            android:foregroundServiceType="connectedDevice" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="This foreground service is used to prompt the user that a special HTTP service is running, and allows the user to use the HTTP service normally after leaving the app. It will only run if the user actively turns it on. And the user can cancel it at any time by entering the app. In addition, it also has a mechanism for automatic cancellation after timeout." />
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
