@@ -1,32 +1,32 @@
 package net.lifeupapp.lifeup.api.content.skills
 
 import android.content.Context
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getLongOrNull
-import androidx.core.database.getStringOrNull
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
+import net.lifeupapp.lifeup.api.utils.getIntOrNull
+import net.lifeupapp.lifeup.api.utils.getLongOrNull
+import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class SkillsApi(private val context: Context) : ContentProviderApi {
 
     fun listSkills(): Result<List<Skill>> {
-        val categories = mutableListOf<Skill>()
+        val skills = mutableListOf<Skill>()
         try {
             context.forEachContent(ContentProviderUrl.SKILLS) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val desc = it.getStringOrNull(2)
-                val icon = it.getStringOrNull(3)
-                val order = it.getIntOrNull(4)
-                val color = it.getIntOrNull(5)
-                val exp = it.getIntOrNull(6)
-                val level = it.getIntOrNull(7)
-                val untilNextLevelExp = it.getIntOrNull(8)
-                val currentLevelExp = it.getIntOrNull(9)
-                val type = it.getIntOrNull(10)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val desc = it.getStringOrNull("desc")
+                val icon = it.getStringOrNull("icon")
+                val order = it.getIntOrNull("order")
+                val color = it.getIntOrNull("color")
+                val exp = it.getIntOrNull("exp")
+                val level = it.getIntOrNull("level")
+                val untilNextLevelExp = it.getIntOrNull("until_next_level_exp")
+                val currentLevelExp = it.getIntOrNull("current_level_exp")
+                val type = it.getIntOrNull("type")
 
-                categories.add(
+                skills.add(
                     Skill.builder {
                         setId(id)
                         setName(name ?: "ERROR: name is null")
@@ -46,6 +46,6 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
             return Result.failure(e)
         }
 
-        return Result.success(categories)
+        return Result.success(skills)
     }
 }

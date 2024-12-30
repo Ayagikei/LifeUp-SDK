@@ -1,40 +1,65 @@
 <resources>
-    <string name="app_name">云人升</string>
-    <string name="server_status">服务未启动...</string>
-    <string name="serverStartedMessage">服务器已开启</string>
-    <string name="ipAddressUnknown">未获取到 IP 地址 (没有连接到 WIFI?)</string>
-    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n%1$s\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP，服务端口为 13276。</string>
-    <string name="overlay_permission">悬浮窗权限</string>
-    <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
-    <string name="title_config">配置</string>
-    <string name="btn_config">配置</string>
-    <string name="ignore_battery_optimizations">忽略电池优化</string>
-    <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
-        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段。</string>
-    <string name="notification_channel_server">服务运行中</string>
-    <string name="title_server">服务</string>
-    <string name="switch_start_service">启动服务</string>
-    <string name="title_about">关于</string>
-    <string name="about_text"><![CDATA[这是个能让你的手机变成一台 HTTP 服务器的小工具。从而使得你能从局域网电脑上发送API命令（URL Scheme）到手机上，来触发<a href="https://www.lifeupapp.fun/">《人升》</a>应用的各种动作。
-<br/><br/><b># 它可以用于以下场景（需要额外的 Web、Python 等开发）:</b>
-<br/>1. 判断电脑上的使用时长、输入文本量、绘画时长来触发LifeUp应用的完成任务、奖励或者惩罚。<br/>还有你能通过电脑编程实现的一切！
+    <string name="app_name">雲人升</string>
+    <string name="server_status">服務未啟動...</string>
+    <string name="serverStartedMessage">伺服器已開啟</string>
+    <string name="ipAddressUnknown">未取得 IP 位址 (沒有連接到 WIFI?)</string>
+    <string name="app_introduction"><![CDATA[這是一個《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的擴充工具，能讓你從電腦或其他裝置控制人升。請確保你已經安裝了人升應用程式。]]></string>
+    <string name="localIpAddressMessage">連接到了以下IP（根據你的組網情況，這裡可能會出現多個分屬不同網段的IP位址，一般區域網路你應該選擇192.168.x.x形式的位址）：\n\n%1$s\n\n服務啟動後，你可以嘗試用處於相同 WIFI 下的電腦（瀏覽器）訪問該連結了！\n\n如果這裡顯示的 IP 位址不準確，你也可以前往 WIFI 設定確認你的本機 IP。</string>
+    <string name="overlay_permission">懸浮視窗權限</string>
+    <string name="overlay_permission_desc">授予權限以背景執行API（Android 10+）</string>
+    <string name="title_config">設定</string>
+    <string name="btn_config">設定</string>
+    <string name="title_introduction">介紹</string>
+    <string name="ignore_battery_optimizations">忽略電池最佳化</string>
+    <string name="ignore_battery_optimizations_desc">為了服務能保持穩定背景運行，你需要關閉電池最佳化。
+        \n\n並且除了該設定外，你還需要檢查各個廠商的額外電池最佳化手段（例如允許「自啟動」，以及在多工處鎖定 app）。</string>
+    <string name="notification_channel_server">服務運行中</string>
+    <string name="title_server">服務</string>
+    <string name="title_status">狀態</string>
+    <string name="status_permission">必要權限</string>
+    <string name="status_permission_overlay">懸浮視窗權限</string>
+    <string name="status_permission_overlay_granted">已取得懸浮視窗權限</string>
+    <string name="status_permission_overlay_missing">缺少懸浮視窗權限</string>
+    <string name="status_permission_battery">電池最佳化</string>
+    <string name="status_permission_battery_ignored">已忽略電池最佳化</string>
+    <string name="status_permission_battery_unknown">電池最佳化狀態未知（因廠商而異）</string>
+    <string name="status_permission_content_provider">人升資料存取</string>
+    <string name="status_lifeup">人升狀態</string>
+    <string name="status_server">服務狀態</string>
+    <string name="switch_start_service">啟動服務</string>
+    <string name="switch_cors">允許跨域存取 (CORS)</string>
+    <string name="title_about">關於</string>
+    <string name="about_text"><![CDATA[這是一個能將手機轉變為 API 伺服器的工具，讓你能透過 HTTP API 和 Content Provider 從其他裝置與《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互動。
+<br/><br/><b># 功能特色：</b>
+<br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 提供完整的遊戲化整合介面
+<br/>• 支援自訂開發和擴充：
+<br/>  - 建立自己的桌面端/網頁端
+<br/>  - 與其他應用程式和裝置聯動
+<br/>  - 設計自動化工作流程
+<br/>  - 開發獨特的遊戲化場景
 <br/>
-<br/>2. 实现简单的网页版本，从电脑网页上创建任务。
-<br/>
-<br/>3. 无限其他可能性…
-<br/>
-<br/><br/><b># 待办项：</b>
-<br/>目前它仍缺少查询接口，因此只能以触发动作为主，无法实现查询手机上的任务列表、属性经验值。
-<br/><br/>
-<br/><b># 开源：</b>
-<br/>这是开源项目 <a href="https://github.com/Ayagikei/LifeUp">https://github.com/Ayagikei/LifeUp</a>，欢迎向我们贡献代码。]]></string>
-    <string name="port_config">服务端口: %1$s</string>
-    <string name="content_provider_permission">读取「人升」数据权限</string>
-    <string name="content_provider_permission_desc">授权以便读取「人升」中的内部数据，如任务列表、商品列表等</string>
-    <string name="qrcode_scanning">正在扫描，请稍后...</string>
-    <string name="lifeup_status_unknown">《人升》的运行状态未知...\n请确定你已经授权了“读取「人升」数据权限”，并且《人升》正在运行</string>
-    <string name="lifeup_status_normal">《人升》正在成功运行中...</string>
-    <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
-    <string name="lifeup_status">人升状态</string>
+<br/><b># 開源專案：</b>
+<br/>這是一個開源專案，歡迎在 <a href="https://github.com/Ayagikei/LifeUp">GitHub</a> 上貢獻程式碼！]]></string>
+    <string name="port_config">服務埠口: %1$s</string>
+    <string name="content_provider_permission">讀取「人升」資料權限</string>
+    <string name="content_provider_permission_desc">授權以便讀取「人升」中的內部資料，如任務列表、商品列表等</string>
+    <string name="qrcode_scanning">正在掃描，請稍後...</string>
+    <string name="lifeup_status_unknown">《人升》的運行狀態未知...\n請確定你已經授權了"讀取「人升」資料權限"，並且《人升》正在背景運行。</string>
+    <string name="lifeup_status_normal">《人升》正在運行中, 已取得資料權限...</string>
+    <string name="lifeup_permission_granted">你已經成功取得了權限。</string>
+    <string name="lifeup_status">人升狀態</string>
     <string name="cloud_version">版本: %1$s</string>
+    <string name="title_advanced">進階設定</string>
+    <string name="title_document">文件</string>
+    <string name="wake_lock_duration">喚醒鎖定持續時間</string>
+    <string name="wake_lock_duration_desc">設定服務保持喚醒的時長（分鐘）。\n\n每次收到請求時會自動續期，所以通常不需要設定太長時間。\n\n範圍：1-60 分鐘</string>
+    <string name="wake_lock_duration_error">請輸入 1-60 之間的數字</string>
+    <string name="port_setting">服務埠口</string>
+    <string name="port_setting_desc">設定自訂服務埠口。\n\n留空則使用預設埠口（13276），並在埠口衝突時自動重試。\n\n範圍：1024-65535</string>
+    <string name="port_setting_error">請輸入 1024-65535 之間的數字</string>
+    <string name="port_setting_conflict">埠口 %1$d 已被佔用</string>
+    <string name="btn_save">儲存</string>
+    <string name="api_token_setting">存取權杖</string>
+    <string name="api_token_desc">設定存取權杖以保護您的伺服器。設定後，所有請求都必須在 Authorization 請求標頭中包含此權杖。</string>
 </resources>

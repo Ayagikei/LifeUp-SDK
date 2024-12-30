@@ -1,13 +1,15 @@
 package net.lifeupapp.lifeup.api.content.achievements
 
 import android.content.Context
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getLongOrNull
-import androidx.core.database.getStringOrNull
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.achievements.category.AchievementCategory
+import net.lifeupapp.lifeup.api.content.common.RewardItem
 import net.lifeupapp.lifeup.api.content.forEachContent
+import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
+import net.lifeupapp.lifeup.api.utils.getIntOrNull
+import net.lifeupapp.lifeup.api.utils.getLongOrNull
+import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class AchievementApi(private val context: Context) : ContentProviderApi {
 
@@ -15,15 +17,15 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
         val categories = mutableListOf<AchievementCategory>()
         try {
             context.forEachContent(ContentProviderUrl.ACHIEVEMENT_CATEGORIES) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val desc = it.getStringOrNull(2)
-                val icon = it.getStringOrNull(3)
-                val isAsc = it.getIntOrNull(4)
-                val sort = it.getStringOrNull(5)
-                val filter = it.getStringOrNull(6)
-                val order = it.getIntOrNull(7)
-                val type = it.getIntOrNull(8)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val desc = it.getStringOrNull("desc")
+                val icon = it.getStringOrNull("icon")
+                val isAsc = it.getIntOrNull("isAsc")
+                val sort = it.getStringOrNull("sort")
+                val filter = it.getStringOrNull("filter")
+                val order = it.getIntOrNull("order")
+                val type = it.getIntOrNull("type")
 
                 categories.add(
                     AchievementCategory.builder {
@@ -56,21 +58,23 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
         val achievements = mutableListOf<Achievement>()
         try {
             context.forEachContent(uri) {
-                val id = it.getLongOrNull(0)
-                val name = it.getStringOrNull(1)
-                val desc = it.getStringOrNull(2)
-                val icon = it.getStringOrNull(3)
-                val contentCategoryId = it.getLongOrNull(4)
-                val status = it.getIntOrNull(5)
-                val exp = it.getIntOrNull(6)
-                val coin = it.getLongOrNull(7)
-                val coinVariable = it.getLongOrNull(8)
-                val type = it.getIntOrNull(9)
-                val progress = it.getIntOrNull(10)
-                val order = it.getIntOrNull(11)
-                val itemId = it.getLongOrNull(12)
-                val itemAmount = it.getIntOrNull(13)
-                val unlockedTime = it.getLongOrNull(14)
+                val id = it.getLongOrNull("_ID")
+                val name = it.getStringOrNull("name")
+                val desc = it.getStringOrNull("desc")
+                val icon = it.getStringOrNull("icon")
+                val contentCategoryId = it.getLongOrNull("categoryId")
+                val status = it.getIntOrNull("status")
+                val exp = it.getIntOrNull("exp")
+                val coin = it.getLongOrNull("coin")
+                val coinVariable = it.getLongOrNull("coinVariable")
+                val type = it.getIntOrNull("type")
+                val progress = it.getIntOrNull("progress")
+                val order = it.getIntOrNull("order")
+                val itemId = it.getLongOrNull("itemId")
+                val itemAmount = it.getIntOrNull("itemAmount")
+                val unlockedTime = it.getLongOrNull("unlocked_time")
+                val itemsJson = it.getStringOrNull("items")
+                val items = itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
 
                 achievements.add(
                     Achievement.builder {
@@ -86,9 +90,10 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                         setType(type ?: 0)
                         setProgress(progress ?: 0)
                         setOrder(order ?: 0)
-                        setItemId(itemId ?: 0)
-                        setItemAmount(itemAmount ?: 0)
-                        setUnlockedTime(unlockedTime ?: 0)
+                        setItemId(itemId)
+                        setItemAmount(itemAmount)
+                        setUnlockedTime(unlockedTime)
+                        setItems(items)
                     }
                 )
             }

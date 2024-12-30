@@ -1,20 +1,20 @@
 package net.lifeupapp.lifeup.api.content.info
 
 import android.content.Context
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getStringOrNull
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
+import net.lifeupapp.lifeup.api.utils.getIntOrNull
+import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class InfoApi(private val context: Context) : ContentProviderApi {
 
     fun getInfo(): Result<Info> {
         try {
             context.forEachContent(ContentProviderUrl.INFO) {
-                val appVersion = it.getIntOrNull(0)
-                val appVersionName = it.getStringOrNull(1)
-                val apiVersion = it.getIntOrNull(2)
+                val appVersion = it.getIntOrNull("appVersion")
+                val appVersionName = it.getStringOrNull("appVersionName")
+                val apiVersion = it.getIntOrNull("apiVersion")
 
                 return Result.success(
                     Info.builder {

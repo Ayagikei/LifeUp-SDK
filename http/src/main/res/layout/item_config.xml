@@ -6,7 +6,7 @@
 
 
     <TextView
-        android:id="@id/tv_title"
+        android:id="@+id/tv_title"
         style="@style/Item_Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
 
 
     <TextView
-        android:id="@id/tv_desc"
+        android:id="@+id/tv_desc"
         style="@style/Item_Desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -32,14 +32,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_config"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_desc"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,14 +7,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.Val.LIFEUP_PACKAGE_NAME
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.achievements.AchievementApi
+import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
+import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
+import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.api.utils.isAppInstalled
 
@@ -37,16 +39,15 @@ object LifeUpApi : LifeUpApiDef {
             ItemsApi(appCtx),
             SkillsApi(appCtx),
             InfoApi(appCtx),
-            FeelingsApi(appCtx)
+            FeelingsApi(appCtx),
+            DataApi(appCtx),
+            SynthesisApi(appCtx),
+            PomodoroApi(appCtx)
         )
     }
 
     override fun isLifeUpInstalled(): Boolean {
         return isAppInstalled(appCtx, LIFEUP_PACKAGE_NAME)
-    }
-
-    override fun call(context: Context?, url: String) {
-        startApiActivity(context, url)
     }
 
     override fun requestContentProviderPermission(appName: String) {
@@ -109,7 +110,3 @@ object LifeUpApi : LifeUpApiDef {
     }
 }
 
-internal val json = Json {
-    ignoreUnknownKeys = true
-    isLenient = true
-}

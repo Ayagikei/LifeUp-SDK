@@ -18,16 +18,6 @@ interface LifeUpApiDef {
      */
     fun isLifeUpInstalled(): Boolean
 
-    /**
-     * call lifeup to open the [uri], which will not return any result
-     */
-    @Deprecated(
-        "use startApiActivity instead",
-        ReplaceWith(
-            "startApiActivity(url)", "net.lifeupapp.lifeup.api.LifeUpApi.startApiActivity"
-        )
-    )
-    fun call(context: Context?, url: String)
 
     /**
      * start the [url] in LifeUp
@@ -68,6 +58,7 @@ interface LifeUpApiDef {
      * @param method the method to call, for example, "query"
      * @param arg the argument to pass to the method, for example, "key=coin"
      */
+    @Throws(Exception::class)
     fun callApiWithContentProvider(method: String, arg: String): Bundle?
 
     /**

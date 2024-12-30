@@ -1,6 +1,7 @@
 package net.lifeupapp.lifeup.http.vo
 
 import kotlinx.serialization.Serializable
+import net.lifeupapp.lifeup.api.exception.CloudException
 
 @Serializable
 data class HttpResponse<T>(
@@ -16,12 +17,31 @@ data class HttpResponse<T>(
             return HttpResponse(SUCCESS, "success", data)
         }
 
-        fun <T> error(message: String): HttpResponse<T?> {
-            return HttpResponse(ERROR, message, null)
+        fun <T> error(message: String, code: Int = ERROR): HttpResponse<T?> {
+            return HttpResponse(code, message, null)
         }
 
         fun <T> error(throwable: Throwable): HttpResponse<T?> {
-            return HttpResponse(ERROR, throwable.message ?: "unknown error", null)
+            return when {
+                throwable is CloudException -> HttpResponse(
+                    throwable.errorCode,
+                    throwable.message ?: "Unknown error",
+                    null
+                )
+
+                throwable is IllegalArgumentException &&
+                        throwable.message?.contains("Unknown authority net.sarasarasa.lifeup.provider.api") == true -> HttpResponse(
+                    CloudException.ERROR_NULL_CURSOR,
+                    "Unknown authority net.sarasarasa.lifeup.provider.api, check if LifeUp is installed and running and you have granted the permission",
+                    null
+                )
+
+                else -> HttpResponse(
+                    ERROR,
+                    "${throwable.message}:\n\n${throwable.stackTraceToString()}",
+                    null
+                )
+            }
         }
     }
 }

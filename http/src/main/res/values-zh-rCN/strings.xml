@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">云人升</string>
+    <string name="server_status">服务未启动...</string>
+    <string name="serverStartedMessage">服务器已开启</string>
+    <string name="ipAddressUnknown">未获取到 IP 地址 (没有连接到 WIFI?)</string>
+    <string name="localIpAddressMessage">连接到了以下IP（根据你的组网情况，这里可能会出现多个分属不同网段的IP地址，一般局域网你应该选择192.168.x.x形式的地址）：\n\n%1$s\n\n服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP。</string>
+    <string name="overlay_permission">悬浮窗权限</string>
+    <string name="overlay_permission_desc">授予权限以后台执行API（Android 10+）</string>
+    <string name="title_config">配置</string>
+    <string name="btn_config">配置</string>
+    <string name="title_introduction">介绍</string>
+    <string name="ignore_battery_optimizations">忽略电池优化</string>
+    <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
+        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定 app）。</string>
+    <string name="notification_channel_server">服务运行中</string>
+    <string name="title_server">服务</string>
+    <string name="title_status">状态</string>
+    <string name="status_permission">必要权限</string>
+    <string name="status_permission_overlay">悬浮窗权限</string>
+    <string name="status_permission_overlay_granted">已获得悬浮窗权限</string>
+    <string name="status_permission_overlay_missing">缺少悬浮窗权限</string>
+    <string name="status_permission_battery">电池优化</string>
+    <string name="status_permission_battery_ignored">已忽略电池优化</string>
+    <string name="status_permission_battery_unknown">电池优化状态未知（因厂商而异）</string>
+    <string name="status_permission_content_provider">人升数据访问</string>
+    <string name="status_lifeup">人升状态</string>
+    <string name="status_server">服务状态</string>
+    <string name="switch_start_service">启动服务</string>
+    <string name="switch_cors">允许跨域访问 (CORS)</string>
+    <string name="title_about">关于</string>
+    <string name="about_text"><![CDATA[这是一个能将手机转变为 API 服务器的工具，让你能通过 HTTP API 和 Content Provider 从其他设备与《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互动。
+<br/><br/><b># 功能特性：</b>
+<br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 提供完整的游戏化集成接口
+<br/>• 支持自定义开发和扩展：
+<br/>  - 构建自己的桌面端/网页端
+<br/>  - 与其他应用和设备联动
+<br/>  - 设计自动化工作流
+<br/>  - 开发独特的游戏化场景
+<br/>
+<br/><b># 开源项目：</b>
+<br/>这是一个开源项目，欢迎在 <a href="https://github.com/Ayagikei/LifeUp">GitHub</a> 上贡献代码！]]></string>
+    <string name="port_config">服务端口: %1$s</string>
+    <string name="content_provider_permission">读取「人升」数据权限</string>
+    <string name="content_provider_permission_desc">授权以便读取「人升」中的内部数据，如任务列表、商品列表等</string>
+    <string name="qrcode_scanning">正在扫描，请稍后...</string>
+    <string name="lifeup_status_unknown">《人升》的运行状态未知...\n请确定你已经授权了“读取「人升」数据权限”，并且《人升》正在后台运行。</string>
+    <string name="lifeup_status_normal">《人升》正在运行中, 已取到数据权限...</string>
+    <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
+    <string name="lifeup_status">人升状态</string>
+    <string name="cloud_version">版本: %1$s</string>
+    <string name="title_advanced">高级设置</string>
+    <string name="title_document">文档</string>
+    <string name="wake_lock_duration">唤醒锁持续时间</string>
+    <string name="wake_lock_duration_desc">设置服务保持唤醒的时长（分钟）。\n\n每次收到请求时会自动续期，所以通常不需要设置太长时间。\n\n范围：1-60 分钟</string>
+    <string name="wake_lock_duration_error">请输入 1-60 之间的数字</string>
+    <string name="port_setting">服务端口</string>
+    <string name="port_setting_desc">设置自定义服务端口。\n\n留空则使用默认端口（13276），并在端口冲突时自动重试。\n\n范围：1024-65535</string>
+    <string name="port_setting_error">请输入 1024-65535 之间的数字</string>
+    <string name="port_setting_conflict">端口 %1$d 已被占用</string>
+    <string name="btn_save">保存</string>
+    <string name="api_token_setting">访问令牌</string>
+    <string name="api_token_desc">设置访问令牌以保护您的服务器。设置后，所有请求都必须在 Authorization 请求头中包含此令牌。</string>
+    <string name="app_introduction"><![CDATA[这是一个《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的扩展工具，能让你从电脑或其他设备控制人升。请确保你已经安装了人升应用。]]></string>
+</resources>

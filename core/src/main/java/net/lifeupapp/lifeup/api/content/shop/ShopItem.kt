@@ -13,7 +13,8 @@ data class ShopItem(
     val ownNumber: Int,
     val price: Long,
     val order: Int,
-    val disablePurchase: Boolean
+    val disablePurchase: Boolean,
+    val maxPurchaseNumber: Int?
 ) {
     class Builder {
         private var id: Long? = null
@@ -26,7 +27,7 @@ data class ShopItem(
         private var price: Long = 0
         private var order: Int = 0
         private var disablePurchase: Boolean = false
-
+        private var maxPurchaseNumber: Int? = null
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -38,6 +39,8 @@ data class ShopItem(
         fun setOrder(order: Int) = apply { this.order = order }
         fun setDisablePurchase(disablePurchase: Boolean) =
             apply { this.disablePurchase = disablePurchase }
+        fun setMaxPurchaseNumber(maxPurchaseNumber: Int?) =
+            apply { this.maxPurchaseNumber = maxPurchaseNumber }
 
         fun build(): ShopItem {
             return ShopItem(
@@ -50,7 +53,8 @@ data class ShopItem(
                 ownNumber = ownNumber,
                 price = price,
                 order = order,
-                disablePurchase = disablePurchase
+                disablePurchase = disablePurchase,
+                maxPurchaseNumber = maxPurchaseNumber
             )
         }
     }
