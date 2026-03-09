@@ -2,6 +2,7 @@ package net.lifeupapp.lifeup.api.content.tasks
 
 import android.content.Context
 import android.net.Uri
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
@@ -9,6 +10,7 @@ import net.lifeupapp.lifeup.api.content.common.RewardItem
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.tasks.category.TaskCategory
 import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
+import net.lifeupapp.lifeup.api.utils.getBooleanOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
@@ -22,7 +24,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
             context.forEachContent(ContentProviderUrl.TASKS_CATEGORIES) {
                 val id = it.getLongOrNull("_ID")
                 val name = it.getStringOrNull("name")
-                val isAsc = it.getIntOrNull("isAsc")
+                val isAsc = it.getBooleanOrNull("isAsc")
                 val sort = it.getStringOrNull("sort")
                 val filter = it.getStringOrNull("filter")
                 val order = it.getIntOrNull("order")
@@ -33,7 +35,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                     TaskCategory.builder {
                         setId(id)
                         setName(name ?: "ERROR: name is null")
-                        setIsAsc(isAsc == 1)
+                        setIsAsc(isAsc ?: false)
                         setSort(sort ?: "")
                         setFilter(filter ?: "")
                         setOrder(order ?: 0)
@@ -109,11 +111,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                                 itemsJson.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
                             )
                         }
-                        if (subTasksJson != null && subTasksJson.isNotBlank()) {
-                            setSubTasks(
-                                subTasksJson.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
-                            )
-                        }
+                        setSubTasks(parseSubTasksJson(subTasksJson))
                     }
                 )
             }
@@ -188,9 +186,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                         setItems(
                             itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
                         )
-                        setSubTasks(
-                            subTasksJson?.decodeFromStringOrNull<List<SubTask>>() ?: emptyList()
-                        )
+                        setSubTasks(parseSubTasksJson(subTasksJson))
                     }
                 )
             }
@@ -200,4 +196,43 @@ class TasksApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(tasks)
     }
+}
+
+@Serializable
+private data class ProviderSubTask(
+    val id: Long? = null,
+    val gid: Long? = null,
+    val todo: String = "",
+    val status: Int? = null,
+    val remindTime: Long? = null,
+    val exp: Int = 0,
+    val coin: Long? = null,
+    val coinVariable: Long? = null,
+    val items: List<RewardItem> = emptyList(),
+    val order: Int? = 0,
+    val autoUseItem: Boolean? = false
+)
+
+internal fun parseSubTasksJson(subTasksJson: String?): List<SubTask> {
+    if (subTasksJson.isNullOrBlank()) {
+        return emptyList()
+    }
+
+    return subTasksJson.decodeFromStringOrNull<List<ProviderSubTask>>()
+        ?.map {
+            SubTask(
+                id = it.id ?: 0L,
+                gid = it.gid ?: 0L,
+                todo = it.todo,
+                status = it.status ?: 0,
+                remindTime = it.remindTime,
+                exp = it.exp,
+                coin = it.coin,
+                coinVariable = it.coinVariable,
+                items = it.items,
+                order = it.order,
+                autoUseItem = it.autoUseItem
+            )
+        }
+        ?: emptyList()
 }

@@ -5,6 +5,7 @@ import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.content.shop.category.ShopCategory
+import net.lifeupapp.lifeup.api.utils.getBooleanOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
@@ -17,7 +18,7 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
             context.forEachContent(ContentProviderUrl.SHOP_CATEGORIES) {
                 val id = it.getLongOrNull("_ID")
                 val name = it.getStringOrNull("name")
-                val isAsc = it.getIntOrNull("isAsc")
+                val isAsc = it.getBooleanOrNull("isAsc")
                 val sort = it.getStringOrNull("sort")
                 val order = it.getIntOrNull("order")
 
@@ -25,7 +26,7 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                     ShopCategory.builder {
                         setId(id)
                         setName(name ?: "ERROR: name is null")
-                        setIsAsc(isAsc == 1)
+                        setIsAsc(isAsc ?: false)
                         setSort(sort ?: "")
                         setOrder(order ?: 0)
                     }
