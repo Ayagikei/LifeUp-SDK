@@ -17,12 +17,12 @@ def computeVersionCode(versionName) {
 
 android {
     namespace 'net.lifeupapp.lifeup.http'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "net.lifeupapp.lifeup.http"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionName "2.0.1"
         versionCode computeVersionCode(versionName)
 
@@ -41,16 +41,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
 
         coreLibraryDesugaringEnabled true
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     packagingOptions {
         jniLibs {
@@ -62,6 +63,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.13.1'
@@ -70,8 +75,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':core')
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5'
@@ -105,15 +110,14 @@ dependencies {
 
 
     implementation 'com.google.mlkit:barcode-scanning:17.3.0'
-    // CameraX core library using the camera2 implementation
-    def camerax_version = "1.0.0-rc03"
+    def cameraxVersion = "1.4.2"
     // The following line is optional, as the core library is included indirectly by camera-camera2
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-core:${cameraxVersion}"
+    implementation "androidx.camera:camera-camera2:${cameraxVersion}"
     // If you want to additionally use the CameraX Lifecycle library
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${cameraxVersion}"
     // If you want to additionally use the CameraX View class
-    implementation "androidx.camera:camera-view:1.3.4"
+    implementation "androidx.camera:camera-view:${cameraxVersion}"
 
     // implementation 'org.jmdns:jmdns:3.5.8'
 
