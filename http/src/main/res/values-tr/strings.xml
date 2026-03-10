@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">Hizmet çalışmıyor...</string>
+    <string name="serverStartedMessage">Sunucu başlatıldı</string>
+    <string name="serverStartingMessage">Sunucu başlatılıyor...</string>
+    <string name="serverStartFailedMessage">❌ Sunucu başlatılamadı: %1$s</string>
+    <string name="server_error_background_restricted">Android arka planda ön plan hizmeti başlatmayı engelledi. Uygulamayı açıp tekrar deneyin.</string>
+    <string name="server_error_unknown">Bilinmeyen başlatma hatası</string>
+    <string name="ipAddressUnknown">IP adresi yok (Wi-Fi bağlantısı var mı?)</string>
+    <string name="app_introduction"><![CDATA[Bu, <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> uygulaması için bir eklenti aracıdır. Bilgisayarınızdan veya diğer cihazlardan LifeUp uygulamasını kontrol etmenizi sağlar. Lütfen önce LifeUp uygulamasını kurduğunuzdan emin olun.]]></string>
+    <string name="localIpAddressMessage">Aşağıdaki IP adres(ler)ine bağlanıldı:\n%1$s\n\nAğ yapınıza bağlı olarak burada farklı ağ segmentlerine ait birden fazla IP adresi görünebilir. Genel yerel ağ kullanımında genellikle 192.168.x.x biçimindeki adresi seçmelisiniz.\nHizmet başladığında, aynı Wi-Fi ağına bağlı bilgisayarınızdan bunu açabilirsiniz.\n\nBurada görünen IP adresi doğru değilse yerel IP adresinizi Wi-Fi ayarlarından doğrulayabilirsiniz. Sunucu portu 13276 olarak ayarlanmıştır.</string>
+    <string name="overlay_permission">Üstte gösterme izni</string>
+    <string name="overlay_permission_desc">Arka plandan sayfa göstermek ve LifeUp API sayfalarını açmak için izin verin (Android 10+)</string>
+    <string name="title_introduction">Giriş</string>
+    <string name="title_config">Yapılandırma</string>
+    <string name="btn_config">AYARLA</string>
+    <string name="ignore_battery_optimizations">Pil optimizasyonlarını yok say</string>
+    <string name="ignore_battery_optimizations_desc">Hizmetin arka planda kararlı şekilde çalışması için pil optimizasyonunu kapatmanız gerekir.\n\nBuna ek olarak, çeşitli üreticilerin sunduğu ek pil optimizasyonu yöntemlerini de kontrol etmelisiniz (örneğin \"otomatik başlatma\" izni vermek ve uygulamayı çoklu görev ekranında kilitlemek).</string>
+    <string name="notification_channel_server">Sunucu çalışıyor</string>
+    <string name="title_server">Sunucu</string>
+    <string name="title_status">Durum</string>
+    <string name="status_permission">Gerekli izinler</string>
+    <string name="status_permission_overlay">Üstte gösterme izni</string>
+    <string name="status_permission_overlay_granted">Üstte gösterme izni verildi</string>
+    <string name="status_permission_overlay_missing">Üstte gösterme izni eksik</string>
+    <string name="status_permission_battery">Pil optimizasyonu</string>
+    <string name="status_permission_battery_ignored">Pil optimizasyonu yok sayıldı</string>
+    <string name="status_permission_battery_unknown">Pil optimizasyonu durumu bilinmiyor (üreticiye göre değişir)</string>
+    <string name="status_permission_content_provider">LifeUp veri erişimi</string>
+    <string name="status_lifeup">LifeUp durumu</string>
+    <string name="status_server">Sunucu durumu</string>
+    <string name="switch_start_service">Hizmeti başlat</string>
+    <string name="title_about">Hakkında</string>
+    <string name="about_text"><![CDATA[Bu, telefonunuzu bir API sunucusuna dönüştüren bir araç olup diğer cihazlardan HTTP API\'leri ve Content Provider üzerinden <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> ile etkileşim kurmanızı sağlar.
+<br/><br/><b># Özellikler:</b>
+<br/>• <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">resmi masaüstü istemcisi</a> ile çalışır
+<br/>• Tam oyun entegrasyonu için kapsamlı API\'ler sunar
+<br/>• Özel geliştirme ve uzantıları destekler:
+<br/>  - Kendi masaüstü/web istemcilerinizi oluşturma
+<br/>  - Diğer uygulamalar ve cihazlarla entegrasyonlar kurma
+<br/>  - Özel otomasyonlar ve iş akışları tasarlama
+<br/>  - Benzersiz oyunlaştırma senaryoları geliştirme
+<br/>
+<br/><b># Açık kaynak:</b>
+<br/>Bu proje <a href="https://github.com/Ayagikei/LifeUp">GitHub</a> üzerinde açık kaynaktır. Katkılarınız memnuniyetle karşılanır!]]></string>
+    <string name="port_config">Hizmet portu: %1$s</string>
+    <string name="content_provider_permission">Content Provider izni</string>
+    <string name="content_provider_permission_desc">LifeUp verilerini okumak için izin verin</string>
+    <string name="qrcode_scanning">Taranıyor...</string>
+    <string name="lifeup_status_unknown">LifeUp durumu bilinmiyor. LifeUp verilerini okuma iznini verdiğinizden ve LifeUp uygulamasının çalıştığından emin olun</string>
+    <string name="lifeup_status_normal">LifeUp çalışıyor, veri izni verildi...</string>
+    <string name="lifeup_permission_granted">İzni başarıyla aldınız.</string>
+    <string name="lifeup_status"><i>LifeUp</i> durumu</string>
+    <string name="cloud_version">Sürüm: %1$s</string>
+    <string name="switch_cors">Çoklu kaynak erişimine izin ver (CORS)</string>
+    <string name="title_advanced">Gelişmiş ayarlar</string>
+    <string name="title_document">Dokümantasyon</string>
+    <string name="wake_lock_duration">Wake Lock süresi</string>
+    <string name="wake_lock_duration_desc">Hizmetin ne kadar süre uyanık kalacağını ayarlayın (dakika).\n\nHer istek geldiğinde otomatik olarak yenilenir, bu nedenle genellikle çok uzun bir süre ayarlamanız gerekmez.\n\nAralık: 1-60 dakika</string>
+    <string name="wake_lock_duration_error">Lütfen 1 ile 60 arasında bir sayı girin</string>
+    <string name="port_setting">Sunucu portu</string>
+    <string name="port_setting_desc">Özel bir sunucu portu ayarlayın.\n\nBoş bırakırsanız varsayılan port (13276) kullanılır ve port çakışması olursa otomatik olarak yeniden denenir.\n\nAralık: 1024-65535</string>
+    <string name="port_setting_error">Lütfen 1024 ile 65535 arasında bir sayı girin</string>
+    <string name="port_setting_conflict">%1$d portu zaten kullanılıyor</string>
+    <string name="btn_save">Kaydet</string>
+    <string name="api_token_setting">API belirteci</string>
+    <string name="api_token_desc">Sunucunuzu korumak için bir API belirteci ayarlayın. Ayarlandığında tüm istekler Authorization başlığında bu belirteci içermelidir.</string>
+</resources>

@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">Le service ne fonctionne pas...</string>
+    <string name="serverStartedMessage">Serveur démarré</string>
+    <string name="serverStartingMessage">Démarrage du serveur...</string>
+    <string name="serverStartFailedMessage">❌ Échec du démarrage du serveur : %1$s</string>
+    <string name="server_error_background_restricted">Android a bloqué le démarrage du service au premier plan depuis l\'arrière-plan. Ouvrez l\'application puis réessayez.</string>
+    <string name="server_error_unknown">Erreur de démarrage inconnue</string>
+    <string name="ipAddressUnknown">Aucune adresse IP (connecté au Wi-Fi ?)</string>
+    <string name="app_introduction"><![CDATA[Il s\'agit d\'un outil d\'extension pour l\'application <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, qui vous permet de contrôler LifeUp depuis votre ordinateur ou d\'autres appareils. Assurez-vous d\'avoir installé LifeUp au préalable.]]></string>
+    <string name="localIpAddressMessage">Connecté aux adresses IP suivantes :\n%1$s\n\nSelon votre environnement réseau, plusieurs adresses IP appartenant à différents segments peuvent apparaître ici. Pour un réseau local classique, choisissez en général une adresse au format 192.168.x.x.\nUne fois le service démarré, vous pouvez l\'ouvrir depuis votre ordinateur connecté au même Wi-Fi.\n\nSi l\'adresse IP affichée ici n\'est pas correcte, vous pouvez aussi vérifier votre IP locale dans les réglages Wi-Fi. Le port du serveur est 13276.</string>
+    <string name="overlay_permission">Autorisation de superposition</string>
+    <string name="overlay_permission_desc">Accordez l\'autorisation pour afficher des pages depuis l\'arrière-plan et ouvrir les pages API de LifeUp (Android 10+)</string>
+    <string name="title_introduction">Présentation</string>
+    <string name="title_config">Configuration</string>
+    <string name="btn_config">CONFIG</string>
+    <string name="ignore_battery_optimizations">Ignorer les optimisations de batterie</string>
+    <string name="ignore_battery_optimizations_desc">Pour que le service reste stable en arrière-plan, vous devez désactiver l\'optimisation de la batterie.\n\nEn plus de ce réglage, vérifiez aussi les restrictions supplémentaires de certains fabricants (par exemple autoriser le démarrage automatique et verrouiller l\'application dans l\'écran multitâche).</string>
+    <string name="notification_channel_server">Serveur en cours d\'exécution</string>
+    <string name="title_server">Serveur</string>
+    <string name="title_status">Statut</string>
+    <string name="status_permission">Autorisations requises</string>
+    <string name="status_permission_overlay">Autorisation de superposition</string>
+    <string name="status_permission_overlay_granted">Autorisation de superposition accordée</string>
+    <string name="status_permission_overlay_missing">Autorisation de superposition manquante</string>
+    <string name="status_permission_battery">Optimisation de la batterie</string>
+    <string name="status_permission_battery_ignored">Optimisation de la batterie ignorée</string>
+    <string name="status_permission_battery_unknown">Statut de l\'optimisation de la batterie inconnu (varie selon le fabricant)</string>
+    <string name="status_permission_content_provider">Accès aux données LifeUp</string>
+    <string name="status_lifeup">Statut de LifeUp</string>
+    <string name="status_server">Statut du serveur</string>
+    <string name="switch_start_service">Démarrer le service</string>
+    <string name="title_about">À propos</string>
+    <string name="about_text"><![CDATA[Cet outil transforme votre téléphone en serveur API et vous permet d\'interagir avec <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> depuis d\'autres appareils via des API HTTP et le Content Provider.
+<br/><br/><b># Fonctionnalités :</b>
+<br/>• Compatible avec le <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">client de bureau officiel</a>
+<br/>• Fournit des API complètes pour une intégration avancée
+<br/>• Permet des développements et extensions personnalisés :
+<br/>  - Créer vos propres clients desktop/web
+<br/>  - Mettre en place des intégrations avec d\'autres applications et appareils
+<br/>  - Concevoir des automatisations et flux de travail sur mesure
+<br/>  - Développer des scénarios de gamification uniques
+<br/>
+<br/><b># Open source :</b>
+<br/>Ce projet est open source sur <a href="https://github.com/Ayagikei/LifeUp">GitHub</a>. Les contributions sont les bienvenues !]]></string>
+    <string name="port_config">Port du service : %1$s</string>
+    <string name="content_provider_permission">Autorisation du Content Provider</string>
+    <string name="content_provider_permission_desc">Accordez l\'autorisation de lire les données de LifeUp</string>
+    <string name="qrcode_scanning">Analyse en cours...</string>
+    <string name="lifeup_status_unknown">Le statut de LifeUp est inconnu. Vérifiez que vous avez autorisé la lecture des données de LifeUp et que LifeUp est en cours d\'exécution</string>
+    <string name="lifeup_status_normal">LifeUp est en cours d\'exécution, accès aux données accordé...</string>
+    <string name="lifeup_permission_granted">Vous avez obtenu l\'autorisation avec succès.</string>
+    <string name="lifeup_status">Statut de <i>LifeUp</i></string>
+    <string name="cloud_version">Version : %1$s</string>
+    <string name="switch_cors">Autoriser l\'accès inter-origines (CORS)</string>
+    <string name="title_advanced">Paramètres avancés</string>
+    <string name="title_document">Documentation</string>
+    <string name="wake_lock_duration">Durée du Wake Lock</string>
+    <string name="wake_lock_duration_desc">Définissez la durée pendant laquelle le service reste actif (en minutes).\n\nElle sera renouvelée automatiquement à chaque requête reçue, vous n\'avez donc généralement pas besoin de choisir une durée trop longue.\n\nPlage : 1 à 60 minutes</string>
+    <string name="wake_lock_duration_error">Veuillez saisir un nombre entre 1 et 60</string>
+    <string name="port_setting">Port du serveur</string>
+    <string name="port_setting_desc">Définissez un port de serveur personnalisé.\n\nLaissez vide pour utiliser le port par défaut (13276), avec nouvelle tentative automatique en cas de conflit.\n\nPlage : 1024 à 65535</string>
+    <string name="port_setting_error">Veuillez saisir un nombre entre 1024 et 65535</string>
+    <string name="port_setting_conflict">Le port %1$d est déjà utilisé</string>
+    <string name="btn_save">Enregistrer</string>
+    <string name="api_token_setting">Jeton API</string>
+    <string name="api_token_desc">Définissez un jeton API pour sécuriser votre serveur. Une fois défini, toutes les requêtes doivent inclure ce jeton dans l\'en-tête Authorization.</string>
+</resources>

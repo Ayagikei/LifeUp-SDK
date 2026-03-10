@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">Layanan tidak berjalan...</string>
+    <string name="serverStartedMessage">Server dimulai</string>
+    <string name="serverStartingMessage">Server sedang dimulai...</string>
+    <string name="serverStartFailedMessage">❌ Gagal memulai server: %1$s</string>
+    <string name="server_error_background_restricted">Android memblokir start layanan latar depan dari latar belakang. Buka aplikasi lalu coba lagi.</string>
+    <string name="server_error_unknown">Kesalahan startup tidak diketahui</string>
+    <string name="ipAddressUnknown">Tidak ada alamat IP (terhubung ke WiFi?)</string>
+    <string name="app_introduction"><![CDATA[Ini adalah alat ekstensi untuk <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> yang memungkinkan Anda mengontrol LifeUp dari komputer atau perangkat lain. Pastikan Anda sudah memasang LifeUp terlebih dahulu.]]></string>
+    <string name="localIpAddressMessage">Terhubung ke alamat IP berikut:\n%1$s\n\nSesuai kondisi jaringan Anda, beberapa alamat IP dari segmen jaringan yang berbeda mungkin muncul di sini. Untuk LAN biasa, sebaiknya pilih alamat dengan format 192.168.x.x.\nSaat layanan sudah berjalan, Anda dapat membukanya di komputer yang terhubung ke WiFi yang sama.\n\nJika alamat IP yang ditampilkan di sini tidak akurat, Anda juga dapat memeriksa pengaturan WiFi untuk melihat IP lokal perangkat dan port server 13276.</string>
+    <string name="overlay_permission">Izin overlay</string>
+    <string name="overlay_permission_desc">Berikan izin untuk menampilkan halaman dari latar belakang dan membuka halaman API LifeUp (Android 10+)</string>
+    <string name="title_introduction">Pengantar</string>
+    <string name="title_config">Konfigurasi</string>
+    <string name="btn_config">KONFIG</string>
+    <string name="ignore_battery_optimizations">Abaikan optimisasi baterai</string>
+    <string name="ignore_battery_optimizations_desc">Agar layanan tetap berjalan stabil di latar belakang, Anda perlu mematikan optimisasi baterai.
+        \n\nSelain pengaturan ini, Anda juga perlu memeriksa pembatasan baterai tambahan dari masing-masing produsen (seperti mengizinkan “mulai otomatis” dan mengunci aplikasi di layar multitugas).</string>
+    <string name="notification_channel_server">Server berjalan</string>
+    <string name="title_server">Server</string>
+    <string name="title_status">Status</string>
+    <string name="status_permission">Izin yang diperlukan</string>
+    <string name="status_permission_overlay">Izin overlay</string>
+    <string name="status_permission_overlay_granted">Izin overlay diberikan</string>
+    <string name="status_permission_overlay_missing">Izin overlay tidak ada</string>
+    <string name="status_permission_battery">Optimisasi baterai</string>
+    <string name="status_permission_battery_ignored">Optimisasi baterai diabaikan</string>
+    <string name="status_permission_battery_unknown">Status optimisasi baterai tidak diketahui (berbeda tiap produsen)</string>
+    <string name="status_permission_content_provider">Akses Data LifeUp</string>
+    <string name="status_lifeup">Status LifeUp</string>
+    <string name="status_server">Status server</string>
+    <string name="switch_start_service">Mulai layanan</string>
+    <string name="title_about">Tentang</string>
+    <string name="about_text"><![CDATA[Alat ini mengubah ponsel Anda menjadi server API, sehingga Anda dapat berinteraksi dengan <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> dari perangkat lain melalui HTTP API dan Content Provider.
+<br/><br/><b># Fitur:</b>
+<br/>• Bekerja dengan <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">klien desktop resmi</a>
+<br/>• Menyediakan API lengkap untuk integrasi penuh dengan game
+<br/>• Mendukung pengembangan dan ekstensi khusus:
+<br/>  - Membangun klien desktop / web Anda sendiri
+<br/>  - Membuat integrasi dengan aplikasi dan perangkat lain
+<br/>  - Merancang otomasi dan alur kerja khusus
+<br/>  - Mengembangkan skenario gamifikasi yang unik
+<br/>
+<br/><b># Sumber terbuka:</b>
+<br/>Ini adalah proyek open source di <a href="https://github.com/Ayagikei/LifeUp">GitHub</a>. Kontribusi sangat diterima!]]></string>
+    <string name="port_config">Port layanan: %1$s</string>
+    <string name="content_provider_permission">Izin Content Provider</string>
+    <string name="content_provider_permission_desc">Berikan izin untuk membaca data LifeUp</string>
+    <string name="qrcode_scanning">Memindai...</string>
+    <string name="lifeup_status_unknown">Status LifeUp tidak diketahui. Pastikan Anda sudah memberi izin untuk membaca data LifeUp dan LifeUp sedang berjalan</string>
+    <string name="lifeup_status_normal">LifeUp sedang berjalan, izin data diberikan...</string>
+    <string name="lifeup_permission_granted">Anda berhasil memperoleh izin.</string>
+    <string name="lifeup_status"><i>LifeUp</i> Status</string>
+    <string name="cloud_version">Versi: %1$s</string>
+    <string name="switch_cors">Izinkan Akses Lintas Asal (CORS)</string>
+    <string name="title_advanced">Pengaturan lanjutan</string>
+    <string name="title_document">Dokumentasi</string>
+    <string name="wake_lock_duration">Durasi Wake Lock</string>
+    <string name="wake_lock_duration_desc">Atur berapa lama layanan tetap aktif (dalam menit).\n\nDurasi ini akan diperbarui otomatis setiap kali ada permintaan yang diterima, jadi biasanya Anda tidak perlu mengaturnya terlalu lama.\n\nRentang: 1-60 menit</string>
+    <string name="wake_lock_duration_error">Masukkan angka antara 1-60</string>
+    <string name="port_setting">Port server</string>
+    <string name="port_setting_desc">Atur port server khusus.\n\nKosongkan untuk menggunakan port bawaan (13276) dengan percobaan ulang otomatis saat terjadi konflik port.\n\nRentang: 1024-65535</string>
+    <string name="port_setting_error">Masukkan angka antara 1024-65535</string>
+    <string name="port_setting_conflict">Port %1$d sudah digunakan</string>
+    <string name="btn_save">Simpan</string>
+    <string name="api_token_setting">Token API</string>
+    <string name="api_token_desc">Atur token API untuk melindungi server Anda. Jika disetel, semua permintaan harus menyertakan token ini di header Authorization.</string>
+</resources>
