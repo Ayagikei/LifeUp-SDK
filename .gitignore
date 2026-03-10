@@ -24,6 +24,12 @@ commit-prompt.txt
 *.aab
 *.ap_
 
+# Local Android/Gradle state
+/.android/
+/.gradle-home/
+/.kotlin/
+/firebase-debug.log
+
 # Local planning docs
 /docs/plan/
 /docs/plans/
