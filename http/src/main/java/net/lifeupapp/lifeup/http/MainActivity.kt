@@ -1,8 +1,11 @@
 package net.lifeupapp.lifeup.http
 
 import android.app.Activity
+import android.app.ForegroundServiceStartNotAllowedException
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +16,18 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
 import io.ktor.util.toLowerCasePreservingASCIIRules
@@ -49,6 +59,8 @@ class MainActivity : AppCompatActivity() {
     private val settings by lazy {
         net.lifeupapp.lifeup.http.utils.Settings.getInstance(this)
     }
+    private var latestRunningState = LifeUpService.RunningState.NOT_RUNNING
+    private var latestServiceError: Throwable? = null
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -63,12 +75,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // init view binding
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        setContentView(binding.root)
+        configureSystemBars()
+        bindEdgeToEdge()
 
-        // init the view logic
         initView()
     }
 
@@ -82,16 +94,18 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             launch {
                 KtorService.isRunning.collect { running ->
-                    if (running == LifeUpService.RunningState.RUNNING || running == LifeUpService.RunningState.STARTING) {
-                        binding.tvStatusServer.text =
-                            "✅ ${getString(R.string.serverStartedMessage)}"
-                        binding.switchStartService.isChecked = true
-                        binding.tvStatusServerIp.visibility = View.VISIBLE
-                    } else {
-                        binding.tvStatusServer.text = "❌ ${getString(R.string.server_status)}"
-                        binding.switchStartService.isChecked = false
-                        binding.tvStatusServerIp.visibility = View.GONE
+                    latestRunningState = running
+                    if (running == LifeUpService.RunningState.RUNNING) {
+                        latestServiceError = null
                     }
+                    renderServiceState()
+                }
+            }
+
+            launch {
+                KtorService.errorMessage.collect { throwable ->
+                    latestServiceError = throwable
+                    renderServiceState()
                 }
             }
 
@@ -199,6 +213,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.switchStartService.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView.isUserTriggeredCheckChange()) {
+                return@setOnCheckedChangeListener
+            }
+            latestServiceError = null
+            renderServiceState()
             if (isChecked) {
                 KtorService.start()
             } else {
@@ -273,6 +292,74 @@ class MainActivity : AppCompatActivity() {
 
         binding.tvAboutVersion.text = getString(R.string.cloud_version, BuildConfig.VERSION_NAME)
         binding.tvAboutDesc.setHtmlText(getString(R.string.about_text))
+    }
+
+    private fun bindEdgeToEdge() {
+        val contentTopPadding = binding.contentContainer.paddingTop
+        val contentBottomPadding = binding.contentContainer.paddingBottom
+        val contentLeftPadding = binding.contentContainer.paddingLeft
+        val contentRightPadding = binding.contentContainer.paddingRight
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.contentContainer.updatePadding(
+                left = contentLeftPadding + systemBarsInsets.left,
+                top = contentTopPadding + systemBarsInsets.top,
+                right = contentRightPadding + systemBarsInsets.right,
+                bottom = contentBottomPadding + systemBarsInsets.bottom
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
+    }
+
+    private fun configureSystemBars() {
+        window.statusBarColor = Color.TRANSPARENT
+        val isDarkTheme =
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                    Configuration.UI_MODE_NIGHT_YES
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+            !isDarkTheme
+    }
+
+    private fun renderServiceState() {
+        val isRunning = latestRunningState == LifeUpService.RunningState.RUNNING
+        val isStarting = latestRunningState == LifeUpService.RunningState.STARTING
+        val errorMessage = latestServiceError?.let(::getServiceErrorMessage)
+
+        val statusText = when {
+            isRunning -> "✅ ${getString(R.string.serverStartedMessage)}"
+            isStarting -> "⏳ ${getString(R.string.serverStartingMessage)}"
+            errorMessage != null -> getString(R.string.serverStartFailedMessage, errorMessage)
+            else -> "❌ ${getString(R.string.server_status)}"
+        }
+
+        binding.tvStatusServer.text = statusText
+        binding.tvStatusServerIp.isVisible = isRunning
+        binding.switchStartService.isEnabled = !isStarting
+        if (binding.switchStartService.isChecked != (isRunning || isStarting)) {
+            binding.switchStartService.isChecked = isRunning || isStarting
+        }
+    }
+
+    private fun getServiceErrorMessage(error: Throwable): String {
+        return when {
+            error is java.net.BindException && settings.customPort > 0 -> {
+                getString(R.string.port_setting_conflict, settings.customPort)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    error is ForegroundServiceStartNotAllowedException -> {
+                getString(R.string.server_error_background_restricted)
+            }
+
+            error.localizedMessage.isNullOrBlank() -> {
+                getString(R.string.server_error_unknown)
+            }
+
+            else -> {
+                error.localizedMessage!!
+            }
+        }
     }
 
     private fun updateLocalIpAddress() {
@@ -428,6 +515,10 @@ class MainActivity : AppCompatActivity() {
             KtorService.stop()
             KtorService.start()
         }
+    }
+
+    private fun CompoundButton.isUserTriggeredCheckChange(): Boolean {
+        return isPressed
     }
 
 }

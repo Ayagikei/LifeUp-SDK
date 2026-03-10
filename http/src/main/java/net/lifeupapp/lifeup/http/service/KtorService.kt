@@ -83,6 +83,22 @@ import java.util.logging.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
+internal fun resolveStartPort(customPort: Int, retryPortOverride: Int?): Int {
+    return retryPortOverride ?: if (customPort > 0) customPort else Settings.DEFAULT_PORT
+}
+
+internal fun nextAutoRetryPort(currentPort: Int): Int {
+    return if (currentPort + 1 > Settings.MAX_PORT) {
+        Settings.MIN_PORT
+    } else {
+        currentPort + 1
+    }
+}
+
+internal fun buildServerBaseUrl(host: String, port: Int): String {
+    return "http://$host:$port"
+}
+
 object KtorService : LifeUpService {
 
     private val _port = MutableStateFlow(Settings.DEFAULT_PORT)
@@ -107,28 +123,6 @@ object KtorService : LifeUpService {
     override val errorMessage: StateFlow<Throwable?>
         get() = _errorMessage
 
-    init {
-        scope.launch {
-            _isRunning.collect {
-                logger.info("KtorService is running: $it")
-                when (it) {
-                    LifeUpService.RunningState.RUNNING -> {
-                        ServerNotificationService.start(appCtx)
-                        val duration = Settings.getInstance(appCtx).wakeLockDuration
-                        wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
-                        mDnsService.registerNsdService(port.value)
-                    }
-                    LifeUpService.RunningState.NOT_RUNNING -> {
-                        ServerNotificationService.cancel(appCtx)
-                        wakeLockManager.release()
-                        mDnsService.unregisterNsdService()
-                    }
-                    else -> {}
-                }
-            }
-        }
-    }
-
     private val RequestMoreWakeLockPlugin =
         createApplicationPlugin(name = "RequestMoreWakeLockPlugin") {
             onCall { _ ->
@@ -142,7 +136,12 @@ object KtorService : LifeUpService {
         }
 
     override fun start() {
+        startInternal()
+    }
+
+    private fun startInternal(portOverride: Int? = null) {
         scope.launch(Dispatchers.IO) {
+            var retryWithNextPort: Int? = null
             mutex.withLock {
                 if (_isRunning.value != LifeUpService.RunningState.NOT_RUNNING || isStarting) {
                     logger.info("Server is already running or starting")
@@ -152,8 +151,12 @@ object KtorService : LifeUpService {
                 _errorMessage.value = null
                 _isRunning.value = LifeUpService.RunningState.STARTING
             }
+            val customPort = Settings.getInstance(appCtx).customPort
+            val startPort = resolveStartPort(customPort = customPort, retryPortOverride = portOverride)
 
             try {
+                ServerNotificationService.start(appCtx)
+
                 // 确保之前的服务完全停止
                 server?.stop(1000, 2000)
                 server = null
@@ -161,9 +164,8 @@ object KtorService : LifeUpService {
                 // 等待一小段时间确保端口释放
                 delay(500)
 
-                // 设置端口
-                val customPort = Settings.getInstance(appCtx).customPort
-                _port.value = if (customPort > 0) customPort else Settings.DEFAULT_PORT
+                // 设置端口；自动重试时优先使用覆盖端口，避免每次都被默认端口重置。
+                _port.value = startPort
 
                 // 创建并启动新服务
                 server = createServer()
@@ -177,6 +179,10 @@ object KtorService : LifeUpService {
                 }
 
                 if (isServerResponding()) {
+                    _errorMessage.value = null
+                    val duration = Settings.getInstance(appCtx).wakeLockDuration
+                    wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                    mDnsService.registerNsdService(port.value)
                     _isRunning.value = LifeUpService.RunningState.RUNNING
                 } else {
                     throw Exception("Server failed to start after multiple retries")
@@ -187,17 +193,20 @@ object KtorService : LifeUpService {
                 _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
                 server?.stop(1000, 2000)
                 server = null
+                ServerNotificationService.cancel(appCtx)
+                wakeLockManager.release()
+                mDnsService.unregisterNsdService()
 
                 // 如果是端口被占用，且没有使用自定义端口，尝试使用下一个端口
-                if (e is java.net.BindException && Settings.getInstance(appCtx).customPort == 0) {
-                    _port.value = port.value + 1
-                    if (port.value > Settings.MAX_PORT) {
-                        _port.value = Settings.MIN_PORT
-                    }
-                    start() // 递归尝试下一个端口
+                if (e is java.net.BindException && customPort == 0) {
+                    retryWithNextPort = nextAutoRetryPort(startPort)
                 }
             } finally {
                 isStarting = false
+            }
+
+            retryWithNextPort?.let { nextPort ->
+                startInternal(nextPort)
             }
         }
     }
@@ -213,9 +222,13 @@ object KtorService : LifeUpService {
             }
 
             try {
-                _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
                 server?.stop(1000, 2000)
                 server = null
+                ServerNotificationService.cancel(appCtx)
+                wakeLockManager.release()
+                mDnsService.unregisterNsdService()
+                _errorMessage.value = null
+                _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
 
                 // 等待一小段时间确保资源释放
                 delay(500)
@@ -285,6 +298,7 @@ object KtorService : LifeUpService {
         routing {
             get("/") {
                 val localAddressIp = getIpAddressInLocalNetwork() ?: "UNKNOWN"
+                val serverBaseUrl = buildServerBaseUrl(localAddressIp, port.value)
                 call.respondText(ContentType.Text.Html) {
                     buildString {
                         appendHTML().html {
@@ -301,17 +315,17 @@ object KtorService : LifeUpService {
                                     +"GET request"
                                 }
                                 p {
-                                    +"http://$localAddressIp:$port/api?url=YOUR_ENCODED_API_URL"
+                                    +"$serverBaseUrl/api?url=YOUR_ENCODED_API_URL"
                                 }
                                 p {
                                     +"you can send the get request to call in directly, but you need to encode the API like this: "
                                 }
                                 p {
                                     a(
-                                        href = "http://$localAddressIp:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1",
+                                        href = "$serverBaseUrl/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1",
                                         target = "_blank"
                                     ) {
-                                        +"http://$localAddressIp:$port/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1"
+                                        +"$serverBaseUrl/api?url=lifeup%3A%2F%2Fapi%2Freward%3Ftype%3Dcoin%26content%3DCall%20LifeUp%20API%20from%20HTTP%26number%3D1"
                                     }
                                 }
                                 div()
@@ -319,7 +333,7 @@ object KtorService : LifeUpService {
                                     +"POST request"
                                 }
                                 p {
-                                    +"http://${localAddressIp}$port/api"
+                                    +"$serverBaseUrl/api"
                                 }
                                 p {
                                     +"or you can POST it the below URL with 'application/json' content type and the body is a json string like this: "
