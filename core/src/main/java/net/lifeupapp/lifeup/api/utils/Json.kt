@@ -4,7 +4,7 @@ import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.BuildConfig
 
 /**
- * 安全地解析 JSON 字符串为指定类型,解析失败时返回 null
+ * Safely decode a JSON string into the requested type and return null on failure.
  */
 inline fun <reified T> String.decodeFromStringOrNull(): T? {
     val result = runCatching {

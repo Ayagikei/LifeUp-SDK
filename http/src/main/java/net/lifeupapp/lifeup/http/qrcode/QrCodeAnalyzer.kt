@@ -15,7 +15,7 @@ class QRCodeAnalyser(private val listener: (Barcode, Int, Int) -> Unit) : ImageA
         const val TAG = "BarcodeScanningActivity"
     }
 
-    // config the current scan code format
+    // Limit scanning to the formats supported by the entry flow.
     private val options = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(
             Barcode.FORMAT_QR_CODE,
@@ -35,7 +35,7 @@ class QRCodeAnalyser(private val listener: (Barcode, Int, Int) -> Unit) : ImageA
             .addOnSuccessListener { barCodes ->
                 if (barCodes.size > 0) {
                     listener.invoke(barCodes[0], imageProxy.width, imageProxy.height)
-                    // 接收到结果后，就关闭解析
+                    // Stop further decoding once a result has been delivered.
                     detector.close()
                 }
             }

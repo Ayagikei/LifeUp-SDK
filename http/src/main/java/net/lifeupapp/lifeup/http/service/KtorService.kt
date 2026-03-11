@@ -157,21 +157,21 @@ object KtorService : LifeUpService {
             try {
                 ServerNotificationService.start(appCtx)
 
-                // 确保之前的服务完全停止
+                // Fully stop any previous server instance before recreating it.
                 server?.stop(1000, 2000)
                 server = null
 
-                // 等待一小段时间确保端口释放
+                // Give the OS a moment to release the previous port binding.
                 delay(500)
 
-                // 设置端口；自动重试时优先使用覆盖端口，避免每次都被默认端口重置。
+                // Prefer the retry override so automatic retries do not fall back to the default port.
                 _port.value = startPort
 
-                // 创建并启动新服务
+                // Create and start the new server instance.
                 server = createServer()
                 server?.start(wait = false)
 
-                // 等待服务器启动
+                // Poll briefly until the server starts responding.
                 var retryCount = 0
                 while (!isServerResponding() && retryCount < 5) {
                     delay(500)
@@ -197,7 +197,7 @@ object KtorService : LifeUpService {
                 wakeLockManager.release()
                 mDnsService.unregisterNsdService()
 
-                // 如果是端口被占用，且没有使用自定义端口，尝试使用下一个端口
+                // Retry on the next port only when automatic port selection is in use.
                 if (e is java.net.BindException && customPort == 0) {
                     retryWithNextPort = nextAutoRetryPort(startPort)
                 }
@@ -230,7 +230,7 @@ object KtorService : LifeUpService {
                 _errorMessage.value = null
                 _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
 
-                // 等待一小段时间确保资源释放
+                // Give the runtime a moment to release networking resources.
                 delay(500)
             } catch (e: Exception) {
                 logger.log(Level.SEVERE, "Error stopping server", e)
@@ -276,7 +276,7 @@ object KtorService : LifeUpService {
             }
         }
 
-        // 添加 API Token 验证
+        // Enforce the optional API token before dispatching request handlers.
         val apiToken = Settings.getInstance(appCtx).apiToken
         if (apiToken.isNotBlank()) {
             install(createApplicationPlugin("ApiTokenValidation") {
@@ -447,7 +447,7 @@ object KtorService : LifeUpService {
                             val tempFile = File(appCtx.externalCacheDir, fileName)
                             tempFile.writeBytes(fileBytes)
 
-                            // 使用 FileProvider 创建内容 URI
+                            // Use FileProvider so external apps can read the exported file safely.
                             val contentUri = tempFile.getUriForFile()
                             uploadedFiles.add(contentUri)
                         }
@@ -738,7 +738,7 @@ object KtorService : LifeUpService {
                             setDataAndType(contentUri, "application/octet-stream")
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            setPackage(Val.LIFEUP_PACKAGE_NAME) // 设置目标应用的包名
+                            setPackage(Val.LIFEUP_PACKAGE_NAME) // Target the LifeUp app explicitly.
                         }
                         appCtx.startActivity(intent)
                         call.respond(HttpResponse.success("File uploaded and BackupActivity launched"))

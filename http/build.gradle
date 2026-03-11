@@ -7,7 +7,7 @@ plugins {
 def computeVersionCode(versionName) {
     def (major, minor, patch) = versionName.tokenize('.')
 
-    // 验证每部分都不超过99
+    // Keep each version segment within two digits so the packed versionCode stays stable.
     assert major.toInteger() <= 99: "Major version cannot exceed 99"
     assert minor.toInteger() <= 99: "Minor version cannot exceed 99"
     assert patch.toInteger() <= 99: "Patch version cannot exceed 99"

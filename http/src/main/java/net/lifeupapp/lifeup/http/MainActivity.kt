@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 监听端口变化
+            // Keep the IP summary aligned with the active server port.
             launch {
                 KtorService.port.collect { port ->
                     if (port > 0) {
@@ -121,14 +121,14 @@ class MainActivity : AppCompatActivity() {
             binding.tvIntroduction.movementMethod = LinkMovementMethod.getInstance()
             binding.tvIntroduction.setHtmlText(getString(R.string.app_introduction))
 
-            // 添加保存按钮
+            // Save all advanced settings in one action.
             binding.btnSaveAdvanced.setOnClickListener {
                 validateAndSaveWakeLockDuration()
                 validateAndSavePortSetting()
                 validateAndSaveApiToken()
             }
 
-            // 初始化高级设置
+            // Initialize the advanced settings form.
             binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
             binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化 API Token
+            // Initialize the API token input.
             binding.apiTokenInput.setText(settings.apiToken)
             binding.apiTokenInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -144,18 +144,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化跨域开关状态
+            // Initialize the CORS toggle.
             binding.switchCors.isChecked = settings.enableCors
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableCors = isChecked
-                // 如果服务正在运行，重启服务以应用新设置
+                // Restart the service so the new setting takes effect immediately.
                 if (binding.switchStartService.isChecked) {
                     KtorService.stop()
                     KtorService.start()
                 }
             }
 
-            // 设置折叠面板
+            // Configure the expandable sections.
             setupExpandablePanel(
                 binding.advancedHeader,
                 binding.btnToggleAdvanced,
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                 binding.cardAbout
             )
 
-            // 设置文档点击事件
+            // Route both documentation entry points to the same action.
             binding.documentHeader.setOnClickListener {
                 openDocumentation()
             }
@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化端口设置
+            // Initialize the port input.
             binding.portSettingInput.setText(
                 if (settings.customPort > 0)
                     settings.customPort.toString()
@@ -342,6 +342,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getServiceErrorMessage(error: Throwable): String {
+        val localizedMessage = error.localizedMessage
         return when {
             error is java.net.BindException && settings.customPort > 0 -> {
                 getString(R.string.port_setting_conflict, settings.customPort)
@@ -352,12 +353,12 @@ class MainActivity : AppCompatActivity() {
                 getString(R.string.server_error_background_restricted)
             }
 
-            error.localizedMessage.isNullOrBlank() -> {
+            localizedMessage.isNullOrBlank() -> {
                 getString(R.string.server_error_unknown)
             }
 
             else -> {
-                error.localizedMessage!!
+                localizedMessage
             }
         }
     }
@@ -376,7 +377,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePermissionStatus() {
-        // 检查悬浮窗权限
+        // Check the overlay permission state.
         val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             android.provider.Settings.canDrawOverlays(this)
         } else {
@@ -388,7 +389,7 @@ class MainActivity : AppCompatActivity() {
             "❌ ${getString(R.string.status_permission_overlay_missing)}"
         }
 
-        // 检查电池优化权限
+        // Check whether battery optimizations are disabled for this app.
         val hasBatteryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             powerManager.isIgnoringBatteryOptimizations(packageName)
         } else {
@@ -489,7 +490,7 @@ class MainActivity : AppCompatActivity() {
         if (port != null && port in net.lifeupapp.lifeup.http.utils.Settings.MIN_PORT..net.lifeupapp.lifeup.http.utils.Settings.MAX_PORT) {
             settings.customPort = port
             binding.portSettingLayout.error = null
-            // 如果服务正在运行，需要重启服务以应用新端口
+            // Restart the service so the new port is applied immediately.
             if (binding.switchStartService.isChecked) {
                 KtorService.stop()
                 KtorService.start()
@@ -510,7 +511,7 @@ class MainActivity : AppCompatActivity() {
         settings.apiToken = input
         binding.apiTokenLayout.error = null
 
-        // 如果服务正在运行，需要重启服务以应用新设置
+        // Restart the service so the new token is applied immediately.
         if (binding.switchStartService.isChecked) {
             KtorService.stop()
             KtorService.start()
