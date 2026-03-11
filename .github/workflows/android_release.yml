@@ -28,35 +28,44 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Prepare release keystore
+        run: |
+          test -n "${{ secrets.SIGNING_KEY }}"
+          test -n "${{ secrets.ALIAS }}"
+          test -n "${{ secrets.KEY_STORE_PASSWORD }}"
+          test -n "${{ secrets.KEY_PASSWORD }}"
+          echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > "$RUNNER_TEMP/release-keystore.jks"
+
       - name: Build AAB
+        env:
+          SIGNING_STORE_FILE: ${{ runner.temp }}/release-keystore.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew http:bundleRelease
 
       - name: Verify 16 KB native alignment
         run: bash scripts/check-16kb-alignment.sh
 
-      - name: Sign AAB
-        id: sign
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: http/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "35.0.0"
+      - name: Verify bundle certificate
+        run: |
+          keytool -printcert -jarfile http/build/outputs/bundle/release/http-release.aab | tee /tmp/release-bundle-cert.txt
+          if grep -q "Android Debug" /tmp/release-bundle-cert.txt; then
+            echo "Release bundle is still signed with the Android Debug key." >&2
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: ${{steps.sign.outputs.signedReleaseFile}}
+          path: http/build/outputs/bundle/release/http-release.aab
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{steps.sign.outputs.signedReleaseFile}}
+          files: http/build/outputs/bundle/release/http-release.aab
           prerelease: true
           generate_release_notes: true
         env:
@@ -68,6 +77,6 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: net.lifeupapp.lifeup.http
-          releaseFiles: ${{steps.sign.outputs.signedReleaseFile}}
+          releaseFiles: http/build/outputs/bundle/release/http-release.aab
           track: internal
           status: draft

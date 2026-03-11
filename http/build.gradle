@@ -4,6 +4,31 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
+def envOrProperty = { String envName, String propertyName = envName ->
+    def envValue = System.getenv(envName)
+    if (envValue != null && !envValue.trim().isEmpty()) {
+        return envValue
+    }
+    if (project.hasProperty(propertyName)) {
+        def propertyValue = project.property(propertyName)?.toString()
+        if (propertyValue != null && !propertyValue.trim().isEmpty()) {
+            return propertyValue
+        }
+    }
+    return null
+}
+
+def releaseStoreFilePath = envOrProperty('SIGNING_STORE_FILE', 'signingStoreFile')
+def releaseStorePassword = envOrProperty('SIGNING_STORE_PASSWORD', 'signingStorePassword')
+def releaseKeyAlias = envOrProperty('SIGNING_KEY_ALIAS', 'signingKeyAlias')
+def releaseKeyPassword = envOrProperty('SIGNING_KEY_PASSWORD', 'signingKeyPassword')
+def hasReleaseSigning = [
+    releaseStoreFilePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+].every { it != null }
+
 def computeVersionCode(versionName) {
     def (major, minor, patch) = versionName.tokenize('.')
 
@@ -18,6 +43,19 @@ def computeVersionCode(versionName) {
 android {
     namespace 'net.lifeupapp.lifeup.http'
     compileSdk 35
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseStoreFilePath)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            } else {
+                initWith(signingConfigs.debug)
+            }
+        }
+    }
 
     defaultConfig {
         applicationId "net.lifeupapp.lifeup.http"
@@ -37,7 +75,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
