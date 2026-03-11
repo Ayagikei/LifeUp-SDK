@@ -1,9 +1,9 @@
 package net.lifeupapp.lifeup.api.content.tasks
 
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import net.lifeupapp.lifeup.api.content.ContentProviderApi
 import net.lifeupapp.lifeup.api.content.ContentProviderUrl
 import net.lifeupapp.lifeup.api.content.common.RewardItem
@@ -61,59 +61,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 }
             }
             context.forEachContent(uri) {
-                val id = it.getLongOrNull("_ID")
-                val gid = it.getLongOrNull("_GID")
-                val name = it.getStringOrNull("name")
-                val notes = it.getStringOrNull("notes")
-                val status = it.getIntOrNull("status")
-                val startTime = it.getLongOrNull("startTime")
-                val deadline = it.getLongOrNull("deadline")
-                val remindTime = it.getLongOrNull("remindTime")
-                val frequency = it.getIntOrNull("frequency")
-                val exp = it.getIntOrNull("exp")
-                val skillIds = it.getStringOrNull("skillIds")
-                val coin = it.getLongOrNull("coin")
-                val coinVariable = it.getLongOrNull("coinVariable")
-                val itemId = it.getLongOrNull("itemId")
-                val itemAmount = it.getIntOrNull("itemCount")
-                val words = it.getStringOrNull("words")
-                val itemCategoryId = it.getLongOrNull("categoryId")
-                val order = it.getIntOrNull("order")
-                val nameExtended = it.getStringOrNull("name_extended")
-                val itemsJson = it.getStringOrNull("items")
-                val subTasksJson = it.getStringOrNull("subTasks")
-
-                tasks.add(
-                    Task.builder {
-                        setId(id)
-                        setGid(gid)
-                        setName(name ?: "ERROR: name is null")
-                        setNotes(notes ?: "")
-                        setStatus(status ?: 0)
-                        setStartTime(startTime ?: 0)
-                        setDeadline(deadline ?: 0)
-                        setRemindTime(remindTime ?: 0)
-                        setFrequency(frequency ?: 0)
-                        setExp(exp ?: 0)
-                        json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
-                            setSkillIds(it)
-                        }
-                        setCoin(coin ?: 0L)
-                        setCoinVariable(coinVariable ?: 0L)
-                        setItemId(itemId ?: 0)
-                        setItemAmount(itemAmount ?: 0)
-                        setWords(words ?: "")
-                        setCategoryId(itemCategoryId)
-                        setOrder(order ?: 0)
-                        setNameExtended(nameExtended ?: "")
-                        if (itemsJson != null && itemsJson.isNotBlank()) {
-                            setItems(
-                                itemsJson.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
-                            )
-                        }
-                        setSubTasks(parseSubTasksJson(subTasksJson))
-                    }
-                )
+                tasks.add(it.toTask(includeEndTime = false, includeRepeatEndCondition = true))
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -140,55 +88,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
                 .build()
 
             context.forEachContent(uri.toString()) {
-                val id = it.getLongOrNull("_ID")
-                val gid = it.getLongOrNull("_GID")
-                val name = it.getStringOrNull("name")
-                val notes = it.getStringOrNull("notes")
-                val status = it.getIntOrNull("status")
-                val startTime = it.getLongOrNull("startTime")
-                val deadline = it.getLongOrNull("deadline")
-                val remindTime = it.getLongOrNull("remindTime")
-                val frequency = it.getIntOrNull("frequency")
-                val exp = it.getIntOrNull("exp")
-                val skillIds = it.getStringOrNull("skillIds")
-                val coin = it.getLongOrNull("coin")
-                val coinVariable = it.getLongOrNull("coinVariable")
-                val itemId = it.getLongOrNull("itemId")
-                val itemAmount = it.getIntOrNull("itemCount")
-                val words = it.getStringOrNull("words")
-                val categoryId = it.getLongOrNull("categoryId")
-                val endTime = it.getLongOrNull("endTime")
-                val itemsJson = it.getStringOrNull("items")
-                val subTasksJson = it.getStringOrNull("subTasks")
-
-                tasks.add(
-                    Task.builder {
-                        setId(id)
-                        setGid(gid)
-                        setName(name ?: "ERROR: name is null")
-                        setNotes(notes ?: "")
-                        setStatus(status ?: 0)
-                        setStartTime(startTime ?: 0)
-                        setDeadline(deadline ?: 0)
-                        setRemindTime(remindTime ?: 0)
-                        setFrequency(frequency ?: 0)
-                        setExp(exp ?: 0)
-                        Json.decodeFromString<List<Long>?>(skillIds ?: "[]")?.let {
-                            setSkillIds(it)
-                        }
-                        setCoin(coin ?: 0L)
-                        setCoinVariable(coinVariable ?: 0L)
-                        setItemId(itemId ?: 0)
-                        setItemAmount(itemAmount ?: 0)
-                        setWords(words ?: "")
-                        setCategoryId(categoryId)
-                        setEndTime(endTime ?: 0)
-                        setItems(
-                            itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
-                        )
-                        setSubTasks(parseSubTasksJson(subTasksJson))
-                    }
-                )
+                tasks.add(it.toTask(includeEndTime = true, includeRepeatEndCondition = false))
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -196,6 +96,121 @@ class TasksApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(tasks)
     }
+}
+
+private fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Boolean): Task {
+    val id = getLongOrNull("_ID")
+    val gid = getLongOrNull("_GID")
+    val name = getStringOrNull("name")
+    val notes = getStringOrNull("notes")
+    val status = getIntOrNull("status")
+    val startTime = getLongOrNull("startTime")
+    val deadline = getLongOrNull("deadline")
+    val remindTime = getLongOrNull("remindTime")
+    val frequency = getIntOrNull("frequency")
+    val exp = getIntOrNull("exp")
+    val skillIds = getStringOrNull("skillIds")
+    val coin = getLongOrNull("coin")
+    val coinVariable = getLongOrNull("coinVariable")
+    val itemId = getLongOrNull("itemId")
+    val itemAmount = getIntOrNull("itemCount")
+    val words = getStringOrNull("words")
+    val categoryId = getLongOrNull("categoryId")
+    val order = getIntOrNull("order")
+    val nameExtended = getStringOrNull("name_extended")
+    val endTime = if (includeEndTime) getLongOrNull("endTime") else null
+    val itemsJson = getStringOrNull("items")
+    val subTasksJson = getStringOrNull("subTasks")
+    val countProgress = buildCountProgress(
+        currentCount = getIntOrNull("countProgressCurrent"),
+        targetCount = getIntOrNull("countProgressTarget")
+    )
+    val repeatEndCondition = if (includeRepeatEndCondition) {
+        buildRepeatEndCondition(
+            mode = getStringOrNull("repeatEndMode"),
+            behavior = getStringOrNull("repeatEndBehavior"),
+            targetCycleCount = getIntOrNull("repeatEndTargetCycleCount"),
+            endDateMillis = getLongOrNull("repeatEndDateMillis"),
+            inclusive = getBooleanOrNull("repeatEndInclusive")
+        )
+    } else {
+        null
+    }
+
+    return Task.builder {
+        setId(id)
+        setGid(gid)
+        setName(name ?: "ERROR: name is null")
+        setNotes(notes ?: "")
+        setStatus(status ?: 0)
+        setStartTime(startTime ?: 0)
+        setDeadline(deadline ?: 0)
+        setRemindTime(remindTime ?: 0)
+        setFrequency(frequency ?: 0)
+        setExp(exp ?: 0)
+        setSkillIds(parseSkillIds(skillIds))
+        setCoin(coin ?: 0L)
+        setCoinVariable(coinVariable ?: 0L)
+        setItemId(itemId ?: 0)
+        setItemAmount(itemAmount ?: 0)
+        setWords(words ?: "")
+        setCategoryId(categoryId)
+        setOrder(order ?: 0)
+        setNameExtended(nameExtended ?: "")
+        setEndTime(endTime ?: 0)
+        setItems(itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList())
+        setSubTasks(parseSubTasksJson(subTasksJson))
+        setCountProgress(countProgress)
+        setRepeatEndCondition(repeatEndCondition)
+    }
+}
+
+internal fun buildCountProgress(currentCount: Int?, targetCount: Int?): TaskCountProgress? {
+    if (currentCount == null || targetCount == null) {
+        return null
+    }
+    return TaskCountProgress(
+        currentCount = currentCount,
+        targetCount = targetCount
+    )
+}
+
+internal fun buildRepeatEndCondition(
+    mode: String?,
+    behavior: String?,
+    targetCycleCount: Int?,
+    endDateMillis: Long?,
+    inclusive: Boolean?
+): TaskRepeatEndCondition? {
+    val normalizedMode = mode?.trim()?.takeUnless { it.isEmpty() } ?: return null
+    val normalizedBehavior = behavior?.trim()?.takeUnless { it.isEmpty() } ?: return null
+
+    when (normalizedMode) {
+        "COUNT" -> if (targetCycleCount == null || targetCycleCount <= 0) {
+            return null
+        }
+
+        "DATE" -> if (endDateMillis == null) {
+            return null
+        }
+    }
+
+    return TaskRepeatEndCondition(
+        mode = normalizedMode,
+        behavior = normalizedBehavior,
+        targetCycleCount = targetCycleCount,
+        endDateMillis = endDateMillis,
+        inclusive = inclusive ?: false
+    )
+}
+
+internal fun parseSkillIds(skillIds: String?): List<Long> {
+    if (skillIds.isNullOrBlank()) {
+        return emptyList()
+    }
+    return runCatching {
+        json.decodeFromString<List<Long>>(skillIds)
+    }.getOrDefault(emptyList())
 }
 
 @Serializable

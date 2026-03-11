@@ -26,7 +26,9 @@ data class Task(
     val nameExtended: String,
     val endTime: Long,
     val items: List<RewardItem>,
-    val subTasks: List<SubTask>
+    val subTasks: List<SubTask>,
+    val countProgress: TaskCountProgress? = null,
+    val repeatEndCondition: TaskRepeatEndCondition? = null
 ) {
     class Builder {
         private var id: Long? = null
@@ -51,6 +53,8 @@ data class Task(
         private var endTime: Long = 0
         private var items: List<RewardItem> = emptyList()
         private var subTasks: List<SubTask> = emptyList()
+        private var countProgress: TaskCountProgress? = null
+        private var repeatEndCondition: TaskRepeatEndCondition? = null
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -94,6 +98,14 @@ data class Task(
 
         fun setSubTasks(subTasks: List<SubTask>) = apply { this.subTasks = subTasks }
 
+        fun setCountProgress(countProgress: TaskCountProgress?) = apply {
+            this.countProgress = countProgress
+        }
+
+        fun setRepeatEndCondition(repeatEndCondition: TaskRepeatEndCondition?) = apply {
+            this.repeatEndCondition = repeatEndCondition
+        }
+
         fun build(): Task {
             return Task(
                 id = id,
@@ -117,7 +129,9 @@ data class Task(
                 nameExtended = nameExtended,
                 endTime = endTime,
                 items = items,
-                subTasks = subTasks
+                subTasks = subTasks,
+                countProgress = countProgress,
+                repeatEndCondition = repeatEndCondition
             )
         }
     }
