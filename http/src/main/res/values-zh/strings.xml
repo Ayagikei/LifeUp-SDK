@@ -2,11 +2,15 @@
     <string name="app_name">雲人升</string>
     <string name="server_status">服務未啟動...</string>
     <string name="serverStartedMessage">伺服器已開啟</string>
+    <string name="serverStartingMessage">服務啟動中...</string>
+    <string name="serverStartFailedMessage">❌ 服務啟動失敗：%1$s</string>
+    <string name="server_error_background_restricted">Android 阻止了背景前台服務啟動，請打開應用後重試。</string>
+    <string name="server_error_unknown">未知啟動錯誤</string>
     <string name="ipAddressUnknown">未取得 IP 位址 (沒有連接到 WIFI?)</string>
     <string name="app_introduction"><![CDATA[這是一個《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的擴充工具，能讓你從電腦或其他裝置控制人升。請確保你已經安裝了人升應用程式。]]></string>
     <string name="localIpAddressMessage">連接到了以下IP（根據你的組網情況，這裡可能會出現多個分屬不同網段的IP位址，一般區域網路你應該選擇192.168.x.x形式的位址）：\n\n%1$s\n\n服務啟動後，你可以嘗試用處於相同 WIFI 下的電腦（瀏覽器）訪問該連結了！\n\n如果這裡顯示的 IP 位址不準確，你也可以前往 WIFI 設定確認你的本機 IP。</string>
     <string name="overlay_permission">懸浮視窗權限</string>
-    <string name="overlay_permission_desc">授予權限以背景執行API（Android 10+）</string>
+    <string name="overlay_permission_desc">授予權限以便在背景顯示頁面並拉起《人升》API 頁面（Android 10+）</string>
     <string name="title_config">設定</string>
     <string name="btn_config">設定</string>
     <string name="title_introduction">介紹</string>

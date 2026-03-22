@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">Сервис не запущен...</string>
+    <string name="serverStartedMessage">Сервер запущен</string>
+    <string name="serverStartingMessage">Сервер запускается...</string>
+    <string name="serverStartFailedMessage">❌ Не удалось запустить сервер: %1$s</string>
+    <string name="server_error_background_restricted">Android заблокировал запуск foreground-сервиса из фона. Откройте приложение и попробуйте снова.</string>
+    <string name="server_error_unknown">Неизвестная ошибка запуска</string>
+    <string name="ipAddressUnknown">Нет IP-адреса (подключены к WiFi?)</string>
+    <string name="app_introduction"><![CDATA[Это дополнительный инструмент для <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, который позволяет управлять LifeUp с компьютера или других устройств. Убедитесь, что LifeUp уже установлен.]]></string>
+    <string name="localIpAddressMessage">Подключено к следующим IP-адресам:\n%1$s\n\nВ зависимости от вашей сети здесь может отображаться несколько IP-адресов из разных сегментов сети. Для обычной локальной сети обычно следует выбирать адрес формата 192.168.x.x.\nПосле запуска сервиса вы сможете открыть его на компьютере, подключенном к той же сети WiFi.\n\nЕсли отображаемый здесь IP-адрес неточен, проверьте в настройках WiFi локальный IP устройства и порт сервера 13276.</string>
+    <string name="overlay_permission">Разрешение на отображение поверх окон</string>
+    <string name="overlay_permission_desc">Выдайте разрешение на показ страниц из фона и запуск страниц API LifeUp (Android 10+)</string>
+    <string name="title_introduction">Введение</string>
+    <string name="title_config">Настройки</string>
+    <string name="btn_config">НАСТРОЙКИ</string>
+    <string name="ignore_battery_optimizations">Игнорировать оптимизацию батареи</string>
+    <string name="ignore_battery_optimizations_desc">Чтобы сервис продолжал стабильно работать в фоне, необходимо отключить оптимизацию батареи.
+        \n\nКроме этого, проверьте и дополнительные ограничения производителя (например, разрешение на автозапуск и закрепление приложения в окне многозадачности).</string>
+    <string name="notification_channel_server">Сервер работает</string>
+    <string name="title_server">Сервер</string>
+    <string name="title_status">Статус</string>
+    <string name="status_permission">Требуемые разрешения</string>
+    <string name="status_permission_overlay">Разрешение на отображение поверх окон</string>
+    <string name="status_permission_overlay_granted">Разрешение на отображение поверх окон выдано</string>
+    <string name="status_permission_overlay_missing">Нет разрешения на отображение поверх окон</string>
+    <string name="status_permission_battery">Оптимизация батареи</string>
+    <string name="status_permission_battery_ignored">Оптимизация батареи отключена</string>
+    <string name="status_permission_battery_unknown">Статус оптимизации батареи неизвестен (зависит от производителя)</string>
+    <string name="status_permission_content_provider">Доступ к данным LifeUp</string>
+    <string name="status_lifeup">Статус LifeUp</string>
+    <string name="status_server">Статус сервера</string>
+    <string name="switch_start_service">Запустить сервис</string>
+    <string name="title_about">О приложении</string>
+    <string name="about_text"><![CDATA[Этот инструмент превращает ваш телефон в API-сервер, позволяя взаимодействовать с <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> с других устройств через HTTP API и Content Provider.
+<br/><br/><b># Возможности:</b>
+<br/>• Работает с <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">официальным настольным клиентом</a>
+<br/>• Предоставляет полный набор API для глубокой игровой интеграции
+<br/>• Поддерживает собственную разработку и расширения:
+<br/>  - Создавайте собственные настольные или веб-клиенты
+<br/>  - Делайте интеграции с другими приложениями и устройствами
+<br/>  - Проектируйте собственные автоматизации и рабочие процессы
+<br/>  - Разрабатывайте уникальные сценарии геймификации
+<br/>
+<br/><b># Открытый исходный код:</b>
+<br/>Этот проект опубликован как open source на <a href="https://github.com/Ayagikei/LifeUp">GitHub</a>. Мы рады вашим вкладам!]]></string>
+    <string name="port_config">Порт сервиса: %1$s</string>
+    <string name="content_provider_permission">Разрешение Content Provider</string>
+    <string name="content_provider_permission_desc">Выдайте разрешение на чтение данных LifeUp</string>
+    <string name="qrcode_scanning">Сканирование...</string>
+    <string name="lifeup_status_unknown">Статус LifeUp неизвестен. Убедитесь, что вы выдали разрешение на чтение данных LifeUp и что LifeUp запущен</string>
+    <string name="lifeup_status_normal">LifeUp запущен, разрешение на данные выдано...</string>
+    <string name="lifeup_permission_granted">Разрешение успешно получено.</string>
+    <string name="lifeup_status"><i>LifeUp</i> Статус</string>
+    <string name="cloud_version">Версия: %1$s</string>
+    <string name="switch_cors">Разрешить межсайтовый доступ (CORS)</string>
+    <string name="title_advanced">Дополнительные настройки</string>
+    <string name="title_document">Документация</string>
+    <string name="wake_lock_duration">Длительность Wake Lock</string>
+    <string name="wake_lock_duration_desc">Укажите, как долго сервис должен оставаться активным (в минутах).\n\nВремя автоматически продлевается при каждом запросе, поэтому обычно не нужно задавать слишком большое значение.\n\nДиапазон: 1-60 минут</string>
+    <string name="wake_lock_duration_error">Введите число от 1 до 60</string>
+    <string name="port_setting">Порт сервера</string>
+    <string name="port_setting_desc">Укажите пользовательский порт сервера.\n\nОставьте поле пустым, чтобы использовать порт по умолчанию (13276) с автоматической повторной попыткой при конфликте порта.\n\nДиапазон: 1024-65535</string>
+    <string name="port_setting_error">Введите число от 1024 до 65535</string>
+    <string name="port_setting_conflict">Порт %1$d уже используется</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="api_token_setting">API-токен</string>
+    <string name="api_token_desc">Укажите API-токен для защиты сервера. После настройки все запросы должны передавать этот токен в заголовке Authorization.</string>
+</resources>

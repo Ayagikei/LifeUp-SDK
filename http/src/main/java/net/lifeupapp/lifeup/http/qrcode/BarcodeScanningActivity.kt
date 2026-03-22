@@ -10,8 +10,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.util.Size
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.Camera
@@ -21,6 +24,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -85,10 +92,11 @@ class BarcodeScanningActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // init view binding
         binding = ActivityBarcodeScanningBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        setContentView(binding.root)
+        bindEdgeToEdge()
+        binding.ivExit.setOnClickListener { finish() }
 
         ActivityCompat.requestPermissions(
             this, arrayOf(Manifest.permission.CAMERA),
@@ -98,6 +106,26 @@ class BarcodeScanningActivity : AppCompatActivity() {
         listener = OverlayListener()
         binding.overlay.viewTreeObserver.addOnGlobalLayoutListener(listener)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun bindEdgeToEdge() {
+        val exitTopMargin = binding.ivExit.marginLayoutParams.topMargin
+        val galleryTopMargin = binding.ivGallery.marginLayoutParams.topMargin
+        val tipsBottomMargin = binding.tvTips.marginLayoutParams.bottomMargin
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.ivExit.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topMargin = exitTopMargin + systemBarsInsets.top
+            }
+            binding.ivGallery.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topMargin = galleryTopMargin + systemBarsInsets.top
+            }
+            binding.tvTips.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = tipsBottomMargin + systemBarsInsets.bottom
+            }
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
     }
 
     inner class OverlayListener : ViewTreeObserver.OnGlobalLayoutListener {
@@ -189,4 +217,7 @@ class BarcodeScanningActivity : AppCompatActivity() {
             scaleX = overlay.width.toFloat() / imageWidth.toFloat()
         }
     }
+
+    private val View.marginLayoutParams: ViewGroup.MarginLayoutParams
+        get() = layoutParams as ViewGroup.MarginLayoutParams
 }

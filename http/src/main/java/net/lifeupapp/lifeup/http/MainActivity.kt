@@ -1,8 +1,11 @@
 package net.lifeupapp.lifeup.http
 
 import android.app.Activity
+import android.app.ForegroundServiceStartNotAllowedException
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +16,18 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
 import io.ktor.util.toLowerCasePreservingASCIIRules
@@ -49,6 +59,8 @@ class MainActivity : AppCompatActivity() {
     private val settings by lazy {
         net.lifeupapp.lifeup.http.utils.Settings.getInstance(this)
     }
+    private var latestRunningState = LifeUpService.RunningState.NOT_RUNNING
+    private var latestServiceError: Throwable? = null
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -63,12 +75,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // init view binding
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        setContentView(binding.root)
+        configureSystemBars()
+        bindEdgeToEdge()
 
-        // init the view logic
         initView()
     }
 
@@ -82,20 +94,22 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             launch {
                 KtorService.isRunning.collect { running ->
-                    if (running == LifeUpService.RunningState.RUNNING || running == LifeUpService.RunningState.STARTING) {
-                        binding.tvStatusServer.text =
-                            "✅ ${getString(R.string.serverStartedMessage)}"
-                        binding.switchStartService.isChecked = true
-                        binding.tvStatusServerIp.visibility = View.VISIBLE
-                    } else {
-                        binding.tvStatusServer.text = "❌ ${getString(R.string.server_status)}"
-                        binding.switchStartService.isChecked = false
-                        binding.tvStatusServerIp.visibility = View.GONE
+                    latestRunningState = running
+                    if (running == LifeUpService.RunningState.RUNNING) {
+                        latestServiceError = null
                     }
+                    renderServiceState()
                 }
             }
 
-            // 监听端口变化
+            launch {
+                KtorService.errorMessage.collect { throwable ->
+                    latestServiceError = throwable
+                    renderServiceState()
+                }
+            }
+
+            // Keep the IP summary aligned with the active server port.
             launch {
                 KtorService.port.collect { port ->
                     if (port > 0) {
@@ -107,14 +121,14 @@ class MainActivity : AppCompatActivity() {
             binding.tvIntroduction.movementMethod = LinkMovementMethod.getInstance()
             binding.tvIntroduction.setHtmlText(getString(R.string.app_introduction))
 
-            // 添加保存按钮
+            // Save all advanced settings in one action.
             binding.btnSaveAdvanced.setOnClickListener {
                 validateAndSaveWakeLockDuration()
                 validateAndSavePortSetting()
                 validateAndSaveApiToken()
             }
 
-            // 初始化高级设置
+            // Initialize the advanced settings form.
             binding.wakeLockDurationInput.setText(settings.wakeLockDuration.toString())
             binding.wakeLockDurationInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -122,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化 API Token
+            // Initialize the API token input.
             binding.apiTokenInput.setText(settings.apiToken)
             binding.apiTokenInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
@@ -130,18 +144,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化跨域开关状态
+            // Initialize the CORS toggle.
             binding.switchCors.isChecked = settings.enableCors
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableCors = isChecked
-                // 如果服务正在运行，重启服务以应用新设置
+                // Restart the service so the new setting takes effect immediately.
                 if (binding.switchStartService.isChecked) {
                     KtorService.stop()
                     KtorService.start()
                 }
             }
 
-            // 设置折叠面板
+            // Configure the expandable sections.
             setupExpandablePanel(
                 binding.advancedHeader,
                 binding.btnToggleAdvanced,
@@ -153,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                 binding.cardAbout
             )
 
-            // 设置文档点击事件
+            // Route both documentation entry points to the same action.
             binding.documentHeader.setOnClickListener {
                 openDocumentation()
             }
@@ -184,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 初始化端口设置
+            // Initialize the port input.
             binding.portSettingInput.setText(
                 if (settings.customPort > 0)
                     settings.customPort.toString()
@@ -199,6 +213,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.switchStartService.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView.isUserTriggeredCheckChange()) {
+                return@setOnCheckedChangeListener
+            }
+            latestServiceError = null
+            renderServiceState()
             if (isChecked) {
                 KtorService.start()
             } else {
@@ -275,6 +294,75 @@ class MainActivity : AppCompatActivity() {
         binding.tvAboutDesc.setHtmlText(getString(R.string.about_text))
     }
 
+    private fun bindEdgeToEdge() {
+        val contentTopPadding = binding.contentContainer.paddingTop
+        val contentBottomPadding = binding.contentContainer.paddingBottom
+        val contentLeftPadding = binding.contentContainer.paddingLeft
+        val contentRightPadding = binding.contentContainer.paddingRight
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.contentContainer.updatePadding(
+                left = contentLeftPadding + systemBarsInsets.left,
+                top = contentTopPadding + systemBarsInsets.top,
+                right = contentRightPadding + systemBarsInsets.right,
+                bottom = contentBottomPadding + systemBarsInsets.bottom
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
+    }
+
+    private fun configureSystemBars() {
+        window.statusBarColor = Color.TRANSPARENT
+        val isDarkTheme =
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                    Configuration.UI_MODE_NIGHT_YES
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+            !isDarkTheme
+    }
+
+    private fun renderServiceState() {
+        val isRunning = latestRunningState == LifeUpService.RunningState.RUNNING
+        val isStarting = latestRunningState == LifeUpService.RunningState.STARTING
+        val errorMessage = latestServiceError?.let(::getServiceErrorMessage)
+
+        val statusText = when {
+            isRunning -> "✅ ${getString(R.string.serverStartedMessage)}"
+            isStarting -> "⏳ ${getString(R.string.serverStartingMessage)}"
+            errorMessage != null -> getString(R.string.serverStartFailedMessage, errorMessage)
+            else -> "❌ ${getString(R.string.server_status)}"
+        }
+
+        binding.tvStatusServer.text = statusText
+        binding.tvStatusServerIp.isVisible = isRunning
+        binding.switchStartService.isEnabled = !isStarting
+        if (binding.switchStartService.isChecked != (isRunning || isStarting)) {
+            binding.switchStartService.isChecked = isRunning || isStarting
+        }
+    }
+
+    private fun getServiceErrorMessage(error: Throwable): String {
+        val localizedMessage = error.localizedMessage
+        return when {
+            error is java.net.BindException && settings.customPort > 0 -> {
+                getString(R.string.port_setting_conflict, settings.customPort)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    error is ForegroundServiceStartNotAllowedException -> {
+                getString(R.string.server_error_background_restricted)
+            }
+
+            localizedMessage.isNullOrBlank() -> {
+                getString(R.string.server_error_unknown)
+            }
+
+            else -> {
+                localizedMessage
+            }
+        }
+    }
+
     private fun updateLocalIpAddress() {
         val localIpAddress =
             getIpAddressListInLocalNetwork().joinToString("\n") {
@@ -289,7 +377,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePermissionStatus() {
-        // 检查悬浮窗权限
+        // Check the overlay permission state.
         val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             android.provider.Settings.canDrawOverlays(this)
         } else {
@@ -301,7 +389,7 @@ class MainActivity : AppCompatActivity() {
             "❌ ${getString(R.string.status_permission_overlay_missing)}"
         }
 
-        // 检查电池优化权限
+        // Check whether battery optimizations are disabled for this app.
         val hasBatteryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             powerManager.isIgnoringBatteryOptimizations(packageName)
         } else {
@@ -402,7 +490,7 @@ class MainActivity : AppCompatActivity() {
         if (port != null && port in net.lifeupapp.lifeup.http.utils.Settings.MIN_PORT..net.lifeupapp.lifeup.http.utils.Settings.MAX_PORT) {
             settings.customPort = port
             binding.portSettingLayout.error = null
-            // 如果服务正在运行，需要重启服务以应用新端口
+            // Restart the service so the new port is applied immediately.
             if (binding.switchStartService.isChecked) {
                 KtorService.stop()
                 KtorService.start()
@@ -423,11 +511,15 @@ class MainActivity : AppCompatActivity() {
         settings.apiToken = input
         binding.apiTokenLayout.error = null
 
-        // 如果服务正在运行，需要重启服务以应用新设置
+        // Restart the service so the new token is applied immediately.
         if (binding.switchStartService.isChecked) {
             KtorService.stop()
             KtorService.start()
         }
+    }
+
+    private fun CompoundButton.isUserTriggeredCheckChange(): Boolean {
+        return isPressed
     }
 
 }

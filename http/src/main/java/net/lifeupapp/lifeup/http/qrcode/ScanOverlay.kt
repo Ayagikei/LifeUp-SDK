@@ -16,7 +16,17 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
     private var paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private var animator: ObjectAnimator? = null
+    private val animator: ObjectAnimator by lazy {
+        ObjectAnimator.ofFloat(
+            this,
+            "floatYFraction",
+            0f,
+            1f
+        ).apply {
+            duration = 5000
+            repeatCount = -1 // -1 means infinite loop
+        }
+    }
 
     private var bitmap: Bitmap
 
@@ -35,7 +45,7 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
         paint.color = ContextCompat.getColor(context, R.color.md_theme_light_secondary)
         paint.strokeWidth = 3f.toPx().toFloat()
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_scan_line)
-        getAnimator().start()
+        animator.start()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -53,24 +63,10 @@ class ScanOverlay(context: Context, attrs: AttributeSet?) : View(context, attrs)
         }
     }
 
-    private fun getAnimator(): ObjectAnimator {
-        if (animator == null) {
-            animator = ObjectAnimator.ofFloat(
-                this,
-                "floatYFraction",
-                0f,
-                1f
-            )
-            animator?.duration = 5000
-            animator?.repeatCount = -1 // -1 means infinite loop
-        }
-        return animator!!
-    }
-
     fun addRect(rect: RectF) {
         showLine = false
         resultRect = rect
-        getAnimator().cancel()
+        animator.cancel()
         invalidate()
     }
 }

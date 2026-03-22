@@ -14,3 +14,22 @@
 .cxx
 local.properties
 commit-prompt.txt
+
+# IDE metadata
+/.idea/
+
+# Build artifacts
+**/build/
+*.apk
+*.aab
+*.ap_
+
+# Local Android/Gradle state
+/.android/
+/.gradle-home/
+/.kotlin/
+/firebase-debug.log
+
+# Local planning docs
+/docs/plan/
+/docs/plans/

@@ -4,10 +4,35 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
+def envOrProperty = { String envName, String propertyName = envName ->
+    def envValue = System.getenv(envName)
+    if (envValue != null && !envValue.trim().isEmpty()) {
+        return envValue
+    }
+    if (project.hasProperty(propertyName)) {
+        def propertyValue = project.property(propertyName)?.toString()
+        if (propertyValue != null && !propertyValue.trim().isEmpty()) {
+            return propertyValue
+        }
+    }
+    return null
+}
+
+def releaseStoreFilePath = envOrProperty('SIGNING_STORE_FILE', 'signingStoreFile')
+def releaseStorePassword = envOrProperty('SIGNING_STORE_PASSWORD', 'signingStorePassword')
+def releaseKeyAlias = envOrProperty('SIGNING_KEY_ALIAS', 'signingKeyAlias')
+def releaseKeyPassword = envOrProperty('SIGNING_KEY_PASSWORD', 'signingKeyPassword')
+def hasReleaseSigning = [
+    releaseStoreFilePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+].every { it != null }
+
 def computeVersionCode(versionName) {
     def (major, minor, patch) = versionName.tokenize('.')
 
-    // 验证每部分都不超过99
+    // Keep each version segment within two digits so the packed versionCode stays stable.
     assert major.toInteger() <= 99: "Major version cannot exceed 99"
     assert minor.toInteger() <= 99: "Minor version cannot exceed 99"
     assert patch.toInteger() <= 99: "Patch version cannot exceed 99"
@@ -17,13 +42,26 @@ def computeVersionCode(versionName) {
 
 android {
     namespace 'net.lifeupapp.lifeup.http'
-    compileSdk 34
+    compileSdk 35
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseStoreFilePath)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            } else {
+                initWith(signingConfigs.debug)
+            }
+        }
+    }
 
     defaultConfig {
         applicationId "net.lifeupapp.lifeup.http"
         minSdk 21
-        targetSdk 34
-        versionName "2.0.1"
+        targetSdk 35
+        versionName "2.1.0"
         versionCode computeVersionCode(versionName)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -37,20 +75,21 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
 
         coreLibraryDesugaringEnabled true
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     packagingOptions {
         jniLibs {
@@ -62,6 +101,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.13.1'
@@ -70,8 +113,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':core')
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // lifecycle
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5'
@@ -105,15 +148,14 @@ dependencies {
 
 
     implementation 'com.google.mlkit:barcode-scanning:17.3.0'
-    // CameraX core library using the camera2 implementation
-    def camerax_version = "1.0.0-rc03"
+    def cameraxVersion = "1.4.2"
     // The following line is optional, as the core library is included indirectly by camera-camera2
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-core:${cameraxVersion}"
+    implementation "androidx.camera:camera-camera2:${cameraxVersion}"
     // If you want to additionally use the CameraX Lifecycle library
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${cameraxVersion}"
     // If you want to additionally use the CameraX View class
-    implementation "androidx.camera:camera-view:1.3.4"
+    implementation "androidx.camera:camera-view:${cameraxVersion}"
 
     // implementation 'org.jmdns:jmdns:3.5.8'
 

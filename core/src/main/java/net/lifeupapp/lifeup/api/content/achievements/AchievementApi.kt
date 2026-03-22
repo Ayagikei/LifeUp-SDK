@@ -7,6 +7,7 @@ import net.lifeupapp.lifeup.api.content.achievements.category.AchievementCategor
 import net.lifeupapp.lifeup.api.content.common.RewardItem
 import net.lifeupapp.lifeup.api.content.forEachContent
 import net.lifeupapp.lifeup.api.utils.decodeFromStringOrNull
+import net.lifeupapp.lifeup.api.utils.getBooleanOrNull
 import net.lifeupapp.lifeup.api.utils.getIntOrNull
 import net.lifeupapp.lifeup.api.utils.getLongOrNull
 import net.lifeupapp.lifeup.api.utils.getStringOrNull
@@ -21,7 +22,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val name = it.getStringOrNull("name")
                 val desc = it.getStringOrNull("desc")
                 val icon = it.getStringOrNull("icon")
-                val isAsc = it.getIntOrNull("isAsc")
+                val isAsc = it.getBooleanOrNull("isAsc")
                 val sort = it.getStringOrNull("sort")
                 val filter = it.getStringOrNull("filter")
                 val order = it.getIntOrNull("order")
@@ -33,7 +34,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                         setName(name ?: "ERROR: name is null")
                         setDesc(desc ?: "")
                         setIconUri(icon ?: "")
-                        setIsAsc(isAsc == 1)
+                        setIsAsc(isAsc ?: false)
                         setSort(sort ?: "")
                         setFilter(filter ?: "")
                         setOrder(order ?: 0)
@@ -49,11 +50,29 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
     }
 
     fun listAchievements(categoryId: Long? = null): Result<List<Achievement>> {
+        return if (categoryId == null) {
+            listAllAchievements()
+        } else {
+            listAchievementsInCategory(categoryId)
+        }
+    }
+
+    private fun listAllAchievements(): Result<List<Achievement>> {
+        return try {
+            val categoryIds = resolveAchievementCategoryIds(null, listCategories().getOrThrow())
+            val achievements = categoryIds.flatMap { categoryId ->
+                listAchievementsInCategory(categoryId).getOrThrow()
+            }
+            Result.success(achievements)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private fun listAchievementsInCategory(categoryId: Long): Result<List<Achievement>> {
         val uri = buildString {
             append(ContentProviderUrl.ACHIEVEMENTS)
-            if (categoryId != null) {
-                append("/$categoryId")
-            }
+            append("/$categoryId")
         }
         val achievements = mutableListOf<Achievement>()
         try {
@@ -103,4 +122,11 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(achievements)
     }
+}
+
+internal fun resolveAchievementCategoryIds(
+    categoryId: Long?,
+    categories: List<AchievementCategory>
+): List<Long> {
+    return categoryId?.let(::listOf) ?: categories.mapNotNull { it.id }
 }

@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">サービスは起動していません...</string>
+    <string name="serverStartedMessage">サーバーを起動しました</string>
+    <string name="serverStartingMessage">サーバーを起動中...</string>
+    <string name="serverStartFailedMessage">❌ サーバーの起動に失敗しました: %1$s</string>
+    <string name="server_error_background_restricted">Android によりバックグラウンドからのフォアグラウンドサービス起動がブロックされました。アプリを開いてから再試行してください。</string>
+    <string name="server_error_unknown">不明な起動エラー</string>
+    <string name="ipAddressUnknown">IP アドレスがありません（WiFi に接続されていますか？）</string>
+    <string name="app_introduction"><![CDATA[これは <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> の拡張ツールで、パソコンや他のデバイスから LifeUp を操作できます。先に LifeUp をインストールしておいてください。]]></string>
+    <string name="localIpAddressMessage">以下の IP アドレスに接続しています:\n%1$s\n\nネットワーク構成によっては、ここに異なるネットワークセグメントの IP アドレスが複数表示される場合があります。通常の LAN では 192.168.x.x 形式のアドレスを選んでください。\nサービスを起動したら、同じ WiFi に接続したパソコンから開くことができます。\n\nここに表示される IP アドレスが正確でない場合は、WiFi 設定で端末のローカル IP とサーバーポート 13276 を確認してください。</string>
+    <string name="overlay_permission">オーバーレイ権限</string>
+    <string name="overlay_permission_desc">バックグラウンドからページを表示し、LifeUp API ページを起動するための権限を付与してください（Android 10+）</string>
+    <string name="title_introduction">紹介</string>
+    <string name="title_config">設定</string>
+    <string name="btn_config">設定</string>
+    <string name="ignore_battery_optimizations">バッテリー最適化を無視</string>
+    <string name="ignore_battery_optimizations_desc">サービスを安定してバックグラウンドで実行し続けるには、バッテリー最適化を無効にする必要があります。
+        \n\nまた、この設定に加えて、各メーカー独自の追加制限（「自動起動」を許可する、マルチタスク画面でアプリを固定する等）も確認してください。</string>
+    <string name="notification_channel_server">サーバー実行中</string>
+    <string name="title_server">サーバー</string>
+    <string name="title_status">状態</string>
+    <string name="status_permission">必要な権限</string>
+    <string name="status_permission_overlay">オーバーレイ権限</string>
+    <string name="status_permission_overlay_granted">オーバーレイ権限は許可されています</string>
+    <string name="status_permission_overlay_missing">オーバーレイ権限がありません</string>
+    <string name="status_permission_battery">バッテリー最適化</string>
+    <string name="status_permission_battery_ignored">バッテリー最適化は無視されています</string>
+    <string name="status_permission_battery_unknown">バッテリー最適化の状態は不明です（メーカーにより異なります）</string>
+    <string name="status_permission_content_provider">LifeUp データアクセス</string>
+    <string name="status_lifeup">LifeUp の状態</string>
+    <string name="status_server">サーバー状態</string>
+    <string name="switch_start_service">サービスを開始</string>
+    <string name="title_about">このアプリについて</string>
+    <string name="about_text"><![CDATA[このツールはスマートフォンを API サーバーに変換し、他のデバイスから HTTP API と Content Provider を通じて <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> と連携できるようにします。
+<br/><br/><b># 主な機能:</b>
+<br/>• <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">公式デスクトップクライアント</a>に対応
+<br/>• ゲーム連携向けの包括的な API を提供
+<br/>• カスタム開発と拡張をサポート:
+<br/>  - 独自のデスクトップ / Web クライアントを構築
+<br/>  - 他のアプリやデバイスとの連携を作成
+<br/>  - 独自の自動化とワークフローを設計
+<br/>  - ユニークなゲーミフィケーション活用を開発
+<br/>
+<br/><b># オープンソース:</b>
+<br/>このプロジェクトは <a href="https://github.com/Ayagikei/LifeUp">GitHub</a> で公開されています。コントリビューションを歓迎します！]]></string>
+    <string name="port_config">サービスポート: %1$s</string>
+    <string name="content_provider_permission">Content Provider 権限</string>
+    <string name="content_provider_permission_desc">LifeUp のデータを読み取る権限を付与してください</string>
+    <string name="qrcode_scanning">スキャン中...</string>
+    <string name="lifeup_status_unknown">LifeUp の状態を確認できません。LifeUp データの読み取り権限が許可され、LifeUp が起動していることを確認してください</string>
+    <string name="lifeup_status_normal">LifeUp は実行中で、データ権限も付与されています...</string>
+    <string name="lifeup_permission_granted">権限の取得に成功しました。</string>
+    <string name="lifeup_status"><i>LifeUp</i> の状態</string>
+    <string name="cloud_version">バージョン: %1$s</string>
+    <string name="switch_cors">クロスオリジンアクセスを許可 (CORS)</string>
+    <string name="title_advanced">詳細設定</string>
+    <string name="title_document">ドキュメント</string>
+    <string name="wake_lock_duration">Wake Lock 継続時間</string>
+    <string name="wake_lock_duration_desc">サービスを起動状態に保つ時間（分）を設定します。\n\nリクエストを受信するたびに自動更新されるため、通常は長く設定する必要はありません。\n\n範囲: 1〜60 分</string>
+    <string name="wake_lock_duration_error">1〜60 の数字を入力してください</string>
+    <string name="port_setting">サーバーポート</string>
+    <string name="port_setting_desc">カスタムのサーバーポートを設定します。\n\n空欄の場合はデフォルトポート（13276）を使用し、ポート競合時は自動で再試行します。\n\n範囲: 1024〜65535</string>
+    <string name="port_setting_error">1024〜65535 の数字を入力してください</string>
+    <string name="port_setting_conflict">ポート %1$d はすでに使用されています</string>
+    <string name="btn_save">保存</string>
+    <string name="api_token_setting">API トークン</string>
+    <string name="api_token_desc">サーバーを保護するための API トークンを設定します。設定すると、すべてのリクエストで Authorization ヘッダーにこのトークンを含める必要があります。</string>
+</resources>

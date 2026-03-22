@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">الخدمة غير قيد التشغيل...</string>
+    <string name="serverStartedMessage">تم تشغيل الخادم</string>
+    <string name="serverStartingMessage">جارٍ تشغيل الخادم...</string>
+    <string name="serverStartFailedMessage">❌ فشل تشغيل الخادم: %1$s</string>
+    <string name="server_error_background_restricted">منع Android تشغيل خدمة المقدمة من الخلفية. افتح التطبيق ثم حاول مرة أخرى.</string>
+    <string name="server_error_unknown">خطأ بدء غير معروف</string>
+    <string name="ipAddressUnknown">لا يوجد عنوان IP (هل أنت متصل بشبكة WiFi؟)</string>
+    <string name="app_introduction"><![CDATA[هذه أداة إضافية لتطبيق <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> تتيح لك التحكم في LifeUp من الكمبيوتر أو من أجهزة أخرى. تأكد من تثبيت LifeUp أولاً.]]></string>
+    <string name="localIpAddressMessage">متصل بعناوين IP التالية:\n%1$s\n\nوفقًا لحالة الشبكة لديك، قد تظهر هنا عدة عناوين IP من مقاطع شبكية مختلفة. في الشبكة المحلية العادية اختر عادةً عنوانًا بالشكل 192.168.x.x.\nبعد تشغيل الخدمة يمكنك فتحها على جهاز كمبيوتر متصل بنفس شبكة WiFi.\n\nإذا لم يكن عنوان IP المعروض هنا دقيقًا، يمكنك أيضًا التحقق من إعدادات WiFi لمعرفة عنوان IP المحلي ومنفذ الخادم 13276.</string>
+    <string name="overlay_permission">إذن الظهور فوق التطبيقات</string>
+    <string name="overlay_permission_desc">امنح الإذن لعرض الصفحات من الخلفية وفتح صفحات API الخاصة بـ LifeUp (Android 10+)</string>
+    <string name="title_introduction">مقدمة</string>
+    <string name="title_config">الإعدادات</string>
+    <string name="btn_config">إعدادات</string>
+    <string name="ignore_battery_optimizations">تجاهل تحسين البطارية</string>
+    <string name="ignore_battery_optimizations_desc">لكي تستمر الخدمة في العمل بثبات في الخلفية، تحتاج إلى إيقاف تحسين البطارية.
+        \n\nوبالإضافة إلى هذا الإعداد، تحتاج أيضًا إلى التحقق من القيود الإضافية الخاصة بكل شركة مصنّعة (مثل السماح بـ «التشغيل التلقائي» وتثبيت التطبيق في شاشة تعدد المهام).</string>
+    <string name="notification_channel_server">الخادم قيد التشغيل</string>
+    <string name="title_server">الخادم</string>
+    <string name="title_status">الحالة</string>
+    <string name="status_permission">الأذونات المطلوبة</string>
+    <string name="status_permission_overlay">إذن الظهور فوق التطبيقات</string>
+    <string name="status_permission_overlay_granted">تم منح إذن الظهور فوق التطبيقات</string>
+    <string name="status_permission_overlay_missing">إذن الظهور فوق التطبيقات مفقود</string>
+    <string name="status_permission_battery">تحسين البطارية</string>
+    <string name="status_permission_battery_ignored">تم تجاهل تحسين البطارية</string>
+    <string name="status_permission_battery_unknown">حالة تحسين البطارية غير معروفة (تختلف حسب الشركة المصنّعة)</string>
+    <string name="status_permission_content_provider">الوصول إلى بيانات LifeUp</string>
+    <string name="status_lifeup">حالة LifeUp</string>
+    <string name="status_server">حالة الخادم</string>
+    <string name="switch_start_service">بدء الخدمة</string>
+    <string name="title_about">حول</string>
+    <string name="about_text"><![CDATA[تحوّل هذه الأداة هاتفك إلى خادم API، مما يتيح لك التفاعل مع <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> من أجهزة أخرى عبر HTTP API وContent Provider.
+<br/><br/><b># الميزات:</b>
+<br/>• تعمل مع <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">عميل سطح المكتب الرسمي</a>
+<br/>• توفر واجهات API شاملة لدمج اللعبة بالكامل
+<br/>• تتيح التطوير المخصص والإضافات:
+<br/>  - إنشاء عملاء سطح مكتب أو ويب خاصين بك
+<br/>  - بناء تكاملات مع تطبيقات وأجهزة أخرى
+<br/>  - تصميم عمليات أتمتة وسير عمل مخصص
+<br/>  - تطوير سيناريوهات مميزة للألعاب التحفيزية
+<br/>
+<br/><b># مفتوح المصدر:</b>
+<br/>هذا مشروع مفتوح المصدر على <a href="https://github.com/Ayagikei/LifeUp">GitHub</a>. نرحب بالمساهمات!]]></string>
+    <string name="port_config">منفذ الخدمة: %1$s</string>
+    <string name="content_provider_permission">إذن Content Provider</string>
+    <string name="content_provider_permission_desc">امنح الإذن لقراءة بيانات LifeUp</string>
+    <string name="qrcode_scanning">جارٍ المسح...</string>
+    <string name="lifeup_status_unknown">حالة LifeUp غير معروفة. تأكد من منح إذن قراءة بيانات LifeUp وأن LifeUp قيد التشغيل</string>
+    <string name="lifeup_status_normal">LifeUp قيد التشغيل وتم منح إذن البيانات...</string>
+    <string name="lifeup_permission_granted">تم الحصول على الإذن بنجاح.</string>
+    <string name="lifeup_status">حالة <i>LifeUp</i></string>
+    <string name="cloud_version">الإصدار: %1$s</string>
+    <string name="switch_cors">السماح بالوصول عبر المصادر المختلفة (CORS)</string>
+    <string name="title_advanced">إعدادات متقدمة</string>
+    <string name="title_document">الوثائق</string>
+    <string name="wake_lock_duration">مدة Wake Lock</string>
+    <string name="wake_lock_duration_desc">عيّن المدة التي تبقي الخدمة مستيقظة خلالها (بالدقائق).\n\nسيتم تجديدها تلقائيًا عند كل طلب يتم استلامه، لذلك عادة لا تحتاج إلى ضبطها على مدة طويلة.\n\nالنطاق: 1-60 دقيقة</string>
+    <string name="wake_lock_duration_error">يرجى إدخال رقم بين 1 و60</string>
+    <string name="port_setting">منفذ الخادم</string>
+    <string name="port_setting_desc">عيّن منفذ خادم مخصص.\n\nاتركه فارغًا لاستخدام المنفذ الافتراضي (13276) مع إعادة المحاولة تلقائيًا عند تعارض المنفذ.\n\nالنطاق: 1024-65535</string>
+    <string name="port_setting_error">يرجى إدخال رقم بين 1024 و65535</string>
+    <string name="port_setting_conflict">المنفذ %1$d مستخدم بالفعل</string>
+    <string name="btn_save">حفظ</string>
+    <string name="api_token_setting">رمز API</string>
+    <string name="api_token_desc">عيّن رمز API لحماية الخادم. عند تعيينه، يجب أن تتضمن جميع الطلبات هذا الرمز في ترويسة Authorization.</string>
+</resources>

@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">LifeUp Cloud</string>
+    <string name="server_status">Il servizio non è in esecuzione...</string>
+    <string name="serverStartedMessage">Server avviato</string>
+    <string name="serverStartingMessage">Avvio del server...</string>
+    <string name="serverStartFailedMessage">❌ Avvio del server non riuscito: %1$s</string>
+    <string name="server_error_background_restricted">Android ha bloccato l\'avvio del servizio in primo piano dal background. Apri l\'app e riprova.</string>
+    <string name="server_error_unknown">Errore di avvio sconosciuto</string>
+    <string name="ipAddressUnknown">Nessun indirizzo IP (connesso al Wi-Fi?)</string>
+    <string name="app_introduction"><![CDATA[Questo è uno strumento di estensione per l\'app <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, che ti consente di controllare LifeUp dal tuo computer o da altri dispositivi. Assicurati di avere installato prima LifeUp.]]></string>
+    <string name="localIpAddressMessage">Connesso ai seguenti IP:\n%1$s\n\nIn base alla tua rete, qui potrebbero comparire più indirizzi IP appartenenti a segmenti diversi. In una normale LAN, in genere dovresti scegliere un indirizzo nel formato 192.168.x.x.\nQuando il servizio è stato avviato, puoi aprirlo sul computer connesso allo stesso Wi-Fi.\n\nSe l\'indirizzo IP mostrato qui non è corretto, puoi anche controllare il tuo IP locale nelle impostazioni Wi-Fi. La porta del server è 13276.</string>
+    <string name="overlay_permission">Autorizzazione overlay</string>
+    <string name="overlay_permission_desc">Concedi l\'autorizzazione per mostrare pagine dal background e aprire le pagine API di LifeUp (Android 10+)</string>
+    <string name="title_introduction">Introduzione</string>
+    <string name="title_config">Configurazione</string>
+    <string name="btn_config">CONFIG.</string>
+    <string name="ignore_battery_optimizations">Ignora le ottimizzazioni della batteria</string>
+    <string name="ignore_battery_optimizations_desc">Per mantenere il servizio stabile in background, devi disattivare l\'ottimizzazione della batteria.\n\nOltre a questa impostazione, controlla anche eventuali restrizioni aggiuntive del produttore (ad esempio consentire l\'avvio automatico e bloccare l\'app nella schermata multitasking).</string>
+    <string name="notification_channel_server">Server in esecuzione</string>
+    <string name="title_server">Server</string>
+    <string name="title_status">Stato</string>
+    <string name="status_permission">Autorizzazioni richieste</string>
+    <string name="status_permission_overlay">Autorizzazione overlay</string>
+    <string name="status_permission_overlay_granted">Autorizzazione overlay concessa</string>
+    <string name="status_permission_overlay_missing">Autorizzazione overlay mancante</string>
+    <string name="status_permission_battery">Ottimizzazione batteria</string>
+    <string name="status_permission_battery_ignored">Ottimizzazione batteria ignorata</string>
+    <string name="status_permission_battery_unknown">Stato dell\'ottimizzazione batteria sconosciuto (varia in base al produttore)</string>
+    <string name="status_permission_content_provider">Accesso ai dati di LifeUp</string>
+    <string name="status_lifeup">Stato di LifeUp</string>
+    <string name="status_server">Stato del server</string>
+    <string name="switch_start_service">Avvia servizio</string>
+    <string name="title_about">Informazioni</string>
+    <string name="about_text"><![CDATA[Questo strumento trasforma il tuo telefono in un server API, permettendoti di interagire con <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> da altri dispositivi tramite API HTTP e Content Provider.
+<br/><br/><b># Funzionalità:</b>
+<br/>• Funziona con il <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">client desktop ufficiale</a>
+<br/>• Fornisce API complete per un\'integrazione totale
+<br/>• Supporta sviluppo ed estensioni personalizzate:
+<br/>  - Creare i tuoi client desktop/web
+<br/>  - Creare integrazioni con altre app e dispositivi
+<br/>  - Progettare automazioni e flussi di lavoro personalizzati
+<br/>  - Sviluppare scenari di gamification unici
+<br/>
+<br/><b># Open source:</b>
+<br/>Questo è un progetto open source su <a href="https://github.com/Ayagikei/LifeUp">GitHub</a>. I contributi sono benvenuti!]]></string>
+    <string name="port_config">Porta del servizio: %1$s</string>
+    <string name="content_provider_permission">Autorizzazione Content Provider</string>
+    <string name="content_provider_permission_desc">Concedi l\'autorizzazione per leggere i dati di LifeUp</string>
+    <string name="qrcode_scanning">Scansione in corso...</string>
+    <string name="lifeup_status_unknown">Lo stato di LifeUp è sconosciuto. Assicurati di aver autorizzato la lettura dei dati di LifeUp e che LifeUp sia in esecuzione</string>
+    <string name="lifeup_status_normal">LifeUp è in esecuzione, autorizzazione dati concessa...</string>
+    <string name="lifeup_permission_granted">Hai ottenuto l\'autorizzazione con successo.</string>
+    <string name="lifeup_status">Stato di <i>LifeUp</i></string>
+    <string name="cloud_version">Versione: %1$s</string>
+    <string name="switch_cors">Consenti accesso cross-origin (CORS)</string>
+    <string name="title_advanced">Impostazioni avanzate</string>
+    <string name="title_document">Documentazione</string>
+    <string name="wake_lock_duration">Durata del Wake Lock</string>
+    <string name="wake_lock_duration_desc">Imposta per quanto tempo il servizio deve rimanere attivo (in minuti).\n\nVerrà rinnovato automaticamente ogni volta che arriva una richiesta, quindi di solito non è necessario impostare una durata troppo lunga.\n\nIntervallo: 1-60 minuti</string>
+    <string name="wake_lock_duration_error">Inserisci un numero tra 1 e 60</string>
+    <string name="port_setting">Porta del server</string>
+    <string name="port_setting_desc">Imposta una porta server personalizzata.\n\nLascia vuoto per usare la porta predefinita (13276), con nuovo tentativo automatico in caso di conflitto.\n\nIntervallo: 1024-65535</string>
+    <string name="port_setting_error">Inserisci un numero tra 1024 e 65535</string>
+    <string name="port_setting_conflict">La porta %1$d è già in uso</string>
+    <string name="btn_save">Salva</string>
+    <string name="api_token_setting">Token API</string>
+    <string name="api_token_desc">Imposta un token API per proteggere il server. Quando è impostato, tutte le richieste devono includere questo token nell\'header Authorization.</string>
+</resources>
