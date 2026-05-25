@@ -10,6 +10,7 @@ data class SubTask(
     val todo: String,
     val status: Int,
     val remindTime: Long? = null,
+    val endTime: Long? = null,
     val exp: Int,
     val coin: Long? = null,
     val coinVariable: Long? = null,

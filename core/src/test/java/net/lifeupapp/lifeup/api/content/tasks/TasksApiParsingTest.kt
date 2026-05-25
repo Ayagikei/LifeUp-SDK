@@ -23,6 +23,16 @@ class TasksApiParsingTest {
     }
 
     @Test
+    fun parseProviderSubTasks_shouldExposeEndTimeWhenPresent() {
+        val subTasks = parseSubTasksJson(
+            """[{"id":1,"gid":2,"todo":"child","status":1,"endTime":1741425600123,"exp":5,"items":[],"order":1}]"""
+        )
+
+        assertEquals(1, subTasks.size)
+        assertEquals(1741425600123L, subTasks.first().endTime)
+    }
+
+    @Test
     fun taskBuilder_shouldExposeLegacyItemAmount() {
         val task = Task.builder {
             setName("task")
