@@ -61,22 +61,119 @@ jobs:
           name: app-release
           path: http/build/outputs/bundle/release/http-release.aab
 
+      - name: Upload to Play Store & download Play-signed APK
+        if: ${{ github.event.inputs.upload_play == 'true' || startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          PACKAGE_NAME: net.lifeupapp.lifeup.http
+        run: |
+          set -euo pipefail
+
+          # ---- version code (fail fast on parse errors) ----
+          VERSION_NAME=$(grep 'versionName' http/build.gradle | sed -n 's/.*"\(.*\)".*/\1/p')
+          if [ -z "$VERSION_NAME" ]; then
+            echo "Failed to extract versionName from http/build.gradle" >&2
+            exit 1
+          fi
+          IFS='.' read -r major minor patch <<< "$VERSION_NAME"
+          if [ -z "$major" ] || [ -z "$minor" ] || [ -z "$patch" ]; then
+            echo "Failed to parse versionName='$VERSION_NAME' (expected major.minor.patch)" >&2
+            exit 1
+          fi
+          VERSION_CODE=$((major * 10000 + minor * 100 + patch))
+          echo "versionName=$VERSION_NAME versionCode=$VERSION_CODE"
+
+          # ---- authenticate ----
+          CLIENT_EMAIL=$(echo "$SERVICE_ACCOUNT_JSON" | jq -r '.client_email')
+          PRIVATE_KEY=$(echo "$SERVICE_ACCOUNT_JSON" | jq -r '.private_key')
+
+          b64url() { base64 -w0 | tr '+/' '-_' | tr -d '='; }
+
+          KEY_FILE=$(mktemp)
+          trap 'rm -f "$KEY_FILE"' EXIT
+          printf '%s\n' "$PRIVATE_KEY" > "$KEY_FILE"
+
+          SCOPES="https://www.googleapis.com/auth/androidpublisher"
+          NOW=$(date +%s)
+          JWT_HEADER=$(echo -n '{"alg":"RS256","typ":"JWT"}' | b64url)
+          JWT_CLAIM=$(echo -n "{\"iss\":\"$CLIENT_EMAIL\",\"scope\":\"$SCOPES\",\"aud\":\"https://oauth2.googleapis.com/token\",\"exp\":$((NOW+3600)),\"iat\":$NOW}" | b64url)
+
+          JWT_SIG=$(echo -n "$JWT_HEADER.$JWT_CLAIM" | openssl dgst -sha256 -sign "$KEY_FILE" | b64url)
+
+          JWT="$JWT_HEADER.$JWT_CLAIM.$JWT_SIG"
+          ACCESS_TOKEN=$(curl -fsS -X POST "https://oauth2.googleapis.com/token" \
+            -d "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$JWT" | jq -r '.access_token')
+          echo "Obtained access token"
+
+          # ---- start edit ----
+          EDIT_ID=$(curl -fsS -X POST "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PACKAGE_NAME/edits" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" | jq -r '.id')
+          echo "Edit ID: $EDIT_ID"
+
+          # ---- upload AAB ----
+          echo "Uploading AAB..."
+          UPLOAD_RESP=$(curl -fsS -X POST "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$EDIT_ID/bundles" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@http/build/outputs/bundle/release/http-release.aab")
+          BUNDLE_VC=$(echo "$UPLOAD_RESP" | jq -r '.versionCode')
+          echo "Uploaded AAB, versionCode=$BUNDLE_VC"
+
+          # ---- assign to internal track (draft) ----
+          curl -fsS -X PUT "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$EDIT_ID/tracks/internal" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"releases\":[{\"name\":\"$VERSION_NAME\",\"versionCodes\":[$BUNDLE_VC],\"status\":\"draft\"}]}"
+          echo "Assigned to internal track"
+
+          # ---- commit edit ----
+          curl -fsS -X POST "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$EDIT_ID:commit" \
+            -H "Authorization: Bearer $ACCESS_TOKEN"
+          echo "Edit committed, Play processing started"
+
+          # ---- poll generatedapks (Play-signed APK) ----
+          echo "Polling generatedapks for Play-signed APK..."
+          DOWNLOAD_URL=""
+          API_BASE="https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PACKAGE_NAME/generatedapks/$BUNDLE_VC"
+          for ((i=1; i<=30; i++)); do
+            RESP=$(curl -fsS "$API_BASE" -H "Authorization: Bearer $ACCESS_TOKEN" 2>/dev/null || echo '{"error":true}')
+            ERROR=$(echo "$RESP" | jq -r '.error.code // empty')
+            if [ -z "$ERROR" ]; then
+              DOWNLOAD_URL=$(echo "$RESP" | jq -r '.generatedApks[0].generatedApk.downloadUrl // empty')
+              if [ -n "$DOWNLOAD_URL" ]; then
+                echo "Got Play-signed APK URL (poll #$i)"
+                break
+              fi
+            fi
+            sleep 30
+          done
+
+          if [ -n "$DOWNLOAD_URL" ] && [ "$DOWNLOAD_URL" != "null" ]; then
+            curl -fsSL -o "app-release.apk" "$DOWNLOAD_URL"
+            echo "Downloaded Play-signed APK"
+          else
+            echo "Play-signed APK not available yet; building universal APK locally via bundletool"
+            BUNDLETOOL_VERSION="1.17.2"
+            BUNDLETOOL_JAR="/tmp/bundletool.jar"
+            curl -fSL -o "$BUNDLETOOL_JAR" "https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar"
+            java -jar "$BUNDLETOOL_JAR" build-apks \
+              --bundle=http/build/outputs/bundle/release/http-release.aab \
+              --output=/tmp/app-release.apks \
+              --mode=universal
+            unzip -o /tmp/app-release.apks universal.apk
+            mv universal.apk app-release.apk
+            echo "Built local universal APK as fallback (signed with upload key)"
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: http/build/outputs/bundle/release/http-release.aab
+          files: |
+            http/build/outputs/bundle/release/http-release.aab
+            app-release.apk
           prerelease: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload to Play Store
-        if: ${{ github.event.inputs.upload_play || startsWith(github.ref, 'refs/tags/') }}
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: net.lifeupapp.lifeup.http
-          releaseFiles: http/build/outputs/bundle/release/http-release.aab
-          track: internal
-          status: draft
