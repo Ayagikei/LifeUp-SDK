@@ -1,0 +1,33 @@
+{
+  "name": "@lifeup/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for LifeUp Cloud: mDNS discover, HTTP APIs, bundled agent skills",
+  "type": "module",
+  "bin": {
+    "lifeup-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "bonjour-service": "^1.4.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
