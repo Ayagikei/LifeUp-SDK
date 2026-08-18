@@ -31,19 +31,18 @@ Optional env:
 - `LIFEUP_TOKEN=...` (raw Authorization value, never persisted)
 - `LIFEUP_MCP_CONFIG=/path/to/config.json`
 
-If Cloud set an API token, pass it to `lifeup_connect` or `LIFEUP_TOKEN`. Header is the raw token, not `Bearer`.
+If Cloud set an API token, pass it to `connect` or `LIFEUP_TOKEN`. Header is the raw token, not `Bearer`.
 
 ## Skills are inside the MCP
 
 You do **not** copy a skill folder for Cursor/Claude Desktop.
 
 - Server `description` tells the model how to connect
-- `lifeup_help topic=api-index` lists methods
-- `lifeup_help topic=add_task` (any method) returns that wiki table
-- Resources `lifeup://skill/*` expose the short skill files only, not all 47 tables
+- `help` with no topic = workflow
+- `help` `api-index` lists methods; `help` `add_task` (any method) returns that wiki table
 
 Claude Code / Pi can additionally point at `mcp/skills/lifeup-cloud` if they want a disk skill. Same files, not a second source of truth.
 
 ## First tools
 
-`lifeup_discover` → `lifeup_connect` → `list_task_categories` / `list_tasks` / `complete_task` / `reward` / `call_api`.
+`discover` (auto-connects if one Cloud) → `list_tasks` / `complete_task` / `reward` / `call_api`.

@@ -5,17 +5,16 @@ description: Use when connecting to LifeUp Cloud, listing or completing LifeUp t
 
 # LifeUp Cloud
 
-Talk to the LifeUp app through LifeUp Cloud on the LAN. This package already exposes these docs as MCP `lifeup_help` and `lifeup://skill/*` resources — do not install a second copy.
+Talk to the LifeUp app through LifeUp Cloud on the LAN. Docs: MCP `help` (no second install).
 
 Phone: LifeUp running + LifeUp Cloud started + "Read LifeUp Data" granted.
 
 ## Connect
 
-1. `lifeup_status`
-2. `lifeup_discover` (mDNS `_lifeup._tcp`, name contains `lifeup_cloud`, TXT `port`)
-3. `lifeup_connect` with `host` if several/none. Token only if Cloud set one — raw `Authorization`, not Bearer.
+1. `discover` — mDNS `_lifeup._tcp`; auto-connects when exactly one Cloud is found. TXT `port` is HTTP.
+2. `connect` `{ host }` only if 0 or >1 instances. Token only if Cloud set one — raw `Authorization`, not Bearer.
 
-Details: `lifeup_help` `discovery`. Errors / encoding / JSON: `lifeup_help` `basics`.
+Details: `help` `discovery`. Errors / encoding / JSON: `help` `basics`.
 
 ## Common ops
 
@@ -40,8 +39,8 @@ After writes, read `calls[].ok` and `calls[].data` (full return: ids, codes, que
 
 ## Long tail
 
-1. `lifeup_help` `api-index` — method names + one-line purpose. Do not open every method file.
-2. `lifeup_help` `<method>` — full wiki param table, only for the method you will call.
+1. `help` `api-index` — method names + one-line purpose. Do not open every method file.
+2. `help` `<method>` — full wiki param table, only for the method you will call.
 3. `call_api` / `call_api_batch` with that method.
 
 

@@ -38,6 +38,41 @@ Do not dump `/tasks` with `detail=true`.
 | `info` | `GET /info` | | singleton |
 
 Shortcuts: `list_tasks`, `list_history`, `list_items`, `list_skills`, `get_coin`, `get_info` — same compact envelope.
+### `achievements` status
+
+`achievements` 行的 `status` 是**三态**，除了表示是否完成，还区分解锁后是否已领取奖励：
+
+| status | 含义 |
+|---|---|
+| 0 | 未完成 |
+| 1 | 已完成，**未领取奖励** |
+| 2 | 已完成，已领取奖励 |
+
+多端同步 / 自动化补领奖励时，用 `status == 1` 判断哪些成就可以领取（`detail=true` 时同一条记录还带 `exp` / `coin` / `items` 奖励内容）。
+
+## List field values
+
+From LifeUp ContentProvider (not wiki). Compact rows keep these.
+
+| resource | field | values |
+|---|---|---|
+| `tasks` / `history` | `status` | `0` unfinished · `1` done · `2` overdue · `3` given up |
+| `tasks` | `frequency` | `0` once · `1` daily · `N>1` every N days · `-1` unlimited · `-3` Ebbinghaus · `-4` monthly · `-5` yearly |
+| `tasks` | `repeatEndCondition.mode` | `COUNT` / `DATE` (writes use 0/1) |
+| `tasks` | `repeatEndCondition.behavior` | `TERMINATE` / `FREEZE` (writes use 0/1) |
+| `task_categories` | `status` | `0` normal · `1` archived |
+| `task_categories` | `type` | `<10` normal list · `10` daily · `11` weekly · `12` monthly · `20` doing |
+| `achievements` | `status` | `0` locked · `1` unlocked, reward unclaimed · `2` unlocked, claimed |
+| `achievements` | `type` | `0` normal · `1` subcategory |
+| `achievement_categories` | `type` | `0` user · `1` system |
+| `feelings` | `isFav` | bool (`true` when CP `1`) |
+| `feelings` | `type` | `0` task · `1` achievement · `2` raw · `3` item use |
+| `skills` | `type` | `0` user · `1` strength · `2` learning · `3` charm · `4` endurance · `5` vitality · `6` creative |
+| `skills` | `status` | on `query`/`query_skill` only: `0` normal · `1` hidden. **Not** on `GET /skills`. |
+| `items` | `disablePurchase` | bool |
+| `pomodoro_records` | `reward` | `0` abandoned · `0.5*n` half · `n` full. No status/mode on the list. |
+
+Hidden shop/synthesis categories exist in the app but **are not** on Cloud category lists. Hidden task lists are `task_categories.status=1` if Cloud returns them.
 
 ## Envelope
 

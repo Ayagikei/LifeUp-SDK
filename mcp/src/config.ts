@@ -21,7 +21,7 @@ export function parseHostInput(input: string): CloudEndpoint {
   if (!url.hostname || !Number.isInteger(port)) {
     throw new Error(`Invalid LIFEUP_HOST: ${input}`)
   }
-  return { host: url.hostname, port, name: "manual" }
+  return { host: url.hostname, port, name: "direct" }
 }
 
 export async function loadConfig(): Promise<PersistedConfig> {

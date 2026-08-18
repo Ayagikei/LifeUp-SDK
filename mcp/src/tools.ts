@@ -42,39 +42,44 @@ function oneOf<T extends Record<string, unknown>>(obj: T, keys: (keyof T)[]): ke
 }
 
 export function registerTools(server: McpServer, session: Session): void {
-  server.registerTool("lifeup_status", {
+  server.registerTool("status", {
     description: "Show LifeUp Cloud connection status",
     inputSchema: z.object({}),
   }, async () => text(session.status()))
 
-  server.registerTool("lifeup_discover", {
-    description: "Browse LAN for LifeUp Cloud via mDNS _lifeup._tcp",
+  server.registerTool("discover", {
+    description: "Browse LAN for LifeUp Cloud via mDNS. If exactly one instance is found, connect to it.",
     inputSchema: z.object({}),
   }, async () => {
     const { discoverCloud } = await import("./discover.js")
-    return text(await discoverCloud())
+    const found = await discoverCloud()
+    session.rememberDiscover(found)
+    if (found.length === 1) {
+      const endpoint = await session.connect({ host: `${found[0].host}:${found[0].port}` })
+      return text({ found, connected: true, endpoint })
+    }
+    return text({ found, connected: false })
   })
 
-  server.registerTool("lifeup_connect", {
-    description: "Connect to LifeUp Cloud. host like 192.168.1.8:13276. token is the raw Authorization value if Cloud set one.",
+  server.registerTool("connect", {
+    description: "Connect to LifeUp Cloud. Omit host if discover already found one. host like 192.168.1.8:13276. token is the raw Authorization value if Cloud set one.",
     inputSchema: z.object({
       host: z.string().optional(),
       token: z.string().optional(),
     }),
   }, async ({ host, token }) => text(await session.connect({ host, token })))
 
-  server.registerTool("lifeup_help", {
+  server.registerTool("help", {
     description:
-      "Read bundled LifeUp docs. First api-index (what exists). Then a method name for the full wiki table. Use basics for errors/encoding/JSON/flaky Cloud. Also overview|discovery|query|tasks|economy.",
+      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|gaps.",
     inputSchema: z.object({
-      topic: z.string(),
+      topic: z.string().optional(),
     }),
-
-  }, async ({ topic }) => text(await readHelp(topic)))
+  }, async ({ topic }) => text(await readHelp(topic ?? "overview")))
 
   server.registerTool("list_data", {
     description:
-      "Query LifeUp ContentProvider lists (GET). Compact rows by default. Prefer categoryId. Use detail=true only when you need full objects. See lifeup_help query.",
+      "Query LifeUp ContentProvider lists (GET). Compact by default. Prefer categoryId. detail=true only for full objects. Feelings/achievements/synthesis/pomodoro: resource=feelings|achievements|synthesis|pomodoro_records.",
     inputSchema: z.object({
       resource: z.enum(LIST_RESOURCES),
       categoryId: z.number().int().optional(),
@@ -158,16 +163,27 @@ export function registerTools(server: McpServer, session: Session): void {
 
 
   server.registerTool("complete_task", {
-    description: "Complete a task. Provide exactly one of id, gid, or name. Returns result; keep ids if present.",
+    description: "Complete a task. Exactly one of id, gid, or name. Count tasks: count + count_set_type (relative|absolute).",
     inputSchema: z.object({
       id: z.number().int().optional(),
       gid: z.number().int().optional(),
       name: z.string().optional(),
       ui: z.boolean().optional(),
+      count: z.number().optional(),
+      count_set_type: z.enum(["relative", "absolute"]).optional(),
+      count_force_sum_up: z.boolean().optional(),
+      reward_factor: z.number().optional(),
     }),
   }, async (args) => {
     const key = oneOf(args, ["id", "gid", "name"])
-    return mutate(session, "complete", { [key]: args[key], ui: args.ui ?? false })
+    return mutate(session, "complete", {
+      [key]: args[key],
+      ui: args.ui ?? false,
+      count: args.count,
+      count_set_type: args.count_set_type,
+      count_force_sum_up: args.count_force_sum_up,
+      reward_factor: args.reward_factor,
+    })
   })
 
   server.registerTool("add_task", {

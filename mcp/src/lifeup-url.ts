@@ -5,16 +5,13 @@ export function buildLifeUpUrl(
   params: Record<string, LifeUpParamValue | undefined> = {},
 ): string {
   const path = method.replace(/^\/+/, "")
-  const url = new URL(`lifeup://api/${path}`)
+  const pairs: string[] = []
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined) continue
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        url.searchParams.append(key, String(item))
-      }
-    } else {
-      url.searchParams.append(key, String(value))
+    const items = Array.isArray(value) ? value : [value]
+    for (const item of items) {
+      pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`)
     }
   }
-  return url.toString()
+  return pairs.length ? `lifeup://api/${path}?${pairs.join("&")}` : `lifeup://api/${path}`
 }

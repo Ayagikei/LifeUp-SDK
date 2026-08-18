@@ -86,7 +86,7 @@ export function assertCallableMethod(
   params: Record<string, unknown> = {},
 ): void {
   if (!KNOWN_METHODS.includes(method as KnownMethod)) {
-    throw new Error(`Unknown LifeUp API method: ${method}. Use lifeup_help topic=api-index.`)
+    throw new Error(`Unknown LifeUp API method: ${method}. Use help topic=api-index.`)
   }
   if (isDestructiveCall(method, params) && confirm !== true) {
     throw new Error(`${method} is destructive. Pass confirm=true to proceed.`)

@@ -6,10 +6,8 @@ Condensed rules for agents. Do not hand-build `lifeup://` strings.
 
 Phone: LifeUp running + LifeUp Cloud started + **Read LifeUp Data**. Same LAN. Default port `13276`.
 
-1. `lifeup_status`
-2. `lifeup_discover` (mDNS `_lifeup._tcp`, name contains `lifeup_cloud`, TXT `port` is HTTP)
-3. `lifeup_connect` `{ host }` if 0 or >1 instances
-
+1. `discover` — auto-connects when exactly one Cloud is found (mDNS `_lifeup._tcp`, TXT `port` is HTTP)
+2. `connect` `{ host }` if 0 or >1 instances
 Token only if Cloud set one. Header is the **raw** token, not `Bearer`. `LIFEUP_TOKEN` is process-only. Saved token is bound to `{host,port}` and is not sent to a different discovered host.
 
 ## Flaky Cloud
@@ -19,12 +17,12 @@ Typical failures:
 | Signal | Meaning | What to do |
 |---|---|---|
 | discover empty | Cloud off / different Wi‑Fi / AP isolation | Ask user to start Cloud; or take `host:port` |
-| connect timeout / NetworkError | phone sleep, Wi‑Fi drop | `lifeup_connect` once more; then ask user |
-| `token required or invalid` (HTTP 401) | Cloud has a token, or the token is wrong | ask user; `lifeup_connect` `{ token }` |
+| connect timeout / NetworkError | phone sleep, Wi‑Fi drop | `connect` once more; then ask user |
+| `token required or invalid` (HTTP 401) | Cloud has a token, or the token is wrong | ask user; `connect` `{ token }` |
 | `LifeUp is not running, or Read LifeUp Data is not granted` (code 10001) | LifeUp closed, or Cloud has no read permission | open LifeUp / grant in Cloud |
-| `Cloud timed out (10s)` | phone sleep / Wi‑Fi drop | one `lifeup_connect`, then ask user |
+| `Cloud timed out (10s)` | phone sleep / Wi‑Fi drop | one `connect`, then ask user |
 | Non-JSON response | wrong host or captive portal | check `host:port` |
-| later calls fail after success | phone slept | `lifeup_status` then `lifeup_connect` again |
+| later calls fail after success | phone slept | `status` then `connect` again |
 
 Do not tight-loop discover. One retry is enough. Mutations are not idempotent (`complete`, `skip`, `reward`) — do not retry a write unless the user asked.
 
@@ -33,7 +31,7 @@ Do not tight-loop discover. One retry is enough. Mutations are not idempotent (`
 
 Pass **raw** values in tool `params`. `call_api` / typed tools encode query values.
 
-- Do **not** percent-encode yourself (`%20`, `%26`, …). Spaces become `+`; `#` becomes `%23`.
+- Do **not** percent-encode yourself (`%20`, `%26`, …). MCP uses `%20` for spaces (not `+`). `#` becomes `%23`.
 - Do **not** paste a finished `lifeup://api/...?` string into `call_api` unless the user already gave that exact URL; prefer `{ method, params }`.
 - Nested APIs (`random.api`, `confirm_dialog.*_action`): pass the inner URL as a **plain** `lifeup://api/...` string in `params`. MCP encodes it once.
 - Wiki examples often show **already-encoded** inner URLs (`lifeup:%2F%2Fapi%2Ftoast%3F...`). Do not copy that form into `params`.
@@ -52,7 +50,7 @@ Minimal shapes:
 
 `purchase_limit`: `[{ "limitType": 0, "limitNumber": 5 }]`.  
 `effects`: `[{ "type": 2, "info": { "min": 100, "max": 200 } }]`.  
-Full type tables: `lifeup_help` for `add_item` / `achievement` when you actually need them.
+Full type tables: `help` for `add_item` / `achievement` when you actually need them.
 
 `extendInfo` inside `purchase_limit` is itself a JSON string.
 

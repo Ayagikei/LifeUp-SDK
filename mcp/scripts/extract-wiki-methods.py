@@ -48,7 +48,7 @@ def main() -> None:
         "# API index",
         "",
         "Catalog only. Do **not** read every method file.",
-        "Need params? `lifeup_help` with `topic` = the method name (e.g. `add_task`).",
+        "Need params? `help` with `topic` = the method name (e.g. `add_task`).",
         "Wiki may lag: https://docs.lifeupapp.fun/zh-cn/#/guide/api",
         "",
         "| method | 功能 |",

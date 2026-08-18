@@ -19,7 +19,7 @@ function pickIpv4(addresses?: Array<string | undefined>): string | undefined {
   return addresses?.find((address) => address != null && /^\d{1,3}(\.\d{1,3}){3}$/.test(address))
 }
 
-export async function discoverCloud(timeoutMs = 2000): Promise<CloudEndpoint[]> {
+export async function discoverCloud(timeoutMs = 5000): Promise<CloudEndpoint[]> {
   const Bonjour = (await import("bonjour-service")).default
   const bonjour = new Bonjour()
   const found = new Map<string, CloudEndpoint>()
