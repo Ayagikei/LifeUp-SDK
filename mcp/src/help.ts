@@ -12,6 +12,7 @@ export const HELP_TOPICS = [
   "economy",
   "api-index",
   "gaps",
+  "broadcasts",
 ] as const
 
 export type HelpTopic = (typeof HELP_TOPICS)[number] | KnownMethod
@@ -25,6 +26,7 @@ const FILES: Record<(typeof HELP_TOPICS)[number], string> = {
   economy: "references/economy.md",
   "api-index": "references/api-index.md",
   gaps: "references/gaps.md",
+  broadcasts: "references/broadcasts.md",
 }
 
 export function skillsDir(): string {
@@ -43,7 +45,7 @@ export async function readHelp(topic: string): Promise<string> {
     return readFile(join(skillsDir(), "references", "methods", `${methodDocSlug(topic)}.md`), "utf8")
   }
   throw new Error(
-    `Unknown help topic "${topic}". Use overview|discovery|basics|query|tasks|economy|api-index|gaps, or a method from api-index.`,
+    `Unknown help topic "${topic}". Use overview|discovery|basics|query|tasks|economy|api-index|gaps|broadcasts, or a method from api-index.`,
   )
 }
 

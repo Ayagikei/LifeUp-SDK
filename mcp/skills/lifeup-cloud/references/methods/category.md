@@ -1,32 +1,32 @@
 # category
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**category
+**Method name:** category
 
-**说明：**添加或编辑各类清单（任务清单、成就清单、商店清单、合成清单）
+**Description:** Add or edit categories (task lists, achievement lists, shop lists, synthesis lists)
 
-**示例：**
+**Examples:**
 
-- 创建任务清单：[lifeup://api/category?type=tasks&name=学习清单](lifeup://api/category?type=tasks&name=学习清单)
-- 编辑商店清单：[lifeup://api/category?type=shop&edit_id=1&name=装备商店&order=1](lifeup://api/category?type=shop&edit_id=1&name=装备商店&order=1)
+- Create a task list: [lifeup://api/category?type=tasks&name=Study List](lifeup://api/category?type=tasks&name=Study List)
+- Edit a shop list: [lifeup://api/category?type=shop&edit_id=1&name=Equipment Shop&order=1](lifeup://api/category?type=shop&edit_id=1&name=Equipment Shop&order=1)
 
-| 参数             | 含义           | 取值                | 示例       | 是否必须 | 备注                           |
-| --------------- | -------------- | ------------------ | ---------- | -------- | ------------------------------ |
-| type            | 清单类型       | 以下数值其一：<br/>tasks<br/>achievements<br/>shop<br/>synthesis | tasks | 是 | tasks - 任务清单<br/>achievements - 成就清单<br/>shop - 商店清单<br/>synthesis - 合成清单 |
-| edit_id         | 编辑的清单ID   | 大于 0 的数字      | 1          | 否       | 编辑时必须提供                 |
-| name            | 清单名称       | 任意文本           | 学习清单    | 否       | 新建时必须提供；编辑时可选      |
-| order           | 排序           | 整数               | 1          | 否       | 清单在列表中的排序位置          |
-| hidden          | 是否隐藏       | true 或者 false    | false      | 否       | 仅任务清单和商店清单支持        |
-| inventory_hidden| 是否在仓库隐藏 | true 或者 false    | false      | 否       | 仅商店清单支持                 |
-| icon_uri        | 图标URI        | URI文本            | content://... | 否    | 仅成就清单支持                 |
-| desc            | 描述           | 任意文本           | 这是描述     | 否      | 仅成就清单支持                 |
-| color           | 标签颜色       | 颜色字符串         | #66CCFF     | 否      | 仅任务清单支持；#需要转义为%23  |
+| Parameter        | Meaning           | Values               | Example    | Required | Notes                           |
+| --------------- | ----------------- | -------------------- | ---------- | -------- | ------------------------------- |
+| type            | Category type     | One of:<br/>tasks<br/>achievements<br/>shop<br/>synthesis | tasks | Yes | tasks - Task lists<br/>achievements - Achievement lists<br/>shop - Shop lists<br/>synthesis - Synthesis lists |
+| edit_id         | Category ID to edit| number greater than 0| 1         | No       | Required when editing           |
+| name            | Category name     | any text             | Study List | No       | Required for new categories; optional when editing |
+| order           | Sort order        | integer              | 1         | No       | Position in the list            |
+| hidden          | Hide category     | true or false        | false     | No       | Only supported for task and shop lists |
+| inventory_hidden| Hide in inventory | true or false        | false     | No       | Only supported for shop lists   |
+| icon_uri        | Icon URI          | URI text             | content://... | No  | Only supported for achievement lists |
+| desc            | Description       | any text             | This is a description | No | Only supported for achievement lists |
+| color           | Tag color         | color string         | #66CCFF   | No       | Only supported for task lists; # must be escaped as %23 |
 
-**返回数据：**
+**Response:**
 
-| 字段名 | 类型   | 说明     | 示例 | 备注             |
-| ------ | ------ | -------- | ---- | ---------------- |
-| id     | 数字   | 清单ID   | 1000 | 新建或编辑的清单ID |
+| Field | Type    | Description    | Example | Notes                    |
+| ----- | ------- | -------------- | ------- | ------------------------ |
+| id    | Number  | Category ID    | 1000    | ID of new or edited category |
 
 <br/>

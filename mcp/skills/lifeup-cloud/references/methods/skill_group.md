@@ -1,43 +1,43 @@
 # skill_group
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**skill_group
+**Method name:** skill_group
 
-**说明：**创建、编辑、删除技能组，也支持一次性提交技能组与技能的混排排序结果。
+**Description:** Create, edit, delete, or reorder skill groups. The sort API also supports mixed ordering of groups and skills.
 
-**示例：**
+**Examples:**
 
-- 创建技能组：[lifeup://api/skill_group?content=战斗](lifeup://api/skill_group?content=战斗)
-- 编辑技能组：[lifeup://api/skill_group?id=10&content=战斗&order=20&collapsed=true](lifeup://api/skill_group?id=10&content=战斗&order=20&collapsed=true)
-- 删除技能组：[lifeup://api/skill_group?id=10&delete=true](lifeup://api/skill_group?id=10&delete=true)
-- 混排排序：
+- Create a group: [lifeup://api/skill_group?content=Combat](lifeup://api/skill_group?content=Combat)
+- Edit a group: [lifeup://api/skill_group?id=10&content=Combat&order=20&collapsed=true](lifeup://api/skill_group?id=10&content=Combat&order=20&collapsed=true)
+- Delete a group: [lifeup://api/skill_group?id=10&delete=true](lifeup://api/skill_group?id=10&delete=true)
+- Sort groups and skills together:
 
 ```text
 lifeup://api/skill_group?sort_json=[{"type":"skill","id":2},{"type":"group","id":10},{"type":"skill","id":3}]
 ```
 
-| 参数 | 含义 | 取值 | 示例 | 是否必须 | 备注 |
-| ---- | ---- | ---- | ---- | -------- | ---- |
-| id | 技能组ID | 大于 0 的数字 | 10 | 否* | 编辑或删除时必须提供 |
-| content | 技能组名称 | 任意文本 | 战斗 | 否* | 新建时必须提供 |
-| order | 排序值 | 整数 | 20 | 否 | 原始 `orderInCategory`；在技能与技能组的混排列表中必须唯一 |
-| collapsed | 折叠状态 | true 或 false | true | 否 | 是否折叠该技能组 |
-| delete | 是否删除 | true 或 false | false | 否 | 仅编辑模式下有效 |
-| sort_json | 混排排序节点 | JSON 数组 | `[{"type":"skill","id":2},{"type":"group","id":10}]` | 否* | 提供后会忽略 CRUD 参数，直接按该排序计划回写。支持部分排序：未传入的节点会保持原相对顺序 |
+| Parameter | Meaning | Values | Example | Required | Notes |
+| --------- | ------- | ------ | ------- | -------- | ----- |
+| id | Skill group ID | number greater than 0 | 10 | No* | Required when editing or deleting |
+| content | Group name | any text | Combat | No* | Required when creating |
+| order | Sort order | integer | 20 | No | Raw `orderInCategory` value; it must be unique in the mixed skill/group list |
+| collapsed | Collapse state | true or false | true | No | Whether the group is collapsed |
+| delete | Delete flag | true or false | false | No | Only valid when editing |
+| sort_json | Mixed sort nodes | JSON array | `[{"type":"skill","id":2},{"type":"group","id":10}]` | No* | When provided, CRUD parameters are ignored and the mixed sort plan is applied. Partial sorting is supported: unspecified nodes keep their relative order |
 
-`sort_json` 节点格式：
+`sort_json` node format:
 
-| 字段 | 含义 | 取值 |
-| ---- | ---- | ---- |
-| type | 节点类型 | `skill` / `group` |
-| id | 实体 ID | 大于 0 的数字 |
+| Field | Meaning | Values |
+| ----- | ------- | ------ |
+| type | Node type | `skill` / `group` |
+| id | Entity ID | number greater than 0 |
 
-**返回数据：**
+**Response:**
 
-| 字段名 | 类型 | 说明 | 示例 | 备注 |
-| ------ | ---- | ---- | ---- | ---- |
-| id | 数字 | 技能组ID | 10 | 创建 / 编辑 / 删除时返回 |
-| count | 数字 | 参与排序的节点数量 | 3 | 使用 `sort_json` 时返回 |
+| Field | Type | Description | Example | Notes |
+| ----- | ---- | ----------- | ------- | ----- |
+| id | Number | Skill group ID | 10 | Returned for create / edit / delete |
+| count | Number | Number of sorted nodes | 3 | Returned for `sort_json` requests |
 
 <br/>

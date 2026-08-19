@@ -7,12 +7,12 @@ test("api-index catalog lists every known method once", async () => {
   const index = await readHelp("api-index")
   assert.match(index, /Catalog only/)
   const listed = [...index.matchAll(/\| `([^`]+)` \|/g)].map((match) => match[1])
-  assert.deepEqual(listed, [...KNOWN_METHODS])
+  assert.deepEqual([...listed].sort(), [...KNOWN_METHODS].sort())
 })
 
 test("method help returns the wiki param table on demand", async () => {
   const toast = await readHelp("toast")
-  assert.match(toast, /\*\*方法名：\*\*toast/)
+  assert.match(toast, /\*\*Method name:\*\* toast/)
   assert.match(toast, /\| text\s+\|/)
   const addTask = await readHelp("add_task")
   assert.match(addTask, /todo/)

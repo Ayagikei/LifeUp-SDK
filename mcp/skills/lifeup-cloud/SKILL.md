@@ -45,5 +45,5 @@ After writes, read `calls[].ok` and `calls[].data` (full return: ids, codes, que
 
 
 Destructive: `delete_task`, `edit_coin`, `export_backup`, `history_operation` need `confirm: true`.
-Wiki may lag; Cloud HTTP is source of truth.
+Wiki may lag; Cloud HTTP is source of truth. Phone broadcasts: `help` `broadcasts` (MCP cannot subscribe).
 

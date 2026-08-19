@@ -33,15 +33,14 @@ Optional env:
 
 If Cloud set an API token, pass it to `connect` or `LIFEUP_TOKEN`. Header is the raw token, not `Bearer`.
 
-## Skills are inside the MCP
+## Skills (in this repo)
 
-You do **not** copy a skill folder for Cursor/Claude Desktop.
+Canonical files: [`mcp/skills/lifeup-cloud/`](skills/lifeup-cloud/). Same copy is bundled into the MCP (`help`).
 
-- Server `description` tells the model how to connect
-- `help` with no topic = workflow
-- `help` `api-index` lists methods; `help` `add_task` (any method) returns that wiki table
+- **Cursor / Claude Desktop / WorkBuddy:** install the MCP only. Do not install a second skill.
+- **Claude Code / Pi / your own agent:** point the skill path at `mcp/skills/lifeup-cloud`, or copy that folder and edit it.
 
-Claude Code / Pi can additionally point at `mcp/skills/lifeup-cloud` if they want a disk skill. Same files, not a second source of truth.
+There is no separate npm skill package. Fork the folder if you want a custom workflow.
 
 ## First tools
 

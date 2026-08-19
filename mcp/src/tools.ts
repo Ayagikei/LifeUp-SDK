@@ -71,7 +71,7 @@ export function registerTools(server: McpServer, session: Session): void {
 
   server.registerTool("help", {
     description:
-      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|gaps.",
+      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|gaps|broadcasts.",
     inputSchema: z.object({
       topic: z.string().optional(),
     }),
@@ -277,5 +277,21 @@ export function registerTools(server: McpServer, session: Session): void {
     const urls = calls.map((item) => buildLifeUpUrl(item.method, (item.params ?? {}) as Record<string, LifeUpParamValue>))
     return text(presentCalls(path, await session.requireClient().callApis(urls, path)))
   })
+
+  server.registerTool("list_events", {
+    description: "Pull LifeUp broadcast events over HTTP GET /events. Default. after= last id.",
+    inputSchema: z.object({
+      after: z.number().int().optional(),
+      limit: z.number().int().optional(),
+    }),
+  }, async ({ after, limit }) => text(await session.listEvents(after ?? 0, limit ?? 50)))
+
+  server.registerTool("subscribe_events", {
+    description: "Open Cloud WebSocket /events (Cloud setting enableEventWs). HTTP list_events still works. on=false closes.",
+    inputSchema: z.object({
+      after: z.number().int().optional(),
+      on: z.boolean().optional(),
+    }),
+  }, async ({ after, on }) => text(session.setEventSubscription(on ?? true, after ?? 0)))
 }
 

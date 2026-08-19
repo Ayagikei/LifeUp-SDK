@@ -1,33 +1,33 @@
 # reward
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**reward
+**Method name:** reward
 
-**说明：**直接提供奖励，可定制奖励理由
+**Description:** Provide the reward directly. The reason for the reward can be customized.
 
-**示例：**
+**Example:**
 
-- 获得 1 点金币，获得原因为「学习API调用」。且原因会在金币详情页面展示：
+- Get 1 coin, and the reason for getting it is "Learn API Calls". And the reason will be displayed on the gold coin details page:
 
-  [lifeup://api/reward?type=coin&content=学习API调用&number=1](lifeup://api/reward?type=coin&content=学习API调用&number=1)
+  <a href="lifeup://api/reward?type=coin&content=Learn API Calls&number=1">lifeup://api/reward?type=coin&content=Learn API Calls&number=1</a>
 
-- 获得 300 点「学识、创造力」经验值，获得原因为「学习API调用」。且原因会在经验值详情页面展示：
+- Get 300 experience points for "Learning, Creativity" , and the reason for obtaining them is "Learn API Calls". And the reason will be displayed on the EXP details page:
 
-  [lifeup://api/reward?type=exp&content=学习API调用&number=300&skills=2&skills=6](lifeup://api/reward?type=exp&content=学习API调用&number=300&skills=2&skills=6)
+  <a href="lifeup://api/reward?type=exp&content=Learn API Calls&number=300&skills=2&skills=6">lifeup://api/reward?type=exp&content=Learn API Calls&number=300&skills=2&skills=6</a>
 
-- 获得 1 个模糊匹配「金币」商品，获得原因为「学习API调用」。且原因会在仓库历史页面展示：
+- Obtained 1 fuzzy matching "treasure" item, and the reason for getting it is "Learn API Calls". And the reason will be displayed on the inventory history page:
 
-  [lifeup://api/reward?type=item&content=学习API调用&number=1&item_name=金币](lifeup://api/reward?type=item&content=学习API调用&number=1&item_name=金币)
+  <a href="lifeup://api/reward?type=item&content=Learn API Calls&number=1&item_name=treasure">lifeup://api/reward?type=item&content=Learn API Calls&number=1&item_name=treasure</a>
 
-| 参数      | 含义             | 取值                                   | 示例        | 是否必须 | 备注                                                         |
-| --------- | ---------------- | -------------------------------------- | ----------- | -------- | ------------------------------------------------------------ |
-| type      | 奖励类型         | 目前仅支持：<br/>coin<br/>exp<br/>item | coin        | 是       | coin - 金币<br/>exp - 经验值<br/>item - 商品                 |
-| content   | 奖励原因         | 任意文本                               | 学习API调用 | 是       | -                                                            |
-| skills    | 技能（属性）     | 大于 0 的数字数组                      | 1           | 否       | 仅当 type 为 exp 时可用<br/>支持数组（如&skills=1&skills=2&skills=3）<br/>获取方式请查看上文 「基础知识 - 人升数据 ID」 |
-| number    | 奖励数量         | 大于 0 的数字                          | 1           | 是       | 如果是金币，取值最大为999999<br/>如果是经验值，取值最大为99999<br/>如果是商品，取值最大为99 |
-| item_id   | 商品id           | 大于 0 的数字                          | 1           | 否*      | 仅当 type 为 item 时可用                                     |
-| item_name | 商品名称         | 任意文本                               | 金币        | 否*      | 仅当 type 为 item 时可用，模糊匹配                           |
-| silent    | 是否要禁用UI提示 | true 或者 false                        | false       | 否       | 默认为 false                                                 |
+| Parameter | Meaning                       | Type                            | Example            | Required | Notes                            |
+| --------- | ----------------------------- | ------------------------------- | ------------------ | -------- | -------------------------------- |
+| type      | reward type                   | currently only supported following values: <br/>coin<br/>exp<br/>item | coin | yes | coin - coins<br/>exp - experience points<br/>item - shop items |
+| content   | reward reason                 | any text                        | Learning API Calls | Yes      |                                  |
+| skills    | skills (attributes)           | array of numbers greater than 0 | 1                  | No       | Available only when type is exp<br/>Supported arrays (eg &skills=1&skills=2&skills=3)<br/>For how to obtain, see above The article "Basic Knowledge - LifeUp Data ID" |
+| number    | number of rewards             | a number greater than 0         | 1                  | Yes      | If it is a gold coin, the maximum value is 999999<br/>If it is an experience value, the maximum value is 99999<br/>If it is a item, the maximum value is 999 |
+| item_id   | item id                       | number greater than 0           | 1                  | no*      | only available when type is item |
+| item_name | item name                     | any text                        | treasure           | no*      | only available when type is item, fuzzy matching with item names |
+| silent    | whether to disable UI prompts | true or false                   | false              | no       | default is false                 |
 
 <br/>

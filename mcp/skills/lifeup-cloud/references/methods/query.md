@@ -1,106 +1,104 @@
 # query
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**query
+**Method name:** query
 
-**说明：**查询参数
+**Description:** query parameters
 
-**版本：**需要 v1.90.2
+**Example:** - Query the current number of coins: [lifeup://api/query?key=coin](lifeup://api/query?key=coin)
 
-**示例：**
+| Parameter   | Meaning              | Type                                                         | Example | Required                                    | Notes                                                        |
+| ----------- | -------------------- | ------------------------------------------------------------ | ------- | ------------------------------------------- | ------------------------------------------------------------ |
+| key         | type of query        | Only one of the following values:<br/>coin<br/>atm<br/>item<br/>item_id_list<br/>tomato<br/>task | coin    | yes                                         | coin - current amount of coins<br/>atm - current ATM balance<br/>item - Item information for the specified `itemId`<br/>item_id_list - List of item IDs specified by `categoryId`<br/>tomato - Tomato data<br/>task - Task information (v1.101.0+) |
+| item_id     | the id of the item   | a number greater than 0                                      | 1       | When the key is `item`, it must be provided |                                                              |
+| category_id | the Shop category id | Number greater than or equal to 0                            | 0       | no*                                         | Required only when the key is `item_id_list`, representing the ID of the list to be queried. |
+| task_id / taskId | Task ID          | Number greater than 0                                        | 1       | When key is `task`, one of three* is required | Queried task ID |
+| task_gid / taskGid / task_group_id / taskGroupId | Task group ID | Number greater than 0 | 1 | When key is `task`, one of three* is required | Queried task group ID |
+| task_name / taskName | Task name      | Any text                                                     | Study   | When key is `task`, one of three* is required | Fuzzy-matched task name |
+| withSubTasks | Include sub-tasks   | true or false                                                | true    | No                                          | Available only when key is `task`; defaults to true |
 
-- 查询当前金币数：[lifeup://api/query?key=coin](lifeup://api/query?key=coin)
+**Return Value:**
 
-| 参数        | 含义       | 取值                                                         | 示例 | 是否必须                        | 备注                                                         |
-| ----------- | ---------- | ------------------------------------------------------------ | ---- | ------------------------------- | ------------------------------------------------------------ |
-| key         | 查询的类型 | 仅限以下数值其一：<br/>coin<br/>atm<br/>item<br/>item_id_list<br/>tomato<br/>task | coin | 是                              | coin - 当前金币数<br/>atm - 当前 ATM 存款<br/>item - 指定 `itemId` 的商品信息<br/>item_id_list - 指定`categoryId`的商品id列表<br/>tomato - 番茄数据<br/>task - 任务信息(v1.101.0+) |
-| item_id     | 商品id     | 大于 0 的数字                                                | 1    | 当 key 为 item 时，必须         | 查询的商品 id                                                |
-| category_id | 清单id     | 大于或者等于 0 的数字                                        | 1    | 当 key 为 item_id_list 时，必须 | 只有当key为`item_id_list`时需要，代表查询的清单 id           |
-| task_id / taskId | 任务 ID | 大于 0 的数字 | 1 | 当 key 为 task 时，三选一* | 查询的任务 ID |
-| task_gid / taskGid / task_group_id / taskGroupId | 任务组 ID | 大于 0 的数字 | 1 | 当 key 为 task 时，三选一* | 查询的任务组 ID |
-| task_name / taskName | 任务名称 | 任意文本 | 学习 | 当 key 为 task 时，三选一* | 模糊匹配任务名称 |
-| withSubTasks | 是否包含子任务 | true 或 false | true | 否 | 仅 key 为 task 时可用，默认为 true |
+Only supported since version 1.90.2
 
-**返回值：**
+When querying coin/atm:
 
-当查询 coin/atm 时:
+| Parameter | Meaning                             | Type               | Example | Required | Notes |
+| --------- | ----------------------------------- | ------------------ | ------- | -------- | ----- |
+| value     | Numeric value returned by the query | number             | 1000    | yes      |       |
 
-| 参数  | 含义           | 取值 | 示例 | 是否必须 | 备注 |
-| ----- | -------------- | ---- | ---- | -------- | ---- |
-| value | 查询返回的数值 | 数字 | 1000 | 是       |      |
+When querying an item:
 
-当查询 item 时:
+| Parameter        | Meaning                         | Type     | Example   | Required | Notes |
+| ---------------- | ------------------------------- | -------- | --------- | -------- | ----- |
+| item_id          | the id of the item              | number   | 1         | yes      |       |
+| name             | the name of the item            | any text | Coffee    | yes      |       |
+| desc             | description                     | any text |           | no       |       |
+| icon             | icon URL                        | any text | icon.webp | no       | If it is a local file, only the file name is returned |
+| category_id      | category data id                | number   | 1         | yes      |       |
+| stock_number     | shop stock quantity             | number   | -1        | yes      | `-1` represents infinite shop inventory |
+| own_number       | the own number in the Inventory | number   | 10        | yes      |       |
+| price            | the price                       | number   | 100       | yes      |       |
+| order            | sort by                         | number   | 100       | yes      | Weight value when custom sorting |
+| disable_purchase | Whether to disable purchase     | true or false | true | yes |       |
+| purchase_limit   | Restriction rules               | JSON text | [{"limitType":0,"limitNumber":5}] | yes | Current restriction list |
+| limit_scope      | Restriction scope               | purchase / use / both | use | yes | Returned as API text value |
 
-| 参数             | 含义         | 取值     | 示例      | 是否必须 | 备注                           |
-| ---------------- | ------------ | -------- | --------- | -------- | ------------------------------ |
-| item_id          | 商品id       | 数字     | 1         | 是       | -                              |
-| name             | 名称         | 任意文本 | 商品      | 是       | -                              |
-| desc             | 描述         | 任意文本 |           | 否       | -                              |
-| icon             | 图标         | 任意文本 |           | 否       | -                              |
-| category_id      | 类别id       | 数字     |           | 否       | -                              |
-| stock_number     | 库存数量     | 数字     | -         | 是       | -1代表无限库存                 |
-| own_number       | 仓库拥有数   | 数字     | 10        | 是       | -                              |
-| price            | 价格         | 数字     | 100       | 是       | -                              |
-| order            | 排序依据     | 数字     | 100       | 是       | 自定义排序时的权重值           |
-| disable_purchase | 是否禁止购买 | true 或 false | true | 是 | -                              |
-| purchase_limit   | 限制规则     | JSON文本 | [{"limitType":0,"limitNumber":5}] | 是 | 当前商品的限制列表 |
-| limit_scope      | 限制作用范围 | purchase / use / both | use | 是 | 以 API 文本值返回 |
+When querying item_id_list:
 
-当查询 item_id_list 时:
+| Parameter | Meaning                           | Type   | Example | Required | Notes |
+| --------- | --------------------------------- | ------ | ------- | -------- | ----- |
+| item_ids  | Comma-separated item ID array     | string | 1,2,3,4 | yes      |       |
 
-| 参数     | 含义                            | 取值   | 示例    | 是否必须 | 备注 |
-| -------- | ------------------------------- | ------ | ------- | -------- | ---- |
-| item_ids | 查询返回的商品id数组,以`,`分隔 | 字符串 | 1,2,3,4 | 是       |      |
+When querying tomato:
 
-当查询 tomato 时:
+| Parameter | Meaning                  | Type   | Example | Required | Notes |
+| --------- | ------------------------ | ------ | ------- | -------- | ----- |
+| total     | Total tomato count       | number | 100     | yes      |       |
+| available | Available tomato count   | number | 50      | yes      |       |
+| exchanged | Exchanged tomato count   | number | 50      | yes      |       |
 
-| 参数      | 含义         | 取值 | 示例 | 是否必须 | 备注 |
-| --------- | ------------ | ---- | ---- | -------- | ---- |
-| total     | 总番茄数量   | 数字 | 100  | 是       |      |
-| available | 可用番茄数量 | 数字 | 50   | 是       |      |
-| exchanged | 已兑换番茄数量 | 数字 | 50   | 是       |      |
+When querying task (v1.101.0+):
 
-当查询 task 时 (v1.101.0+):
+| Parameter   | Meaning                      | Type        | Example | Required | Notes                           |
+| ----------- | ---------------------------- | ----------- | ------- | -------- | ------------------------------- |
+| _ID         | Task ID                      | number      | 1       | yes      | -                               |
+| _GID        | Task group ID                | number      | 1       | yes      | -                               |
+| name        | Task name                    | text        | Study   | yes      | -                               |
+| notes       | Notes                        | text        | -       | no       | May be empty                    |
+| status      | Task status                  | number      | 0       | yes      | 0=incomplete, 1=completed       |
+| startTime   | Start time                   | number      | -       | yes      | Unix timestamp (milliseconds)   |
+| deadline    | Deadline time                | number      | -       | no       | Unix timestamp (milliseconds), may be empty |
+| remindTime  | Remind time                  | number      | -       | no       | Unix timestamp (milliseconds), may be empty |
+| frequency   | Repetition frequency         | number      | -       | yes      | -                               |
+| exp         | EXP reward                   | number      | -       | yes      | -                               |
+| skillIds    | Skill ID list                | JSON text   | -       | yes      | JSON array format               |
+| coin        | Coin reward                  | number      | -       | no       | May be empty                    |
+| coinVariable| Random coin reward           | number      | -       | no       | May be empty                    |
+| itemId      | First reward item ID         | number      | -       | no       | May be empty                    |
+| itemCount   | First reward item count      | number      | -       | no       | Returned when itemId exists     |
+| items       | Item reward list             | JSON text   | -       | yes      | JSON array format               |
+| words       | Completion incentive words   | text        | -       | no       | May be empty                    |
+| categoryId  | Category ID                  | number      | -       | no       | May be empty                    |
+| order       | Order                        | number      | -       | yes      | -                               |
+| name_extended | Extended name              | text        | -       | yes      | Same as name                    |
+| subTasks    | Sub-task list                | JSON text   | -       | yes      | JSON array format, see below    |
 
-| 参数           | 含义             | 取值      | 示例 | 是否必须 | 备注                           |
-| -------------- | ---------------- | --------- | ---- | -------- | ------------------------------ |
-| _ID            | 任务ID           | 数字      | 1    | 是       | -                              |
-| _GID           | 任务组ID         | 数字      | 1    | 是       | -                              |
-| name           | 任务名称         | 文本      | 学习 | 是       | -                              |
-| notes          | 备注             | 文本      | -    | 否       | 可能为空                       |
-| status         | 任务状态         | 数字      | 0    | 是       | 0=未完成, 1=已完成             |
-| startTime      | 开始时间         | 数字      | -    | 是       | Unix时间戳(毫秒)               |
-| deadline       | 截止时间         | 数字      | -    | 否       | Unix时间戳(毫秒),可能为空      |
-| remindTime     | 提醒时间         | 数字      | -    | 否       | Unix时间戳(毫秒),可能为空      |
-| frequency      | 重复频率         | 数字      | -    | 是       | -                              |
-| exp            | 经验值奖励       | 数字      | -    | 是       | -                             |
-| skillIds       | 技能ID列表       | JSON文本  | -    | 是       | JSON数组格式                   |
-| coin           | 金币奖励         | 数字      | -    | 否       | 可能为空                       |
-| coinVariable   | 随机金币奖励     | 数字      | -    | 否       | 可能为空                       |
-| itemId         | 第一个奖励物品ID | 数字      | -    | 否       | 可能为空                       |
-| itemCount      | 第一个奖励物品数量 | 数字    | -    | 否       | 当itemId存在时返回             |
-| items          | 物品奖励列表     | JSON文本  | -    | 是       | JSON数组格式                   |
-| words          | 完成励志语       | 文本      | -    | 否       | 可能为空                       |
-| categoryId     | 分类ID           | 数字      | -    | 否       | 可能为空                       |
-| order          | 排序             | 数字      | -    | 是       | -                              |
-| name_extended  | 扩展名称         | 文本      | -    | 是       | 与name相同                     |
-| subTasks       | 子任务列表       | JSON文本  | -    | 是       | JSON数组格式,见下文说明        |
+**Sub-tasks (subTasks) field description:**
 
-**子任务(subTasks)字段说明:**
+The `subTasks` field is a JSON array, each element contains the following fields:
 
-`subTasks` 字段是一个JSON数组,每个元素包含以下字段:
-
-- `id`: 子任务ID
-- `gid`: 子任务组ID
-- `todo`: 子任务内容
-- `status`: 子任务状态(0=未完成, 1=已完成)
-- `remindTime`: 提醒时间(Unix时间戳,毫秒)
-- `exp`: 经验值奖励
-- `coin`: 金币奖励
-- `coinVariable`: 随机金币奖励
-- `items`: 物品奖励列表
-- `order`: 排序
-- `autoUseItem`: 是否自动使用物品
+- `id`: Sub-task ID
+- `gid`: Sub-task group ID
+- `todo`: Sub-task content
+- `status`: Sub-task status (0=incomplete, 1=completed)
+- `remindTime`: Remind time (Unix timestamp, milliseconds)
+- `exp`: EXP reward
+- `coin`: Coin reward
+- `coinVariable`: Random coin reward
+- `items`: Item reward list
+- `order`: Order
+- `autoUseItem`: Whether to automatically use item
 
 <br/>

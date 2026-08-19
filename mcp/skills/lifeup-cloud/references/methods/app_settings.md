@@ -1,27 +1,27 @@
 # app_settings
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**app_settings
+**Method name:** app_settings
 
-**说明：**调整应用的界面设置
+**Description:** Adjust app interface settings
 
-**示例：**
+**Examples:**
 
-- 启用简洁模式：[lifeup://api/app_settings?is_enable_compact_mode=true](lifeup://api/app_settings?is_enable_compact_mode=true)
-- 启用 Material You 主题：[lifeup://api/app_settings?is_enable_material_you=true](lifeup://api/app_settings?is_enable_material_you=true)
-- 更改设置并立即重启界面：[lifeup://api/app_settings?is_enable_compact_mode=true&restart_activities=true](lifeup://api/app_settings?is_enable_compact_mode=true&restart_activities=true)
+- Enable compact mode: [lifeup://api/app_settings?is_enable_compact_mode=true](lifeup://api/app_settings?is_enable_compact_mode=true)
+- Enable Material You theme: [lifeup://api/app_settings?is_enable_material_you=true](lifeup://api/app_settings?is_enable_material_you=true)
+- Change settings and restart UI immediately: [lifeup://api/app_settings?is_enable_compact_mode=true&restart_activities=true](lifeup://api/app_settings?is_enable_compact_mode=true&restart_activities=true)
 
-| 参数                    | 含义              | 取值            | 示例  | 是否必须 | 备注                           |
-| ---------------------- | ----------------- | --------------- | ----- | -------- | ------------------------------ |
-| is_enable_compact_mode | 是否启用简洁模式   | true 或者 false | true  | 否       | 精简界面元素                    |
-| is_enable_material_you | 是否启用Material You| true 或者 false | true  | 否       | 启用 Material You 主题          |
-| restart_activities     | 是否重启界面       | true 或者 false | true  | 否       | 立即应用界面更改                |
+| Parameter              | Meaning           | Values          | Example | Required | Notes                           |
+| --------------------- | ----------------- | --------------- | ------- | -------- | ------------------------------- |
+| is_enable_compact_mode| Enable compact mode| true or false  | true    | No       | Simplify interface elements     |
+| is_enable_material_you| Enable Material You| true or false  | true    | No       | Enable Material You theme       |
+| restart_activities    | Restart interface | true or false   | true    | No       | Apply interface changes immediately |
 
-**返回数据：**
+**Response:**
 
-| 字段名 | 类型   | 说明     | 示例 | 备注             |
-| ------ | ------ | -------- | ---- | ---------------- |
-| result | 整数   | 结果代码 | 0    | 0 表示设置成功   |
+| Field  | Type    | Description  | Example | Notes                    |
+| ------ | ------- | ------------ | ------- | ------------------------ |
+| result | Integer | Result code  | 0       | 0 indicates success      |
 
 <br/>

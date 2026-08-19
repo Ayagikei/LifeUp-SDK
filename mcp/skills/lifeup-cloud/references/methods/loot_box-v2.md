@@ -1,48 +1,48 @@
 # loot_box/v2
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**loot_box/v2
+**Method name:** loot_box/v2
 
-**说明：**loot_box API 的改进版本，修改指定箱子的开箱效果，支持调整概率、奖励数、增加内容物和**删除内容物**。
+**Description:** An improved version of the loot_box API. Modify the loot box effect of the specified box item, support adjustment of probability, number of rewards, adding content, and **deleting content**.
 
-**相比 v1 的改进：**
-- **`sub_amount` 精准匹配**：当开箱中存在同一物品的多个不同数量条目时（如 A x1 50%、A x2 30%），用 `sub_amount` 精准定位指定条目。默认值为 `1`。匹配不到时按 `sub_id` / `sub_name` 查找商品并新增条目；如果本次请求是 `amount=0` 删除语义，则不会新增。
-- **`set_type` 独立控制**：`amount_set_type` 和 `probability_set_type` 可独立设置，全局 `set_type` 作为默认回退值。
-- **支持删除条目**：`amount=0`（absolute 模式）或计算后 `<=0`（relative 模式）时删除匹配到的条目。
-- **重复条目合并**：如果调整 `amount` 后与同一箱子中已有的相同物品、相同数量条目重复，会合并到已有条目，并继续应用本次传入的 `probability` / `fixed`。
+**Improvements over v1:**
+- **`sub_amount` for precise matching**: When the box contains multiple entries of the same item with different amounts (e.g. A x1 50%, A x2 30%), use `sub_amount` to target a specific entry. Default value is `1`. If no matching entry is found, LifeUp looks up the item by `sub_id` / `sub_name` and adds a new entry; if the request is an `amount=0` deletion, no new entry is added.
+- **Independent `set_type`**: `amount_set_type` and `probability_set_type` can be controlled independently. The global `set_type` serves as fallback default.
+- **Delete support**: Setting `amount=0` with `amount_set_type=absolute` (or computing to `<=0` with `relative`) deletes the matched entry.
+- **Duplicate merge**: If changing `amount` would duplicate an existing entry with the same item and amount in the same box, LifeUp merges into the existing entry and continues applying the request's `probability` / `fixed` values.
 
-**示例：**[lifeup://api/loot_box/v2?name=金币箱&sub_name=【大】袋金币&sub_amount=2&probability_set_type=relative&probability=10](lifeup://api/loot_box/v2?name=金币箱&sub_name=【大】袋金币&sub_amount=2&probability_set_type=relative&probability=10)
+**Example:** <a href="lifeup://api/loot_box/v2?name=Coin loot box&sub_name=A big bag of coins&sub_amount=2&probability_set_type=relative&probability=10">lifeup://api/loot_box/v2?name=Coin loot box&sub_name=A big bag of coins&sub_amount=2&probability_set_type=relative&probability=10</a>
 
-**解释：**增加金币箱中的【大】袋金币（x2）的比重 10 点。
+**Explanation:** Increase the probability of the [large] bag of gold coins (x2) in the gold coin box by 10 points.
 
-| 参数                 | 含义                  | 取值                                     | 示例         | 是否必须 | 备注                                                         |
-| -------------------- | --------------------- | ---------------------------------------- | ------------ | -------- | ------------------------------------------------------------ |
-| id                   | 商品id                | 大于0的数字                              | 1            | 否*      | 获取方式请查看上文 「基础知识 - 人升数据 ID」                |
-| name                 | 商品名称              | 任意文本                                 | 金币箱       | 否*      | 用于未知 id 时，模糊搜索商品，并非修改名称                   |
-| sub_id               | 箱子内容物的 id       | 大于0的数字                              | 1            | 否*      | 箱子内容物的 id。与 sub_name 同时提供时，优先使用 sub_id 匹配 |
-| sub_name             | 箱子内容物的名称      | 任意文本                                 | 【大】袋金币 | 否*      | 用于箱子内容物未知 id 时，模糊搜索商品                       |
-| sub_amount           | 箱子内容物数量（匹配） | 数字                                    | 2            | 否       | 精准匹配 amount 等于该值的条目，最小值为 `1`，默认 `1`。匹配不到且不是删除语义时新增条目。 |
-| set_type             | 全局调整方式          | `absolute` / `relative`                  | relative     | 否       | 作为 amount_set_type 和 probability_set_type 的默认值        |
-| amount_set_type      | 奖励数调整方式        | `absolute` / `relative`                  | relative     | 否       | 覆盖 set_type 对 amount 字段的设置方式                       |
-| probability_set_type | 奖励比重调整方式      | `absolute` / `relative`                  | absolute     | 否       | 覆盖 set_type 对 probability 字段的设置方式                  |
-| amount               | 奖励数                | 数字                                     | 1            | 否       | 某个单一物品的奖励个数。`0`（absolute）或计算后 `<=0`（relative）时删除条目 |
-| probability          | 奖励比重              | 数字                                     | 1            | 否       | -                                                            |
-| fixed                | 是否是固定奖励        | 布尔值                                   | true/false   | 否       | -                                                            |
+| Parameter              | Meaning                               | Type                                                    | Example        | Required | Notes                                                        |
+| ---------------------- | ------------------------------------- | ------------------------------------------------------- | -------------- | -------- | ------------------------------------------------------------ |
+| id                     | item id                               | a number greater than 0                                 | 1              | no*      | Please refer to the above "Basic Knowledge - LifeUp Data ID" for how to obtain |
+| name                   | item name                             | any text                                                | Treasure chest | no*      | When used for unknown id, fuzzy search product, not name modification |
+| sub_id                 | content item id                       | a number greater than 0                                 | 1              | no*      | id of chest contents. If both sub_id and sub_name are provided, sub_id takes precedence |
+| sub_name               | content item name                     | any text                                                | Get a gift     | no*      | For fuzzy search items when the id of the contents of the box is unknown |
+| sub_amount             | content item amount for matching      | number                                                  | 2              | no       | Used to precisely match an entry with this amount. Minimum `1`, default `1`. If no match is found and this is not a deletion request, a new entry is added. |
+| set_type               | global adjustment method              | one of: `absolute` / `relative`                         | relative       | no       | Default for `amount_set_type` and `probability_set_type` if not specified |
+| amount_set_type        | adjustment method for amount          | one of: `absolute` / `relative`                         | relative       | no       | Overrides `set_type` for the amount field                    |
+| probability_set_type   | adjustment method for probability     | one of: `absolute` / `relative`                         | absolute       | no       | Overrides `set_type` for the probability field               |
+| amount                 | number of content item                | number                                                  | 1              | no       | number of rewards for a single item. `0` (absolute) or computed `<=0` (relative) deletes the entry |
+| probability            | probability of the content item       | number                                                  | 1              | no       | -                                                            |
+| fixed                  | whether it is a fixed reward          | boolean                                                 | true/false     | no       | -                                                            |
 
-**注意：**
+**Notice:**
 
-1. 为了搜索到商品，必须提供 id 或 name 其一。
-1. 为了搜索到内容物，必须提供 sub_id 或 sub_name 其一。
-1. 如果同时提供 `sub_id` 和 `sub_name`，`sub_id` 优先；只有未提供有效 `sub_id` 时才会使用 `sub_name`。
-1. `name` 和 `sub_name` 会先完整匹配，匹配不到再模糊匹配。
-1. `sub_amount` 默认值为 `1`。当开箱中存在同一物品的多个不同数量条目时，可提供 `sub_amount` 来指定要编辑的条目。匹配不到且不是删除语义时，会新增一条 `amount=sub_amount` 的内容物。
-1. 删除条目：设置 `amount=0`（absolute 模式）或使用 relative 模式使计算结果 `<=0`。删除仅对匹配到的已有条目生效；如果没有匹配到已有条目，`amount=0` 不会新增内容物。
-1. 如果把某个内容物的 `amount` 调整为同一箱子内已有的相同物品、相同数量条目，会合并到已有条目，并用本次请求继续覆盖 `probability` / `fixed`。
-1. 当删除后开箱为空时，整个开箱效果会被软删除（商品本身保留，后续仍可重新添加开箱条目）。
+1. In order to search for a product, either id or name must be provided.
+1. In order to search for content, either sub_id or sub_name must be provided.
+1. If both `sub_id` and `sub_name` are provided, `sub_id` takes precedence. `sub_name` is used only when no valid `sub_id` is provided.
+1. `name` and `sub_name` try exact matching first, then fall back to fuzzy matching.
+1. `sub_amount` defaults to `1`. When the box has multiple entries of the same item with different amounts, provide `sub_amount` to target a specific entry. If no match is found and this is not a deletion request, a new entry with `amount=sub_amount` is added.
+1. To delete an entry, set `amount=0` with `amount_set_type=absolute`, or use `amount_set_type=relative` with a negative value that brings the total to `<=0`. Deletion only applies to matched entries; if no existing entry is matched, `amount=0` does not add a new entry.
+1. If changing an entry's `amount` would duplicate an existing entry with the same item and amount in the same box, LifeUp merges into the existing entry and continues applying the request's `probability` / `fixed` values.
+1. When deletion leaves the box empty, the entire loot box effect is soft-deleted (the item itself is preserved and you can re-add loot box entries later).
 
 <br/>
 
-#### 使用商品
+#### Use items
 
-?> 该 API 于 v1.93.0-beta01（502）版本更新引入。
+?> This API was introduced in version v1.93.0-beta01 (502).

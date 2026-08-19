@@ -1,41 +1,41 @@
 # edit_pomodoro
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**edit_pomodoro
+**Method name:** edit_pomodoro
 
-**说明：**编辑现有的番茄计时记录或添加新的记录，如果提供有效的 `edit_item_id`。
+**Description:** Edit an existing Pomodoro timing record or add a new record if a valid `edit_item_id` is provided.
 
-**示例：**
+**Example:**
 
-- 编辑指定 ID 的记录，设置时长为 45 分钟（2700000 毫秒），并奖励番茄：[lifeup://api/edit_pomodoro?edit_item_id=123&duration=2700000&reward_tomatoes=true](lifeup://api/edit_pomodoro?edit_item_id=123&duration=2700000&reward_tomatoes=true)
-- 根据开始和结束时间编辑记录：[lifeup://api/edit_pomodoro?start_time=1659322800000&end_time=1659326400000&edit_item_id=456](lifeup://api/edit_pomodoro?start_time=1659322800000&end_time=1659326400000&edit_item_id=456)
+- Edit a record with a specified ID, set duration to 45 minutes (2700000 ms), and reward tomatoes: [lifeup://api/edit_pomodoro?edit_item_id=123&duration=2700000&reward_tomatoes=true](lifeup://api/edit_pomodoro?edit_item_id=123&duration=2700000&reward_tomatoes=true)
+- Edit a record by start and end time: [lifeup://api/edit_pomodoro?start_time=1659322800000&end_time=1659326400000&edit_item_id=456](lifeup://api/edit_pomodoro?start_time=1659322800000&end_time=1659326400000&edit_item_id=456)
 
-**参数：**
+**Parameters:**
 
-| 参数            | 含义                   | 取值            | 示例          | 是否必须 | 备注                                        |
-| --------------- | ---------------------- | --------------- | ------------- | -------- | ------------------------------------------- |
-| task_id         | 任务 ID                | 大于 0 的数字   | 101           | 否       | 任务的唯一标识                              |
-| task_gid        | 任务组 ID              | 大于 0 的数字   | 5             | 否       | 如果提供，会覆盖 task_id                    |
-| task_name       | 任务名称               | 任意文本        | 学习          | 否       | 如果 task_id 或 task_gid 不提供，则必须提供 |
-| start_time      | 计时开始时间           | 时间戳          | 1659322800000 | 否*      | 可以百度了解时间戳的定义                    |
-| end_time        | 计时结束时间           | 时间戳          | 1659326400000 | 否*      | -                                           |
-| duration        | 专注时长               | 数字（毫秒）    | 2700000       | 否*      | 至少为 30000 毫秒（30秒）                   |
-| reward_tomatoes | 是否奖励番茄           | true 或者 false | true          | 否       | 默认为 false                                |
-| edit_item_id    | 编辑项的 ID            | 大于 0 的数字   | 123           | 是       | 指定编辑的记录 ID                           |
-| ui              | 是否展示奖励番茄数的UI | true 或者 false | true          | 否       |                                             |
+| Parameter       | Meaning                    | Type                  | Example       | Required | Notes                                            |
+| --------------- | -------------------------- | --------------------- | ------------- | -------- | ------------------------------------------------ |
+| task_id         | Task ID                    | Number greater than 0 | 101           | No       | Unique identifier for the task                   |
+| task_gid        | Task group ID              | Number greater than 0 | 5             | No       | If provided, it overrides task_id                |
+| task_name       | Task name                  | Any text              | Study         | No       | Must be provided if task_id or task_gid is not   |
+| start_time      | Timing start time          | Timestamp             | 1659322800000 | No*      | Can Google to understand what a timestamp is     |
+| end_time        | Timing end time            | Timestamp             | 1659326400000 | No*      | -                                                |
+| duration        | Focus duration             | Number (milliseconds) | 2700000       | No*      | Must be at least 30000 milliseconds (30 seconds) |
+| reward_tomatoes | Whether to reward tomatoes | true or false         | true          | No       | Default is false                                 |
+| edit_item_id    | ID of the item to edit     | Number greater than 0 | 123           | Yes      | Specifies the record ID to edit                  |
+| ui              | Display reward tomatoes UI | true or false         | true          | No       |                                                  |
 
-**返回值：**
+**Return values:**
 
-| 参数     | 含义                 | 取值 | 示例 | 是否必须 | 备注                     |
-| -------- | -------------------- | ---- | ---- | -------- | ------------------------ |
-| tomatoes | 此次操作获得的番茄数 | 数字 | 2    | 否       | 如果 `ui` 为 true 时返回 |
+| Parameter | Meaning                          | Type   | Example | Required | Notes                    |
+| --------- | -------------------------------- | ------ | ------- | -------- | ------------------------ |
+| tomatoes  | Tomatoes gained from this action | Number | 2       | No       | Returned if `ui` is true |
 
-**注意：**
+**Notes:**
 
-1. `start_time`, `end_time`, `duration` 必须至少提供一个。
-2. `end_time` 需要大于 `start_time`。
-3. `duration` 应该小于或等于 (`end_time` - `start_time`)。
-4. 如果提供 `edit_item_id` 且找到对应记录进行编辑；否则根据其他参数创建新记录。
+1. At least one of `start_time`, `duration`, `end_time` must be provided.
+2. `end_time` needs to be greater than `start_time`.
+3. `duration` should be less than or equal to (`end_time` - `start_time`).
+4. If `edit_item_id` is provided and the corresponding record is found, it will be edited; otherwise, a new record will be created based on other parameters.
 
 <br/>

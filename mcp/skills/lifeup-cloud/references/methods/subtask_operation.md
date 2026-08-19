@@ -1,33 +1,33 @@
 # subtask_operation
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**subtask_operation
+**Method name:** subtask_operation
 
-**说明：**对子任务进行完成、撤销完成或删除操作
+**Description:** Complete, undo completion, or delete subtasks
 
-**示例：**
+**Examples:**
 
-- 完成子任务：[lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=complete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=complete)
-- 删除子任务：[lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=delete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=delete)
-- 撤销完成子任务：[lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=undo_complete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=undo_complete)
+- Complete a subtask: [lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=complete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=complete)
+- Delete a subtask: [lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=delete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=delete)
+- Undo subtask completion: [lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=undo_complete](lifeup://api/subtask_operation?main_id=1&edit_id=2&operation=undo_complete)
 
-| 参数          | 含义           | 取值                | 示例      | 是否必须 | 备注                           |
-| ------------ | -------------- | ------------------ | --------- | -------- | ------------------------------ |
-| main_id      | 主任务ID       | 大于 0 的数字      | 1         | 否*      | main_id、main_gid、main_name 必须提供其中一个 |
-| main_gid     | 主任务组ID     | 大于 0 的数字      | 1         | 否*      | main_id、main_gid、main_name 必须提供其中一个 |
-| main_name    | 主任务名称     | 任意文本           | 学习任务   | 否*      | main_id、main_gid、main_name 必须提供其中一个 |
-| edit_id      | 子任务ID       | 大于 0 的数字      | 2         | 否*      | edit_id、edit_gid、edit_name 必须提供其中一个 |
-| edit_gid     | 子任务组ID     | 大于 0 的数字      | 2         | 否*      | edit_id、edit_gid、edit_name 必须提供其中一个 |
-| edit_name    | 子任务名称     | 任意文本           | 完成作业   | 否*      | edit_id、edit_gid、edit_name 必须提供其中一个 |
-| operation    | 操作类型       | 以下数值其一：<br/>complete<br/>undo_complete<br/>delete | complete | 是 | complete - 完成任务<br/>undo_complete - 撤销完成<br/>delete - 删除任务 |
+| Parameter     | Meaning          | Values               | Example    | Required | Notes                          |
+| ------------ | ---------------- | ------------------- | ---------- | -------- | ------------------------------ |
+| main_id      | Main task ID     | number greater than 0| 1         | No*      | One of main_id, main_gid, or main_name required |
+| main_gid     | Main task group ID| number greater than 0| 1        | No*      | One of main_id, main_gid, or main_name required |
+| main_name    | Main task name   | any text            | Study task | No*      | One of main_id, main_gid, or main_name required |
+| edit_id      | Subtask ID       | number greater than 0| 2         | No*      | One of edit_id, edit_gid, or edit_name required |
+| edit_gid     | Subtask group ID | number greater than 0| 2         | No*      | One of edit_id, edit_gid, or edit_name required |
+| edit_name    | Subtask name     | any text            | Do homework| No*      | One of edit_id, edit_gid, or edit_name required |
+| operation    | Operation type   | One of the following:<br/>complete<br/>undo_complete<br/>delete | complete | Yes | complete - Complete task<br/>undo_complete - Undo completion<br/>delete - Delete task |
 
-**返回数据：**
+**Response:**
 
-| 字段名        | 类型   | 说明         | 示例 | 备注             |
-| ------------ | ------ | ------------ | ---- | ---------------- |
-| main_task_id | 数字   | 主任务ID     | 1    |                  |
-| subtask_id   | 数字   | 子任务ID     | 2    |                  |
-| subtask_gid  | 数字   | 子任务组ID   | 3    | 可能为空         |
+| Field        | Type    | Description      | Example | Notes            |
+| ------------ | ------- | ---------------- | ------- | ---------------- |
+| main_task_id | Number  | Main task ID     | 1       |                  |
+| subtask_id   | Number  | Subtask ID       | 2       |                  |
+| subtask_gid  | Number  | Subtask group ID | 3       | May be empty     |
 
 <br/>

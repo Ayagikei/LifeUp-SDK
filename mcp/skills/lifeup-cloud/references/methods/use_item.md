@@ -1,28 +1,28 @@
 # use_item
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**use_item
+**Method name:** use_item
 
-**说明：**使用指定商品。
+**Description:** Use a specified item.
 
-**示例：**
+**Example:**
 
-- 打开一个金币箱：[lifeup://api/use_item?name=金币箱&use_times=1](lifeup://api/use_item?name=金币箱&use_times=1)
+- Open a coin box: [lifeup://api/use_item?name=coin_box&use_times=1](lifeup://api/use_item?name=coin_box&use_times=1)
 
-| 参数      | 含义       | 取值          | 示例   | 是否必须 | 备注                                                         |
-| --------- | ---------- | ------------- | ------ | -------- | ------------------------------------------------------------ |
-| id        | 商品id     | 大于 0 的数字 | 1      | 否*      | 获取方式请查看上文 「基础知识 - 人升数据 ID」                |
-| name      | 商品名称   | 任意文本      | 金币箱 | 否*      | 用于未知 id 时，模糊搜索商品，并非修改名称                   |
-| use_times | 使用的次数 | 大于 0 的数字 | 1      | 否       | 默认为 1 次<br/>对于普通商品、开箱而言，对应商品的数量<br/>对于简易合成商品，该值对应的是【合成数量】，而非消耗的商品数量 |
+| Parameter | Meaning     | Type                    | Example  | Required | Notes                                                        |
+| --------- | ----------- | ----------------------- | -------- | -------- | ------------------------------------------------------------ |
+| id        | Item ID     | a number greater than 0 | 1        | No*      | For obtaining the item ID, please refer to the "Basic Knowledge - LifeUp Data ID" section |
+| name      | Item name   | Any text                | coin_box | No*      | Used for unknown IDs; performs a fuzzy search for items      |
+| use_times | Usage times | a number greater than 0 | 1        | No       | Default is 1 time<br/>For regular items or opening boxes, it corresponds to the quantity of the item<br/>For simple synthesis items, this value corresponds to the "synthesis quantity" rather than the number of consumed items |
 
-**返回值：**
+**Return:**
 
-!> 该 API 可能会由于部分原因失败，部分特殊失败原因会以返回值的形式提供。
+!> This API may fail for some reasons, and specific failure reasons may be provided in the return values.
 
-| 参数   | 含义     | 取值 | 示例             | 是否必须 | 备注                                                         |
-| ------ | -------- | ---- | ---------------- | -------- | ------------------------------------------------------------ |
-| result | 结果码   | 数字 | 0                | 是       | 0 - 使用成功<br/>1- 数据库异常<br/>2 - 经验值不足限制<br/>3 - 找不到商品<br/>4 - 运行倒计时冲突<br/>5 - 库存不足<br/>6 - 商品不可使用<br/>7 - 金币限制<br/>8 - 目标库存限制<br/>9 - 属性等级限制<br/>10 - 时间限制<br/>11 - 拥有物品数量限制<br/>12 - 任务完成限制<br/>13 - 成就解锁限制<br/>14 - 周期数量限制<br/>15 - 任务周期完成限制 |
-| desc   | 结果描述 | 文本 | RunningCountDown | 是       |                                                              |
+| Parameter | Meaning            | Type     | Example          | Required | Notes                                                        |
+| --------- | ------------------ | -------- | ---------------- | -------- | ------------------------------------------------------------ |
+| result    | Result code        | a number | 0                | Yes      | 0 - Successful usage<br/>1 - Database exception<br/>2 - Insufficient experience points restriction<br/>3 - Item not found<br/>4 - Running countdown conflict<br/>5 - Insufficient inventory<br/>6 - Unusable item<br/>7 - Coin limit<br/>8 - Target stock limit<br/>9 - Attribute level restriction<br/>10 - Time restriction<br/>11 - Owned item quantity restriction<br/>12 - Task completion restriction<br/>13 - Achievement unlock restriction<br/>14 - Period quantity restriction<br/>15 - Task cycle completed restriction |
+| desc      | Result description | Text     | RunningCountDown | Yes      |                                                              |
 
 <br/>

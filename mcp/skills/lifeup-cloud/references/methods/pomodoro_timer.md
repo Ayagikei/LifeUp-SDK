@@ -1,87 +1,93 @@
 # pomodoro_timer
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**pomodoro_timer
+**Method name:** pomodoro_timer
 
-**说明：**控制人升内真实的番茄倒计时或正计时。该接口与 App UI 启动同一类计时会话，
-不会直接增加番茄记录或番茄数量。
+**Description:** Control the real Pomodoro countdown or count-up timer in LifeUp. This API starts
+the same timer session as the app UI; it does not directly add Pomodoro records or tomatoes.
 
-**示例：**
+**Examples:**
 
-- 启动或恢复默认工作番茄：
+- Start or resume the default work countdown:
   [lifeup://api/pomodoro_timer?action=start&mode=countdown](lifeup://api/pomodoro_timer?action=start&mode=countdown)
-- 选择任务 101 并开始正计时：
+- Start the count-up timer and select task 101:
   [lifeup://api/pomodoro_timer?action=start&mode=count_up&task_id=101](lifeup://api/pomodoro_timer?action=start&mode=count_up&task_id=101)
-- 暂停倒计时：
+- Pause the active countdown:
   [lifeup://api/pomodoro_timer?action=pause&mode=countdown](lifeup://api/pomodoro_timer?action=pause&mode=countdown)
-- 放弃并重置番茄生命周期：
+- Abandon and reset the Pomodoro lifecycle:
   [lifeup://api/pomodoro_timer?action=abandon&mode=countdown](lifeup://api/pomodoro_timer?action=abandon&mode=countdown)
-- 跳过当前番茄周期：
+- Skip the current Pomodoro stage:
   [lifeup://api/pomodoro_timer?action=skip](lifeup://api/pomodoro_timer?action=skip)
-- 结算正计时但不领取番茄奖励：
+- Settle a count-up timer without receiving tomato rewards:
   [lifeup://api/pomodoro_timer?action=complete&mode=count_up&receive_reward=false](lifeup://api/pomodoro_timer?action=complete&mode=count_up&receive_reward=false)
-- 查询两种计时状态：
+- Query both timer modes:
   [lifeup://api/pomodoro_timer?action=status](lifeup://api/pomodoro_timer?action=status)
 
-**参数：**
+**Parameters:**
 
-| 参数 | 含义 | 取值 | 是否必须 | 备注 |
-| ---- | ---- | ---- | -------- | ---- |
-| action | 操作 | `start`、`pause`、`abandon`、`skip`、`complete`、`select_task`、`status` | 是 | - |
-| mode | 计时模式 | `countdown`、`count_up` | `start`、`pause`、`abandon`、`complete` 必须 | `skip` 固定操作倒计时。 |
-| stage | 倒计时阶段 | `work`、`short_break`、`long_break` | 否 | 仅适用于 `mode=countdown`。未传入时使用运行中、暂停中或已进入下一周期的 canonical 阶段；新生命周期从 `work` 开始。 |
-| receive_reward | 是否领取番茄奖励 | `true` 或 `false` | `complete` 必须 | 严格布尔值；`complete` 仅支持 `mode=count_up`。 |
-| task_id | 任务 ID | 大于 0 的整数 | 否 | 不能与 `task_gid` 或 `task_name` 同时使用。 |
-| task_gid | 任务组 ID | 大于 0 的整数 | 否 | 可与 `task_name` 组合以缩小匹配范围。 |
-| task_name | 任务名称 | 文本 | 否 | 优先精确匹配，再使用模糊匹配。 |
-| clear_task | 清除计时任务 | `true` 或 `false` | 否 | `true` 不能与任务定位参数同时使用。 |
+| Parameter | Meaning | Type / values | Required | Notes |
+| --------- | ------- | ------------- | -------- | ----- |
+| action | Operation | `start`, `pause`, `abandon`, `skip`, `complete`, `select_task`, `status` | yes | - |
+| mode | Timer mode | `countdown`, `count_up` | for `start`, `pause`, `abandon`, and `complete` | `skip` always targets the countdown. |
+| stage | Countdown stage | `work`, `short_break`, `long_break` | no | Only valid with `mode=countdown`. If omitted, the active, paused, or staged-next canonical stage is used; a new lifecycle starts with `work`. |
+| receive_reward | Whether to receive tomato rewards | `true` or `false` | for `complete` | Strict boolean. `complete` only supports `mode=count_up`. |
+| task_id | Task ID | positive integer | no | Cannot be combined with `task_gid` or `task_name`. |
+| task_gid | Task group ID | positive integer | no | Can be combined with `task_name` to narrow the match. |
+| task_name | Task name | text | no | Exact match is preferred, with fuzzy matching as fallback. |
+| clear_task | Clear the timer task | `true` or `false` | no | `true` cannot be combined with a task locator. |
 
-`select_task` 必须提供任务定位参数或 `clear_task=true`；`start` 也可以携带相同的任务选择
-参数。不支持传入自定义时长：倒计时使用当前默认时长或所选任务配置的番茄时长。
+`select_task` requires either a task locator or `clear_task=true`. `start` may include the same
+task-selection parameters. Custom duration parameters are not supported: countdowns use the
+current default duration or the selected task's Pomodoro duration.
 
-`abandon&mode=countdown` 等价 App 左下角操作：放弃当前周期、重置番茄生命周期，并回到
-停止的工作周期。`skip` 等价右下角操作：工作周期进入短/长休息，休息周期进入工作周期，
-但不会自动开始下一周期。每次 `skip` 都是一次真实且非幂等的操作，调用方不得自动重试。
+`abandon&mode=countdown` is equivalent to the app's left action: it gives up the current stage,
+resets the Pomodoro lifecycle, and returns to a stopped work stage. `skip` is equivalent to the
+right action: it advances work to a short/long break, or a break to work, without automatically
+starting the next stage. Each `skip` call is a real, non-idempotent action; callers must not retry
+it automatically.
 
-`complete&mode=count_up` 会结算真实正计时。少于 30 秒的会话会被消费，但不会创建记录；
-`receive_reward=false` 时，达到记录门槛的会话仍保存为放弃记录，但不奖励番茄。
+`complete&mode=count_up` settles the real count-up session. Sessions shorter than 30 seconds are
+consumed without creating a record. With `receive_reward=false`, a record that meets the threshold
+is still saved as abandoned but awards no tomatoes.
 
-**任务切换规则：**
+**Task switching rules:**
 
-- 工作番茄倒计时运行中禁止切换任务。
-- 正计时运行中允许切换任务，常驻通知会同步更新。
-- 倒计时暂停时允许切换任务；保留已计时部分，并按新任务设置重新计算总时长。
+- A running work countdown rejects task changes.
+- A running count-up timer allows task changes and updates its notification.
+- A paused countdown allows task changes and preserves elapsed time while recalculating its total
+  duration from the new task settings.
 
-**成功返回值：**
+**Successful return values:**
 
-| 参数 | 含义 | 取值 |
-| ---- | ---- | ---- |
-| api_result | 接口是否成功 | 布尔值 |
-| applied | 本次调用是否改变了计时状态 | 布尔值 |
-| mode | 目标模式或人升当前选择的模式 | `countdown` 或 `count_up` |
-| state | `mode` 对应的状态 | `running`、`paused` 或 `stopped` |
-| selected_task_id | 当前计时任务 ID；未选择时为 `0` | 数字 |
-| can_start_in_background | Android 当前是否允许从后台启动计时 | 布尔值 |
-| countdown_state | 倒计时 canonical 状态 | `running`、`paused` 或 `stopped` |
-| countdown_phase | 倒计时生命周期阶段 | `idle`、`running`、`paused`、`completing`、`completed` 或 `cancelled` |
-| countdown_stage | 倒计时阶段 | `work`、`short_break` 或 `long_break` |
-| countdown_session_id | 倒计时会话 ID | 文本或 null |
-| countdown_total_millis | 倒计时总时长 | 毫秒 |
-| countdown_remaining_millis | 倒计时剩余时长 | 毫秒 |
-| count_up_state | 正计时状态 | `running`、`paused` 或 `stopped` |
-| count_up_elapsed_millis | 正计时已计时长 | 毫秒 |
-| battery_optimization_ignored | 人升是否已忽略电池优化 | 布尔值 |
+| Parameter | Meaning | Type |
+| --------- | ------- | ---- |
+| api_result | Whether the API call succeeded | boolean |
+| applied | Whether this call changed timer state | boolean |
+| mode | Target or currently selected timer mode | `countdown` or `count_up` |
+| state | State of `mode` | `running`, `paused`, or `stopped` |
+| selected_task_id | Current timer task ID, or `0` | number |
+| can_start_in_background | Whether Android currently allows a background timer start | boolean |
+| countdown_state | Canonical countdown state | `running`, `paused`, or `stopped` |
+| countdown_phase | Countdown lifecycle phase | `idle`, `running`, `paused`, `completing`, `completed`, or `cancelled` |
+| countdown_stage | Canonical countdown stage | `work`, `short_break`, or `long_break` |
+| countdown_session_id | Canonical countdown session ID | text or null |
+| countdown_total_millis | Countdown total duration | milliseconds |
+| countdown_remaining_millis | Countdown remaining duration | milliseconds |
+| count_up_state | Canonical count-up state | `running`, `paused`, or `stopped` |
+| count_up_elapsed_millis | Count-up elapsed duration | milliseconds |
+| battery_optimization_ignored | Whether LifeUp is exempt from battery optimization | boolean |
 
-成功的 `complete` 还会返回 `record_created`、`reward_tomatoes` 和
-`settled_elapsed_millis`。
+Successful `complete` responses additionally contain `record_created`, `reward_tomatoes`, and
+`settled_elapsed_millis`.
 
-重复调用已经达到目标状态的 `start`、`pause` 或 `abandon` 会成功返回
-`applied=false`。mutation 调用不提供跨进程重试去重。
+Repeated `start`, `pause`, or `abandon` calls that already match the requested state succeed with
+`applied=false`. Mutating calls do not provide cross-process retry deduplication.
 
-**错误：**
+**Errors:**
 
-失败时返回 `api_result=false`、`error_code` 和 `error_message`。计时接口的稳定错误码包括：
+Failures return `api_result=false`, `error_code`, and `error_message`. Timer-specific stable error
+codes are:
 
 - `invalid_parameter`
 - `missing_required_parameter`
@@ -94,9 +100,10 @@ Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
 - `timer_start_failed`
 - `timer_settlement_failed`
 
-Android 12 及以上版本中，后台 ContentProvider 调用仅在人升已获准忽略电池优化时才能启动
-计时；否则会在改变计时状态前返回 `background_start_not_allowed`。通过 URL Scheme Activity
-打开时，人升会先进入前台再启动计时。Android 也可能阻止第三方应用从后台拉起该 Activity；
-此时人升没有收到 API 调用，因此无法返回错误。
+On Android 12 and later, a background ContentProvider call can start a timer only when LifeUp is
+allowed to ignore battery optimization. Otherwise it returns `background_start_not_allowed`
+before changing timer state. Opening the URL Scheme through its Activity brings LifeUp to the
+foreground before starting. Android may block a third-party app from launching that Activity from
+the background; when that happens, LifeUp receives no API call and cannot return an error.
 
 <br/>

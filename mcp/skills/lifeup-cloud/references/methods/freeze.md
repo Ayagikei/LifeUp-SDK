@@ -1,28 +1,28 @@
 # freeze
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**freeze
+**Method name:** freeze
 
-**说明：**触发任务冻结，只适用于重复任务
+**Description:** Trigger task freeze, only for repeating tasks.
 
-**示例：**
+**Example:**
 
-- 根据名字搜索任务并冻结：[lifeup://api/freeze?name=早起](lifeup://api/freeze?name=早起)
+- Search for tasks by name and freeze: [lifeup://api/freeze?name=get up early](lifeup://api/freeze?name=get up early)
 
-**解释：**
+**Explanation:**
 
-| 参数 | 含义        | 取值          | 示例          | 是否必须 | 备注                                           |
-| ---- | ----------- | ------------- | ------------- | -------- | ---------------------------------------------- |
-| id   | 任务id      | 大于 0 的数字 | 1             | 否*      | 任务id；如果是重复任务，每次重复，id都会更新。 |
-| gid  | 任务组id    | 大于 0 的数字 | 1             | 否*      | 任务组id；                                     |
-| name | 名称        | 任意文本      | 早起          | 否*      | 模糊搜索，仅会对搜索到的其中一个任务执行冻结操作 |
-| time | 冻结直至... | 时间戳        | 1661688800682 | 否       | -                                              |
+| Parameter | Meaning       | Type                  | Example | Required | Notes |
+| --------- | ------------- | --------------------- | ------- | -------- | ----- |
+| id        | task id       | number greater than 0 | 1       | no*      | task id; if it is a repeating task, the id will be updated every time it repeats. |
+| gid       | task group id | number greater than 0 | 1       | no*      | task group id; |
+| name      | name          | any text              | get up  | no*      | fuzzy search, operate on only one matched task |
+| time      | Freeze until  | timestamp             | 1661688800682 | no | - |
 
-**注意：**
+**Notice:**
 
-1. 为了能够匹配到任务，id、gid、name 必须提供其一。
+1. In order to be able to match the task, one of id, gid, and name must be provided.
 
 <br/>
 
-#### 解冻任务
+#### Unfreeze a task

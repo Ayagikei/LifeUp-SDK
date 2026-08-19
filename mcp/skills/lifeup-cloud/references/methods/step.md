@@ -1,18 +1,18 @@
 # step
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**step
+**Method name:** step
 
-**说明：**设置指定日期的步数，比如可以用于搭配手环+自动化工具录入步数。并且可以用于修改历史纪录。
+**Description:** Set the number of steps on the specified date, for example, it can be used to enter the number of steps with a wristband + automation tool. And can be used to modify historical records.
 
-**示例：**
+**Example:**
 
-- 调整GMT+8时区下的2022-10-21的步数为9999步：[lifeup://api/step?count=9999&time=1666282995643](lifeup://api/step?count=9999&time=1666282995643)
+- Adjust the number of steps for 2022-10-21 in GMT+8 time zone to 9999 steps: [lifeup://api/step?count=9999&time=1666282995643](lifeup://api/step?count=9999&time=1666282995643)
 
-| 参数  | 含义                 | 取值                | 示例          | 是否必须 | 备注 |
-| ----- | -------------------- | ------------------- | ------------- | -------- | ---- |
-| count | 步数                 | 大于或等于 0 的数字 | 9999          | 是       | -    |
-| time  | 所属日期的任意时间戳 | 时间戳（ms）        | 1666282995643 | 是       | -    |
+| Parameter | Meaning                         | Type                                | Example       | Required | Notes |
+| --------- | ------------------------------- | ----------------------------------- | ------------- | -------- | ----- |
+| count     | number of steps                 | a number greater than or equal to 0 | 9999          | yes      |       |
+| time      | arbitrary timestamp of the date | timestamp (ms)                      | 1666282995643 | yes      |       |
 
 <br/>

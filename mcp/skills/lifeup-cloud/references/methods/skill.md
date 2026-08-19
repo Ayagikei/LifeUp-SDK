@@ -1,35 +1,35 @@
 # skill
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**skill
+**Method name:** skill
 
-**说明：**新建或编辑自定义技能（属性）
+**Description:** Create or edit custom skills (attributes)
 
-**示例：**
+**Examples:**
 
-- 创建一个技能：[lifeup://api/skill?content=编程&desc=代码能力&color=%23FF6B6B](lifeup://api/skill?content=编程&desc=代码能力&color=%23FF6B6B)
-- 编辑技能经验值：[lifeup://api/skill?id=1&exp=100](lifeup://api/skill?id=1&exp=100)
-- 删除技能：[lifeup://api/skill?id=1&delete=true](lifeup://api/skill?id=1&delete=true)
+- Create a skill: [lifeup://api/skill?content=Programming&desc=Coding ability&color=%23FF6B6B](lifeup://api/skill?content=Programming&desc=Coding ability&color=%23FF6B6B)
+- Edit skill experience: [lifeup://api/skill?id=1&exp=100](lifeup://api/skill?id=1&exp=100)
+- Delete skill: [lifeup://api/skill?id=1&delete=true](lifeup://api/skill?id=1&delete=true)
 
-| 参数         | 含义           | 取值                | 示例       | 是否必须 | 备注                           |
-| ----------- | -------------- | ------------------ | ---------- | -------- | ------------------------------ |
-| id          | 技能ID         | 大于 0 的数字      | 1          | 否       | 编辑时必须提供                 |
-| content     | 技能名称       | 任意文本           | 编程        | 否*      | 新建时必须提供                 |
-| desc        | 技能描述       | 任意文本           | 代码能力    | 否       |                               |
-| icon        | 图标           | 任意文本           | 💻         | 否       | 可以使用 emoji                 |
-| color       | 颜色           | 颜色字符串         | #FF6B6B    | 否       | #需要转义为%23                 |
-| type        | 类型           | 整数               | 0          | 否       |                               |
-| order       | 排序           | 整数               | 1          | 否       | 原始混排位置。单独传时按该位置落位，并由位置推导最终分组；与 `group_id` 一起传时，会在目标组内吸附到最接近的合法位置 |
-| group_id    | 技能组ID       | 整数               | 10         | 否       | 需要 v1.103.0+；不能小于 `0`，仅 `0` 表示移到未分组区域。单独传时：新建技能会追加到目标组尾部，编辑技能若已在该组则尽量保留当前位置，否则移动到组尾；与 `order` 一起传时以 `group_id` 为主 |
-| status      | 状态           | 整数               | 0          | 否       |                               |
-| exp         | 经验值         | 大于或等于 0 的数字 | 100        | 否       | 技能当前经验值                 |
-| delete      | 是否删除       | true 或者 false    | false      | 否       | 仅在编辑模式下有效             |
+| Parameter    | Meaning           | Values               | Example    | Required | Notes                           |
+| ----------- | ----------------- | -------------------- | ---------- | -------- | ------------------------------- |
+| id          | Skill ID          | number greater than 0 | 1         | No       | Required when editing           |
+| content     | Skill name        | any text             | Programming| No*      | Required for new skills         |
+| desc        | Description       | any text             | Coding ability | No    |                                |
+| icon        | Icon              | any text             | 💻         | No       | Can use emoji                   |
+| color       | Color             | color string         | #FF6B6B    | No       | # must be escaped as %23        |
+| type        | Type              | integer              | 0          | No       |                                |
+| order       | Sort order        | integer              | 1          | No       | Raw mixed-list position. When used alone, the skill is placed at that position and the final group is inferred from layout; when used with `group_id`, it is snapped to the nearest legal position inside the target group |
+| group_id    | Skill group ID    | integer              | 10         | No       | Requires v1.103.0+; it cannot be less than `0`, and only `0` moves the skill to the ungrouped area. When used alone, new skills are appended to the target group tail, while edited skills keep their current position if already in that group, otherwise they move to the group tail; when used with `order`, `group_id` takes priority |
+| status      | Status            | integer              | 0          | No       |                                |
+| exp         | Experience points | number greater than or equal to 0 | 100 | No | Current skill experience        |
+| delete      | Delete flag       | true or false        | false      | No       | Only valid when editing         |
 
-**返回数据：**
+**Response:**
 
-| 字段名 | 类型   | 说明     | 示例 | 备注             |
-| ------ | ------ | -------- | ---- | ---------------- |
-| id     | 数字   | 技能ID   | 1000 | 新建或编辑的技能ID |
+| Field  | Type    | Description    | Example | Notes                    |
+| ------ | ------- | -------------- | ------- | ------------------------ |
+| id     | Number  | Skill ID       | 1000    | ID of new or edited skill |
 
 <br/>

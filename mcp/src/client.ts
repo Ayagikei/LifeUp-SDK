@@ -13,6 +13,19 @@ export type Envelope<T> = {
   data: T | null
 }
 
+export type CloudEvent = {
+  id: number
+  time: number
+  action: string
+  extras: Record<string, string>
+}
+
+export type EventsPage = {
+  latestId: number
+  eventWs: boolean
+  events: CloudEvent[]
+}
+
 export type CallUrlResult = {
   url: string
   result: unknown
@@ -140,4 +153,19 @@ export class LifeUpClient {
   }
 
 
+  async listEvents(after = 0, limit = 50): Promise<EventsPage> {
+    return this.get<EventsPage>("/events", { after, limit })
+  }
+
+  subscribeEvents(after: number, onEvent: (event: CloudEvent) => void): { close: () => void } {
+    const url = new URL("/events", this.baseUrl.replace(/^http/, "ws"))
+    url.searchParams.set("after", String(after))
+    if (this.token) url.searchParams.set("token", this.token)
+    const socket = new WebSocket(url)
+    socket.addEventListener("message", (message) => {
+      if (typeof message.data !== "string" || !message.data.startsWith("{")) return
+      onEvent(JSON.parse(message.data) as CloudEvent)
+    })
+    return { close: () => socket.close() }
+  }
 }

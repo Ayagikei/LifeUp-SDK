@@ -1,26 +1,26 @@
 # tomato
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**tomato
+**Method name:** tomato
 
-**说明：**调整番茄数量（增加、减少或设置指定数量）
+**Description:** Adjust the number of tomatoes (increase, decrease, or set to a specific amount)
 
-**示例：**
+**Examples:**
 
-- 增加1个番茄：[lifeup://api/tomato?action=increase&number=1](lifeup://api/tomato?action=increase&number=1)
-- 减少2个番茄：[lifeup://api/tomato?action=decrease&number=2](lifeup://api/tomato?action=decrease&number=2)
-- 设置番茄数为10：[lifeup://api/tomato?action=set&number=10](lifeup://api/tomato?action=set&number=10)
+- Add 1 tomato: [lifeup://api/tomato?action=increase&number=1](lifeup://api/tomato?action=increase&number=1)
+- Remove 2 tomatoes: [lifeup://api/tomato?action=decrease&number=2](lifeup://api/tomato?action=decrease&number=2)
+- Set pomodoro count to 10: [lifeup://api/tomato?action=set&number=10](lifeup://api/tomato?action=set&number=10)
 
-| 参数   | 含义     | 取值                                           | 示例     | 是否必须 | 备注                                                    |
-| ------ | -------- | ---------------------------------------------- | -------- | -------- | ------------------------------------------------------- |
-| action | 操作类型 | 以下值之一：<br/>increase<br/>decrease<br/>set | increase | 否       | increase - 增加番茄数（默认）<br/>decrease - 减少番茄数<br/>set - 设置番茄数为指定值 |
-| number | 数量     | 整数                                           | 1        | 是       | 根据 action 不同含义不同：<br/>increase/decrease - 增加/减少的数量<br/>set - 设置的目标数量 |
+| Parameter | Meaning        | Values                                        | Example   | Required | Notes                                                         |
+| --------- | -------------- | --------------------------------------------- | --------- | -------- | ------------------------------------------------------------- |
+| action    | Operation type | One of:<br/>increase<br/>decrease<br/>set     | increase  | No       | increase - Add pomodoros (default)<br/>decrease - Remove pomodoros<br/>set - Set pomodoro count to specified value |
+| number    | Amount         | Integer                                       | 1         | Yes      | Different meanings based on action:<br/>increase/decrease - Amount to add/remove<br/>set - Target amount to set |
 
-**返回数据：**
+**Response:**
 
-| 字段名   | 类型 | 说明         | 示例 |
-| -------- | ---- | ------------ | ---- |
-| tomatoes | 整数 | 当前番茄总数 | 10   |
+| Field    | Type    | Description              | Example |
+| -------- | ------- | ------------------------ | ------- |
+| tomatoes | Integer | Current pomodoro count   | 10      |
 
 <br/>

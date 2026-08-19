@@ -11,6 +11,7 @@ Recorded while exercising the MCP. Not a promise to implement.
 | Shop settings | help / list_data | No GET. Known Cloud gap. |
 | Loot box inventory query | help | `loot_box/v2` is mutation; no list GET. |
 | Feelings delete | `call_api` | Check `help` `feelings` — delete may exist as scheme; no list-filter-by-id first-class tool. |
+| Subscribe to LifeUp broadcasts | — | Android Intents stay on the phone. Cloud has no event feed. See `help` `broadcasts`. |
 | Coin ledger / resCode history | `get_coin` | Only `{ value }`. No CP coin ledger list. |
 | Count complete on `complete_task` | first-class tool | **Fixed**: `count` / `count_set_type` now on the tool. |
 

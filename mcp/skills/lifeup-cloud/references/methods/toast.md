@@ -1,21 +1,21 @@
 # toast
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**toast
+**Method name:** toast
 
-**说明：**弹出各种样式的消息
+**Description:** Various styles of messages pop up
 
-**示例：**[[lifeup://api/toast?text=好好生活，好好吃饭！&type=1&isLong=true](lifeup://api/toast?text=好好生活，好好吃饭！&type=1&isLong=true)](lifeup://api/goto?page=lab)
+**Example:** <a href="lifeup://api/toast?text=Live well, eat well!&type=1&isLong=true">lifeup://api/toast?text=Live well, eat well!&type=1&isLong=true</a>
 
-**解释：**以奖励样式弹出提示“好好生活，好好吃饭！”，并且显示较长时间。
+**Explanation:** The prompt "Live well, eat well!" pops up in a bonus style and displays it for a longer time.
 
-> 点击示例的链接可以测试效果
+> Click on the link of the example to test the effect
 
-| 参数   | 含义             | 取值            | 示例           | 是否必须 | 备注                                                         |
-| ------ | ---------------- | --------------- | -------------- | -------- | ------------------------------------------------------------ |
-| text   | 要提示的文本消息 | 任意文本        | 你学会了调用！ | 是       |                                                              |
-| type   | 文本样式类型     | 数字从0到6其一  | 1              | 否       | 0 - 普通样式<br/>1 - 奖励样式<br/>2 - 番茄样式<br/>3 - 成功样式<br/>4 - 提示样式<br/>5 - 警告样式<br/>6 - 错误样式 |
-| isLong | 显示时长         | true 或者 false | true           | 否       | true - 长<br/>false - 短                                     |
+| Parameter | Meaning                | Type               | Example              | Required | Notes |
+| --------- | ---------------------- | ------------------ | -------------------- | -------- | ----- |
+| text      | Text message to prompt | Any text           | You learned to call! | yes      |       |
+| type      | Text style type        | Number from 0 to 6 | 1                    | no       | 0 - Normal style<br/>1 - Bonus style<br/>2 - Tomato style<br/>3 - Success style<br/>4 - Prompt style<br/>5 - Warning style<br/>6 - Error style |
+| isLong    | Display duration       | true or false      | true                 | no       | true - long<br/>false - short |
 
 <br/>

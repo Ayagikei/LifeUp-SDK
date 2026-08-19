@@ -1,31 +1,31 @@
 # feeling
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**feeling
+**Method name:** feeling
 
-**说明：**创建或更新感想。
+**Description:** It is used to create or update records of feelings.
 
-**示例：**
+**Example:**
 
-- 创建一个新的感想：[lifeup://api/feeling?content=开心&time=1633036800](lifeup://api/feeling?content=开心&time=1633036800)
-- 更新特定 id 的感想，并标记为收藏状态：[lifeup://api/feeling?id=1&is_favorite=true](lifeup://api/feeling?id=1&is_favorite=true)
+- Create a new record of feeling: [lifeup://api/feeling?content=Happy&time=1633036800](lifeup://api/feeling?content=Happy&time=1633036800)
+- Update an existing record of feeling and mark it as a favorite: [lifeup://api/feeling?id=1&is_favorite=true](lifeup://api/feeling?id=1&is_favorite=true)
 
-| 参数                     | 含义       | 取值                           | 示例           | 是否必须 | 备注                                                                                                   |
-| ------------------------ | ---------- | ------------------------------ | -------------- | -------- | ------------------------------------------------------------------------------------------------------ |
-| id                       | 感想记录id | 大于 0 的数字                  | 1              | 否       | 如果提供，则用于更新特定记录                                                                           |
-| content                  | 内容       | 任意文本                       | 快乐           | 否       | 用于创建记录或更新记录的内容                                                                           |
-| time                     | 时间戳     | Unix 时间戳                    | 1633036800     | 否       | 记录的时间，默认为当前时间                                                                             |
-| is_favorite              | 是否收藏   | true 或 false                  | true           | 否       | 标记记录是否为收藏                                                                                     |
-| relate_type              | 关联类型   | 数字 0-3                       | 1              | 否       | 指定记录的关联类型<br/>0：任务<br/>1：自定义成就<br/>2：无关联<br/>3：物品使用                         |
-| relate_id                | 关联id     | 大于 0 的数字                  | 2              | 否       | 指定记录的关联id<br/>当 relate_type 为 0 时，代表任务 id<br/>当 relate_type 为 1 时，代表成就 id<br/>当 relate_type 为 3 时，代表物品 id<br/>当 relate_type 为 2，无需提供 |
-| usage_count              | 使用次数   | 大于 1 的整数                  | 1              | 否       | 仅当 relate_type 为 3（物品使用）时有效，记录该物品的使用次数                                          |
-| image_uris               | 图片 URI   | URI 字符串列表                 |                | 否       | 支持本地文件 URI (file://) 或 远程网络图片 (http/https)。支持数组（如 &image_uris=uri1&image_uris=uri2） |
-| image_uris_update_mode | 更新模式   | APPEND 或者 REPLACE | REPLACE | 否       | 仅当更新现有记录且提供 image_uris 时有效<br/>APPEND：追加图片<br/>REPLACE：替换现有图片（默认）        |
+| Parameter            | Meaning           | Type                               | Example           | Required | Notes                                                                                                                                                                                                                                        |
+| -------------------- | ----------------- | ---------------------------------- | ----------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| id                   | Feeling Record ID | Number greater than 0              | 1                 | No       | If provided, the method tries to update a specific record                                                                                                                                                                                    |
+| content              | Content           | Any text                           | Happy             | No       | Used for creating a new record or updating the content of an existing one                                                                                                                                                                    |
+| time                 | Timestamp         | Unix timestamp                     | 1633036800        | No       | The time of the record, defaults to current time                                                                                                                                                                                             |
+| is_favorite          | Favorite Flag     | true or false                      | true              | No       | Marks the record as a favorite or not                                                                                                                                                                                                        |
+| relate_type          | Relation Type     | Number between 0 and 3             | 1                 | No       | Specifies the type of relation associated with the record:<br/>0: Task<br/>1: Custom Achievement<br/>2: No relation<br/>3: Item usage                                                                                                        |
+| relate_id            | Related ID        | Number greater than 0              | 2                 | No       | Specifies the ID of the related item:<br/>When relate_type is 0: represents task ID<br/>When relate_type is 1: represents achievement ID<br/>When relate_type is 3: represents item ID<br/>When relate_type is 2: no ID needed                |
+| usage_count          | Usage count       | Integer greater than 1             | 1                 | No       | Only valid when relate_type is 3 (Item usage), records the usage count of the item.                                                                                                                                                          |
+| image_uris           | Image URIs        | List of URI strings                |                   | No       | Supports local file URIs (file://) or remote web images (http/https). Supports arrays (e.g., &image_uris=uri1&image_uris=uri2). |
+| image_uris_update_mode | Update Mode       | APPEND or REPLACE | REPLACE           | No       | Only valid when updating an existing record and providing image_uris.<br/>APPEND: Appends to existing images.<br/>REPLACE: Replaces existing images (default).                                                               |
+    
+**Note:**
 
-**注意：**
-
-1. 如果提供 `id` 参数，则方法会尝试更新对应的感想记录。如果没有找到相应的记录，将抛出异常。
-2. 如果不提供 `id`，但提供了 `content`，则方法会创建一个新的感想记录。
+1. If the `id` parameter is provided, the method attempts to update the corresponding record of feeling. An exception is thrown if no matching record is found.
+2. If `id` is not provided, but `content` is, the method will create a new record of feeling.
 
 <br/>

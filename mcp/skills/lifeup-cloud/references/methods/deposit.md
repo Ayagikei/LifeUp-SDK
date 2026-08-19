@@ -1,25 +1,25 @@
 # deposit
 
-Source: lifeup-wiki `docs/zh-cn/guide/api.md` (may lag).
+Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
-**方法名：**deposit
+**Method name:** deposit
 
-**说明：**存款，会进行合法性校验（金币余额是否充足）。
+**Description:** The deposit will be checked for legality (whether the coin balance is sufficient).
 
-**示例：**[lifeup://api/deposit?amount=500](lifeup://api/deposit?amount=500)
+**Example:**[lifeup://api/deposit?amount=500](lifeup://api/deposit?amount=500)
 
-**解释：**存款 500 金币。
+**Explanation:** Deposit 500 coins.
 
-| 参数   | 含义     | 取值          | 示例 | 是否必须 | 备注 |
-| ------ | -------- | ------------- | ---- | -------- | ---- |
-| amount | 存款数量 | 大于 0 的数字 | 100  | 是       | -    |
+| Parameter | Meaning        | Type                    | Example | Required | Notes |
+| --------- | -------------- | ----------------------- | ------- | -------- | ----- |
+| amount    | deposit amount | a number greater than 0 | 100     | yes      | -     |
 
-**返回值：**
+**Return:**
 
-| 参数   | 含义         | 取值   | 示例 | 是否必须 | 备注 |
-| ------ | ------------ | ------ | ---- | -------- | ---- |
-| result | 操作是否成功 | 布尔值 | true | 是       | -    |
+| Parameter | Meaning                              | Type              | Example | Required | Notes |
+| --------- | ------------------------------------ | ----------------- | ------- | -------- | ----- |
+| result    | Whether the operation was successful | `true` or `false` | true    | yes      | -     |
 
 <br/>
 
-#### 取款
+#### Withdraw
