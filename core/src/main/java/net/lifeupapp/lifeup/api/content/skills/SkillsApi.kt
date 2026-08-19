@@ -48,4 +48,27 @@ class SkillsApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(skills)
     }
+
+    fun listSkillGroups(includeHidden: Boolean = false): Result<List<SkillGroup>> {
+        val groups = mutableListOf<SkillGroup>()
+        try {
+            val uri = buildString {
+                append(ContentProviderUrl.SKILL_GROUPS)
+                if (includeHidden) append("?include_hidden=true")
+            }
+            context.forEachContent(uri) {
+                groups.add(
+                    SkillGroup(
+                        id = it.getLongOrNull("_ID"),
+                        content = it.getStringOrNull("content") ?: "",
+                        order = it.getIntOrNull("order") ?: 0,
+                        collapsed = it.getStringOrNull("collapsed") == "true"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+        return Result.success(groups)
+    }
 }

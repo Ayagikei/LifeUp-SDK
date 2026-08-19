@@ -12,15 +12,21 @@ import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class ItemsApi(private val context: Context) : ContentProviderApi {
 
-    fun listCategories(): Result<List<ShopCategory>> {
+    fun listCategories(includeHidden: Boolean = false): Result<List<ShopCategory>> {
         val categories = mutableListOf<ShopCategory>()
         try {
-            context.forEachContent(ContentProviderUrl.SHOP_CATEGORIES) {
+            val uri = buildString {
+                append(ContentProviderUrl.SHOP_CATEGORIES)
+                if (includeHidden) append("?include_hidden=true")
+            }
+            context.forEachContent(uri) {
                 val id = it.getLongOrNull("_ID")
                 val name = it.getStringOrNull("name")
                 val isAsc = it.getBooleanOrNull("isAsc")
                 val sort = it.getStringOrNull("sort")
                 val order = it.getIntOrNull("order")
+                val hidden = (it.getIntOrNull("hidden") ?: 0) == 1
+                val inventoryHidden = (it.getIntOrNull("inventory_hidden") ?: 0) == 1
 
                 categories.add(
                     ShopCategory.builder {
@@ -29,6 +35,8 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                         setIsAsc(isAsc ?: false)
                         setSort(sort ?: "")
                         setOrder(order ?: 0)
+                        setHidden(hidden)
+                        setInventoryHidden(inventoryHidden)
                     }
                 )
             }

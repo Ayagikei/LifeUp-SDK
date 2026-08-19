@@ -563,7 +563,9 @@ object KtorService : LifeUpService {
 
             route("/items_categories") {
                 get {
-                    LifeUpApi.getContentProviderApi<ItemsApi>().listCategories().onSuccess {
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<ItemsApi>().listCategories(includeHidden).onSuccess {
                         call.respond(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
@@ -650,7 +652,9 @@ object KtorService : LifeUpService {
 
             route("/synthesis_categories") {
                 get {
-                    LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories()
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(includeHidden = includeHidden)
                         .onSuccess {
                             call.respond(it.wrapAsResponse())
                         }.onFailure {
@@ -660,12 +664,40 @@ object KtorService : LifeUpService {
                 route("/{id}") {
                     get {
                         val id = call.parameters["id"]?.toLongOrNull()
-                        LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id)
+                        val includeHidden =
+                            call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                        LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id, includeHidden)
                             .onSuccess {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
+                    }
+                }
+            }
+
+            route("/skill_groups") {
+                get {
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<SkillsApi>().listSkillGroups(includeHidden).onSuccess {
+                        call.respond(it.wrapAsResponse())
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+            }
+
+            route("/achievement_conditions") {
+                route("/{id}") {
+                    get {
+                        val id = call.parameters["id"]?.toLongOrNull()
+                            ?: return@get call.respond(HttpResponse.error<String>(IllegalArgumentException("id")))
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listConditions(id).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
             }

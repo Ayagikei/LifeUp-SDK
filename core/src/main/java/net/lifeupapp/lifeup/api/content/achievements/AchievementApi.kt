@@ -122,6 +122,27 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(achievements)
     }
+
+    fun listConditions(achievementId: Long): Result<List<AchievementCondition>> {
+        val conditions = mutableListOf<AchievementCondition>()
+        try {
+            context.forEachContent("${ContentProviderUrl.ACHIEVEMENT_CONDITIONS}/$achievementId") {
+                conditions.add(
+                    AchievementCondition(
+                        id = it.getLongOrNull("_ID"),
+                        type = it.getIntOrNull("type") ?: 0,
+                        relatedId = it.getLongOrNull("related_id") ?: 0L,
+                        target = it.getIntOrNull("target") ?: 0,
+                        current = it.getIntOrNull("current") ?: 0,
+                        progress = it.getIntOrNull("progress") ?: 0
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+        return Result.success(conditions)
+    }
 }
 
 internal fun resolveAchievementCategoryIds(
