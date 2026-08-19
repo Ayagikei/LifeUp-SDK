@@ -148,7 +148,15 @@ class MainActivity : AppCompatActivity() {
             binding.switchCors.isChecked = settings.enableCors
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableCors = isChecked
-                // Restart the service so the new setting takes effect immediately.
+                if (binding.switchStartService.isChecked) {
+                    KtorService.stop()
+                    KtorService.start()
+                }
+            }
+
+            binding.switchEventWs.isChecked = settings.enableEventWs
+            binding.switchEventWs.setOnCheckedChangeListener { _, isChecked ->
+                settings.enableEventWs = isChecked
                 if (binding.switchStartService.isChecked) {
                     KtorService.stop()
                     KtorService.start()

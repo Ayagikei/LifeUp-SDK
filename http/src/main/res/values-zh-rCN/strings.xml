@@ -31,6 +31,7 @@
     <string name="status_server">服务状态</string>
     <string name="switch_start_service">启动服务</string>
     <string name="switch_cors">允许跨域访问 (CORS)</string>
+    <string name="switch_event_ws">WebSocket 事件推送</string>
     <string name="title_about">关于</string>
     <string name="about_text"><![CDATA[这是一个能将手机转变为 API 服务器的工具，让你能通过 HTTP API 和 Content Provider 从其他设备与《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互动。
 <br/><br/><b># 功能特性：</b>

@@ -34,7 +34,15 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.isActive
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -182,6 +190,7 @@ object KtorService : LifeUpService {
                     _errorMessage.value = null
                     val duration = Settings.getInstance(appCtx).wakeLockDuration
                     wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                    EventHub.start(appCtx)
                     mDnsService.registerNsdService(port.value)
                     _isRunning.value = LifeUpService.RunningState.RUNNING
                 } else {
@@ -195,6 +204,7 @@ object KtorService : LifeUpService {
                 server = null
                 ServerNotificationService.cancel(appCtx)
                 wakeLockManager.release()
+                EventHub.stop(appCtx)
                 mDnsService.unregisterNsdService()
 
                 // Retry on the next port only when automatic port selection is in use.
@@ -222,6 +232,7 @@ object KtorService : LifeUpService {
             }
 
             try {
+                EventHub.stop(appCtx)
                 server?.stop(1000, 2000)
                 server = null
                 ServerNotificationService.cancel(appCtx)
@@ -282,7 +293,8 @@ object KtorService : LifeUpService {
             install(createApplicationPlugin("ApiTokenValidation") {
                 onCall { call ->
                     val authHeader = call.request.headers[HttpHeaders.Authorization]
-                    if (authHeader != apiToken) {
+                    val queryToken = call.request.queryParameters["token"]
+                    if (authHeader != apiToken && queryToken != apiToken) {
                         call.respond(
                             HttpStatusCode.Unauthorized,
                             HttpResponse.error<String>(
@@ -746,6 +758,47 @@ object KtorService : LifeUpService {
                         call.respond(HttpResponse.error<String>("No file received"))
                     }
 
+                }
+            }
+
+            get("/events") {
+                val after = call.request.queryParameters["after"]?.toLongOrNull() ?: 0L
+                val limit = (call.request.queryParameters["limit"]?.toIntOrNull() ?: 50).coerceIn(1, EventBuffer.CAPACITY)
+                call.respond(
+                    HttpResponse.success(
+                        EventsPage(
+                            latestId = EventHub.latestId,
+                            eventWs = Settings.getInstance(appCtx).enableEventWs,
+                            events = EventHub.since(after, limit),
+                        )
+                    )
+                )
+            }
+
+            if (Settings.getInstance(appCtx).enableEventWs) {
+                webSocket("/events") {
+                    val duration = Settings.getInstance(appCtx).wakeLockDuration
+                    wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                    val after = call.request.queryParameters["after"]?.toLongOrNull() ?: 0L
+                    val channel = Channel<CloudEvent>(Channel.UNLIMITED)
+                    val listener: (CloudEvent) -> Unit = { channel.trySend(it) }
+                    EventHub.addListener(listener)
+                    try {
+                        EventHub.since(after).forEach { send(Frame.Text(Json.encodeToString(it))) }
+                        launch {
+                            while (isActive) {
+                                delay(30_000)
+                                send(Frame.Ping(ByteArray(0)))
+                                wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                            }
+                        }
+                        for (event in channel) {
+                            send(Frame.Text(Json.encodeToString(event)))
+                        }
+                    } finally {
+                        EventHub.removeListener(listener)
+                        channel.close()
+                    }
                 }
             }
 

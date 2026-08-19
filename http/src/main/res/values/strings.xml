@@ -54,6 +54,7 @@
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
     <string name="switch_cors">Allow Cross-Origin Access (CORS)</string>
+    <string name="switch_event_ws">WebSocket event push</string>
     <string name="title_advanced">Advanced Settings</string>
     <string name="title_document">Documentation</string>
     <string name="wake_lock_duration">Wake Lock Duration</string>

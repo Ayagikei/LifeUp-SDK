@@ -285,6 +285,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/switch_cors" />
 
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_event_ws"
+                    style="@style/Item_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/switch_event_ws" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/wake_lock_duration_layout"
                     android:layout_width="match_parent"
