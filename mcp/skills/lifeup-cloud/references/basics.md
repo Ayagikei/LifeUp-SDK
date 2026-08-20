@@ -4,7 +4,7 @@ Condensed rules for agents. Do not hand-build `lifeup://` strings.
 
 ## Connect
 
-Phone: LifeUp running + LifeUp Cloud started + **Read LifeUp Data**. Same LAN. Default port `13276`.
+Phone: LifeUp **1.106.0+** + LifeUp Cloud **3.0.0+** + **Read LifeUp Data**. Same LAN. Default port `13276`. Older builds: `status.update` tells the agent to ask the user to update.
 
 1. `discover` — auto-connects when exactly one Cloud is found (mDNS `_lifeup._tcp`, TXT `port` is HTTP)
 2. `connect` `{ host }` if 0 or >1 instances

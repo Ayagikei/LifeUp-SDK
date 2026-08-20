@@ -61,7 +61,7 @@ android {
         applicationId "net.lifeupapp.lifeup.http"
         minSdk 21
         targetSdk 36
-        versionName "2.1.2"
+        versionName "3.0.0"
         versionCode computeVersionCode(versionName)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

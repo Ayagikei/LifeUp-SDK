@@ -7,7 +7,7 @@ description: Use when connecting to LifeUp Cloud, listing or completing LifeUp t
 
 Talk to the LifeUp app through LifeUp Cloud on the LAN. Docs: MCP `help` (no second install).
 
-Phone: LifeUp running + LifeUp Cloud started + "Read LifeUp Data" granted.
+Phone: LifeUp **1.106.0+** and LifeUp Cloud **3.0.0+**, running, with "Read LifeUp Data" granted. `status.update` warns if either is older.
 
 ## Connect
 

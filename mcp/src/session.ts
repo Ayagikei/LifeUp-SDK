@@ -8,6 +8,7 @@ import {
   tokenToPersist,
 } from "./config.js"
 import { discoverCloud, type CloudEndpoint } from "./discover.js"
+import { versionAdvice } from "./versions.js"
 
 export type CloudInfo = {
   appVersion?: number
@@ -27,6 +28,7 @@ export type SessionStatus = {
   eventsSubscribed?: boolean
   lastError?: string
   info?: CloudInfo
+  update?: string[]
 }
 
 export function withDiscoveredName(parsed: CloudEndpoint, discovered: CloudEndpoint[]): CloudEndpoint {
@@ -44,6 +46,7 @@ export class Session {
   private info: CloudInfo | undefined
 
   status(): SessionStatus {
+    const update = versionAdvice(this.info)
     return {
       connected: this.client != null,
       host: this.client?.host,
@@ -54,6 +57,7 @@ export class Session {
       eventsSubscribed: this.eventSub != null,
       lastError: this.lastError,
       info: this.info,
+      update: update.length ? update : undefined,
     }
   }
 

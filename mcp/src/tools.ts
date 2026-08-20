@@ -56,7 +56,7 @@ export function registerTools(server: McpServer, session: Session): void {
     session.rememberDiscover(found)
     if (found.length === 1) {
       const endpoint = await session.connect({ host: `${found[0].host}:${found[0].port}` })
-      return text({ found, connected: true, endpoint })
+      return text({ found, connected: true, endpoint, ...session.status() })
     }
     return text({ found, connected: false })
   })
@@ -67,7 +67,10 @@ export function registerTools(server: McpServer, session: Session): void {
       host: z.string().optional(),
       token: z.string().optional(),
     }),
-  }, async ({ host, token }) => text(await session.connect({ host, token })))
+  }, async ({ host, token }) => {
+    const endpoint = await session.connect({ host, token })
+    return text({ endpoint, ...session.status() })
+  })
 
   server.registerTool("help", {
     description:
