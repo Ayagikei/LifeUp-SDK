@@ -261,6 +261,23 @@ Using `No Action`+`Broadcast return value` can achieve this effect in a more con
 
 - `amount` is the **total consumed / total produced** in this execution, not the per-formula amount.
 
+### Feelings added / updated
+
+**Name:** app.lifeup.feelings.add
+
+**Return value:**
+
+| Parameters | Meaning | Examples |
+| --- | --- | --- |
+| feelings_id | feeling id | 1 |
+| action_type | `add` or `update` | add |
+| content | feeling text | Feeling good today! |
+| create_time | created-at timestamp (ms) | 1642060800000 |
+| relate_type | related object type | 0 |
+| related_id | related object id | 1 |
+| attachments_count | attachment count | 2 |
+| attachments | attachment path array | ["/path/1", "/path/2"] |
+
 ### Level up
 
 **Name:** app.lifeup.level.up

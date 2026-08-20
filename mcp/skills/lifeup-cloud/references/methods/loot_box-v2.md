@@ -29,11 +29,12 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | amount                 | number of content item                | number                                                  | 1              | no       | number of rewards for a single item. `0` (absolute) or computed `<=0` (relative) deletes the entry |
 | probability            | probability of the content item       | number                                                  | 1              | no       | -                                                            |
 | fixed                  | whether it is a fixed reward          | boolean                                                 | true/false     | no       | -                                                            |
+| query                  | list box contents                     | true or false                                           | true           | no       | v1.105.1+. Returns item JSON only; sub_id / sub_name not required |
 
 **Notice:**
 
 1. In order to search for a product, either id or name must be provided.
-1. In order to search for content, either sub_id or sub_name must be provided.
+1. In order to search for content, either sub_id or sub_name must be provided. Use `query=true` to list contents without sub_id / sub_name.
 1. If both `sub_id` and `sub_name` are provided, `sub_id` takes precedence. `sub_name` is used only when no valid `sub_id` is provided.
 1. `name` and `sub_name` try exact matching first, then fall back to fuzzy matching.
 1. `sub_amount` defaults to `1`. When the box has multiple entries of the same item with different amounts, provide `sub_amount` to target a specific entry. If no match is found and this is not a deletion request, a new entry with `amount=sub_amount` is added.

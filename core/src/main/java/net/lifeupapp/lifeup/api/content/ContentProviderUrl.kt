@@ -37,4 +37,16 @@ internal object ContentProviderUrl {
     const val SKILL_GROUPS = "$PREFIX/skill_groups"
 
     const val ACHIEVEMENT_CONDITIONS = "$PREFIX/achievement_conditions"
+
+    const val COIN_RECORDS = "$PREFIX/coin_records"
+
+    const val INVENTORY_RECORDS = "$PREFIX/inventory_records"
+
+    const val EXP_RECORDS = "$PREFIX/exp_records"
+
+    const val STEP_RECORDS = "$PREFIX/step_records"
+
+    const val LEVEL_DEFINES = "$PREFIX/level_defines"
+
+    const val STATISTICS = "$PREFIX/statistics"
 }

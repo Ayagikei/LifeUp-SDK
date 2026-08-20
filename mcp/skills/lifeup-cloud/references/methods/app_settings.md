@@ -17,6 +17,8 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | is_enable_compact_mode| Enable compact mode| true or false  | true    | No       | Simplify interface elements     |
 | is_enable_material_you| Enable Material You| true or false  | true    | No       | Enable Material You theme       |
 | restart_activities    | Restart interface | true or false   | true    | No       | Apply interface changes immediately |
+| exp_punishment_factor | Global exp punishment | 0–10 float | 0.2 | No | Default 0.2 |
+| coin_punishment_factor| Global coin punishment | 0–10 float | 0 | No | Default 0 |
 
 **Response:**
 

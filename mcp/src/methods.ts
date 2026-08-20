@@ -24,8 +24,10 @@ export const KNOWN_METHODS = [
   "pomodoro_timer",
   "add_pomodoro",
   "edit_pomodoro",
+  "complete_achievement",
   "unlock_condition",
   "step",
+  "level_define",
   "edit_exp",
   "feeling",
   "tomato",
@@ -72,9 +74,14 @@ export function isDestructiveCall(
     (method === "synthesis_formula" ||
       method === "skill" ||
       method === "skill_group" ||
-      method === "achievement") &&
+      method === "achievement" ||
+      method === "feeling" ||
+      method === "edit_pomodoro") &&
     flagTrue(params.delete)
   ) {
+    return true
+  }
+  if (method === "level_define" && (params.levels != null || params.custom != null)) {
     return true
   }
   return false

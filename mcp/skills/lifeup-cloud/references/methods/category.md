@@ -17,7 +17,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | edit_id         | Category ID to edit| number greater than 0| 1         | No       | Required when editing           |
 | name            | Category name     | any text             | Study List | No       | Required for new categories; optional when editing |
 | order           | Sort order        | integer              | 1         | No       | Position in the list            |
-| hidden          | Hide category     | true or false        | false     | No       | Only supported for task and shop lists |
+| hidden          | Hide category     | true or false        | false     | No       | tasks=archive; shop=shop hide; synthesis=hide. Achievement lists reject with `unsupported_parameter`. `false` unhides |
 | inventory_hidden| Hide in inventory | true or false        | false     | No       | Only supported for shop lists   |
 | icon_uri        | Icon URI          | URI text             | content://... | No  | Only supported for achievement lists |
 | desc            | Description       | any text             | This is a description | No | Only supported for achievement lists |

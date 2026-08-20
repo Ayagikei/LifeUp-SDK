@@ -16,6 +16,10 @@ test("destructive methods need confirm", () => {
 test("param-aware deletes need confirm", () => {
   assert.throws(() => assertCallableMethod("skill", false, { delete: true }), /confirm=true/)
   assert.throws(() => assertCallableMethod("task_template", false, { method: "delete", id: 1 }), /confirm=true/)
+  assert.throws(() => assertCallableMethod("feeling", false, { id: 1, delete: true }), /confirm=true/)
+  assert.throws(() => assertCallableMethod("edit_pomodoro", false, { edit_item_id: 1, delete: true }), /confirm=true/)
+  assert.throws(() => assertCallableMethod("level_define", false, { levels: [] }), /confirm=true/)
+  assert.throws(() => assertCallableMethod("level_define", false, { custom: true }), /confirm=true/)
   assert.doesNotThrow(() => assertCallableMethod("skill", true, { delete: true }))
   assert.doesNotThrow(() => assertCallableMethod("skill", false, { id: 1, name: "x" }))
 })

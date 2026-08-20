@@ -43,7 +43,7 @@ function oneOf<T extends Record<string, unknown>>(obj: T, keys: (keyof T)[]): ke
 
 export function registerTools(server: McpServer, session: Session): void {
   server.registerTool("status", {
-    description: "Show LifeUp Cloud connection status",
+    description: "Show LifeUp Cloud connection status, including LifeUp and Cloud versions from GET /info",
     inputSchema: z.object({}),
   }, async () => text(session.status()))
 
@@ -79,7 +79,7 @@ export function registerTools(server: McpServer, session: Session): void {
 
   server.registerTool("list_data", {
     description:
-      "Query LifeUp ContentProvider lists (GET). Compact by default. Prefer categoryId. detail=true only for full objects. Feelings/achievements/synthesis/pomodoro: resource=feelings|achievements|synthesis|pomodoro_records.",
+      "Query LifeUp ContentProvider lists (GET). Compact by default. Also coin_records, inventory_records, exp_records, step_records, level_defines, statistics.",
     inputSchema: z.object({
       resource: z.enum(LIST_RESOURCES),
       categoryId: z.number().int().optional(),
@@ -90,6 +90,7 @@ export function registerTools(server: McpServer, session: Session): void {
       detail: z.boolean().optional(),
       timeRangeStart: z.number().int().optional(),
       timeRangeEnd: z.number().int().optional(),
+      includeHidden: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, args as ListArgs))
 
@@ -128,6 +129,7 @@ export function registerTools(server: McpServer, session: Session): void {
       offset: z.number().int().optional(),
       limit: z.number().int().optional(),
       detail: z.boolean().optional(),
+      includeHidden: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "item_categories", ...args }))
 

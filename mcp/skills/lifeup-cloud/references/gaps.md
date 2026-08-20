@@ -1,31 +1,17 @@
 # Gaps (live MCP + Cloud)
 
-Recorded while exercising the MCP. Not a promise to implement.
+Needs a new LifeUp + Cloud build for the latest CP routes.
 
-## Missing or incomplete Cloud / MCP
+## Closed
 
-| Wanted | Tried | Result |
-|---|---|---|
-| Hidden shop / synthesis / achievement categories | `list_data` category lists | Cloud category CP omits hide status. App models have HIDE=1. No restore/list-hidden HTTP. |
-| Skill hidden flag on list | `list_skills` | `GET /skills` has no `status`. Use `call_api` `query_skill`. |
-| Shop settings | help / list_data | No GET. Known Cloud gap. |
-| Loot box inventory query | help | `loot_box/v2` is mutation; no list GET. |
-| Feelings delete | `call_api` | Check `help` `feelings` — delete may exist as scheme; no list-filter-by-id first-class tool. |
-| Subscribe to LifeUp broadcasts | — | Android Intents stay on the phone. Cloud has no event feed. See `help` `broadcasts`. |
-| Coin ledger / resCode history | `get_coin` | Only `{ value }`. No CP coin ledger list. |
-| Count complete on `complete_task` | first-class tool | **Fixed**: `count` / `count_set_type` now on the tool. |
-
-## Agent friction (fixed or noted)
-
-| Issue | Status |
+| Wanted | How |
 |---|---|
-| `lifeup_lifeup_*` double prefix | Fixed: tools are `status`/`discover`/`connect`/`help` |
-| 7 extra `read_skill_*` tools | Fixed: resources no longer registered as tools (19 tools) |
-| `connect` name=`manual` after mDNS | Fixed: keeps `lifeup_cloud` when host matches discover |
-| Docs split help vs resources | Fixed: `help` with no topic = workflow |
-| mDNS empty then success | Discover timeout 2s→5s; one retry still required |
-| `complete_task` cannot +1 a count task | Fixed |
-
-## Not missing (use `list_data`)
-
-`feelings`, `achievements`, `synthesis`, `pomodoro_records`, `coin`, `info` — no extra `list_*` shortcuts. `help` / `list_data` resource=…
+| Complete / claim achievement | `call_api` `complete_achievement` |
+| Feelings / pomodoro delete | `feeling` / `edit_pomodoro` + `delete=true` `confirm=true` |
+| Shop settings / loot contents | `shop_settings query=true` / `loot_box/v2 query=true` |
+| Unlock conditions / skill groups | `list_data` `achievement_conditions` / `skill_groups` |
+| Coin / item / exp journals | `coin_records` / `inventory_records` / `exp_records` |
+| Level curve | `list_data` `level_defines` · write `call_api` `level_define` |
+| Global punishment factors | `call_api` `query` `key=punishment` · write `app_settings` |
+| Statistics aggregates | `list_data` `statistics` |
+| Step history | `list_data` `step_records` · write still `step` |

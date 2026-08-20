@@ -14,6 +14,12 @@ import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
+import net.lifeupapp.lifeup.api.content.records.CoinRecordsApi
+import net.lifeupapp.lifeup.api.content.records.ExpRecordsApi
+import net.lifeupapp.lifeup.api.content.records.InventoryRecordsApi
+import net.lifeupapp.lifeup.api.content.records.LevelDefinesApi
+import net.lifeupapp.lifeup.api.content.records.StatisticsApi
+import net.lifeupapp.lifeup.api.content.records.StepRecordsApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
@@ -42,7 +48,13 @@ object LifeUpApi : LifeUpApiDef {
             FeelingsApi(appCtx),
             DataApi(appCtx),
             SynthesisApi(appCtx),
-            PomodoroApi(appCtx)
+            PomodoroApi(appCtx),
+            CoinRecordsApi(appCtx),
+            InventoryRecordsApi(appCtx),
+            ExpRecordsApi(appCtx),
+            StepRecordsApi(appCtx),
+            LevelDefinesApi(appCtx),
+            StatisticsApi(appCtx)
         )
     }
 

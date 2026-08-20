@@ -24,6 +24,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | reward_tomatoes | Whether to reward tomatoes | true or false         | true          | No       | Default is false                                 |
 | edit_item_id    | ID of the item to edit     | Number greater than 0 | 123           | Yes      | Specifies the record ID to edit                  |
 | ui              | Display reward tomatoes UI | true or false         | true          | No       |                                                  |
+| delete          | Delete the record          | true or false         | true          | No       | v1.105.1+. Soft-deletes the pomodoro record (`isDel`), same as the app |
 
 **Return values:**
 

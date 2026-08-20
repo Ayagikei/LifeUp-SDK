@@ -32,7 +32,9 @@ Wiki may lag: https://docs.lifeupapp.fun/en/#/guide/api
 | `add_pomodoro` | Add tomato timing record |
 | `edit_pomodoro` | Edit an existing Pomodoro timing record or add a new record if a valid `edit_item_id` is provided. |
 | `unlock_condition` | Unlock achievement condition: requires an external API call to unlock |
+| `complete_achievement` | Complete a manual achievement and claim its reward, or claim the reward of an already unlocked automatic achievement. Same behavior as tapping the complete checkbox / claim-reward button in the app. |
 | `step` | Set the number of steps on the specified date, for example, it can be used to enter the number of steps with a wristband + automation tool. And can be used to modify historical records. |
+| `level_define` | Read or replace the XP level curve |
 | `edit_exp` | This API can batch set the current experience values for attributes. It can directly set a specific experience value or a particular level. |
 | `feeling` | It is used to create or update records of feelings. |
 | `tomato` | Adjust the number of tomatoes (increase, decrease, or set to a specific amount) |

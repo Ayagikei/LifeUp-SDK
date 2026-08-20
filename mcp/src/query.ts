@@ -13,12 +13,20 @@ export const LIST_RESOURCES = [
   "synthesis",
   "synthesis_categories",
   "pomodoro_records",
+  "skill_groups",
+  "achievement_conditions",
+  "coin_records",
+  "inventory_records",
+  "exp_records",
+  "step_records",
+  "level_defines",
+  "statistics",
 ] as const
 
 export type ListResource = (typeof LIST_RESOURCES)[number]
 
-const SERVER_PAGED = new Set<ListResource>(["history", "feelings", "pomodoro_records"])
-const SINGULAR = new Set<ListResource>(["coin", "info"])
+const SERVER_PAGED = new Set<ListResource>(["history", "feelings", "pomodoro_records", "coin_records", "inventory_records", "exp_records", "step_records"])
+const SINGULAR = new Set<ListResource>(["coin", "info", "level_defines", "statistics"])
 
 const COMPACT: Record<string, string[]> = {
   tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "coin", "exp", "deadline", "countProgress", "repeatEndCondition"],
@@ -31,9 +39,15 @@ const COMPACT: Record<string, string[]> = {
 
   pomodoro_records: ["id", "startTime", "endTime", "duration", "reward"],
   task_categories: ["id", "name", "type", "order", "status"],
-  item_categories: ["id", "name", "order"],
+  item_categories: ["id", "name", "order", "hidden", "inventoryHidden"],
   achievement_categories: ["id", "name", "order"],
-  synthesis_categories: ["id", "name", "order"],
+  synthesis_categories: ["id", "name", "order", "hidden"],
+  skill_groups: ["id", "content", "order", "collapsed"],
+  achievement_conditions: ["id", "type", "relatedId", "target", "current", "progress"],
+  coin_records: ["id", "time", "value", "isDecrease", "totalValue", "resCode", "content"],
+  inventory_records: ["id", "time", "itemId", "itemName", "changeNumber", "isDecrease", "resCode"],
+  exp_records: ["id", "time", "value", "isDecrease", "resCode", "skillIds", "relatedAttributes", "content"],
+  step_records: ["id", "date", "dailyStepCount", "totalStepCount", "isGotReward"],
 }
 
 export type ListArgs = {
@@ -46,6 +60,7 @@ export type ListArgs = {
   detail?: boolean
   timeRangeStart?: number
   timeRangeEnd?: number
+  includeHidden?: boolean
 }
 
 export function listRequest(args: ListArgs): {
@@ -83,9 +98,21 @@ export function listRequest(args: ListArgs): {
         singular,
       }
     case "item_categories":
-      return { path: "/items_categories", query: {}, serverPaged, singular }
+      return {
+        path: "/items_categories",
+        query: { include_hidden: args.includeHidden ? "true" : undefined },
+        serverPaged,
+        singular,
+      }
     case "skills":
       return { path: "/skills", query: {}, serverPaged, singular }
+    case "skill_groups":
+      return {
+        path: "/skill_groups",
+        query: { include_hidden: args.includeHidden ? "true" : undefined },
+        serverPaged,
+        singular,
+      }
     case "coin":
       return { path: "/coin", query: {}, serverPaged, singular }
     case "info":
@@ -99,6 +126,18 @@ export function listRequest(args: ListArgs): {
       }
     case "achievement_categories":
       return { path: "/achievement_categories", query: {}, serverPaged, singular }
+    case "achievement_conditions": {
+      const achievementId = Number(args.categoryId)
+      if (!Number.isInteger(achievementId) || achievementId <= 0) {
+        throw new Error("achievement_conditions needs categoryId = achievement id")
+      }
+      return {
+        path: `/achievement_conditions/${achievementId}`,
+        query: {},
+        serverPaged,
+        singular,
+      }
+    }
     case "feelings":
       return { path: "/feelings", query: page, serverPaged, singular }
     case "synthesis":
@@ -111,7 +150,7 @@ export function listRequest(args: ListArgs): {
     case "synthesis_categories":
       return {
         path: args.categoryId == null ? "/synthesis_categories" : `/synthesis_categories/${args.categoryId}`,
-        query: {},
+        query: { include_hidden: args.includeHidden ? "true" : undefined },
         serverPaged,
         singular,
       }
@@ -119,6 +158,25 @@ export function listRequest(args: ListArgs): {
       return {
         path: "/pomodoro_records",
         query: { ...page, time_range_start: args.timeRangeStart, time_range_end: args.timeRangeEnd },
+        serverPaged,
+        singular,
+      }
+    case "coin_records":
+    case "inventory_records":
+    case "exp_records":
+    case "step_records":
+      return {
+        path: `/${args.resource}`,
+        query: { ...page, time_range_start: args.timeRangeStart, time_range_end: args.timeRangeEnd },
+        serverPaged,
+        singular,
+      }
+    case "level_defines":
+      return { path: "/level_defines", query: {}, serverPaged, singular }
+    case "statistics":
+      return {
+        path: "/statistics",
+        query: { time_range_start: args.timeRangeStart, time_range_end: args.timeRangeEnd },
         serverPaged,
         singular,
       }

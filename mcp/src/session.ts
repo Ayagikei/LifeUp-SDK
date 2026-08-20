@@ -9,6 +9,14 @@ import {
 } from "./config.js"
 import { discoverCloud, type CloudEndpoint } from "./discover.js"
 
+export type CloudInfo = {
+  appVersion?: number
+  appVersionName?: string
+  apiVersion?: number
+  cloudVersion?: number
+  cloudVersionName?: string
+}
+
 export type SessionStatus = {
   connected: boolean
   host?: string
@@ -18,6 +26,7 @@ export type SessionStatus = {
   eventWs?: boolean
   eventsSubscribed?: boolean
   lastError?: string
+  info?: CloudInfo
 }
 
 export function withDiscoveredName(parsed: CloudEndpoint, discovered: CloudEndpoint[]): CloudEndpoint {
@@ -32,6 +41,7 @@ export class Session {
   private eventWs = false
   private eventSub: { close: () => void } | undefined
   private pushed: import("./client.js").CloudEvent[] = []
+  private info: CloudInfo | undefined
 
   status(): SessionStatus {
     return {
@@ -43,6 +53,7 @@ export class Session {
       eventWs: this.eventWs,
       eventsSubscribed: this.eventSub != null,
       lastError: this.lastError,
+      info: this.info,
     }
   }
 
@@ -63,7 +74,7 @@ export class Session {
     const token = resolveToken(input, saved, endpoint)
     const client = new LifeUpClient(endpoint.host, endpoint.port, token)
     try {
-      await client.get("/info")
+      this.info = await client.get<CloudInfo>("/info")
     } catch (error) {
       this.lastError = error instanceof Error ? error.message : String(error)
       throw error

@@ -70,11 +70,18 @@ import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
+import net.lifeupapp.lifeup.api.content.records.CoinRecordsApi
+import net.lifeupapp.lifeup.api.content.records.ExpRecordsApi
+import net.lifeupapp.lifeup.api.content.records.InventoryRecordsApi
+import net.lifeupapp.lifeup.api.content.records.LevelDefinesApi
+import net.lifeupapp.lifeup.api.content.records.StatisticsApi
+import net.lifeupapp.lifeup.api.content.records.StepRecordsApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
+import net.lifeupapp.lifeup.http.BuildConfig
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.Settings
 import net.lifeupapp.lifeup.http.utils.WakeLockManager
@@ -574,8 +581,13 @@ object KtorService : LifeUpService {
             }
 
             get("/info") {
-                LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess {
-                    call.respond(it.wrapAsResponse())
+                LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess { info ->
+                    call.respond(
+                        info.copy(
+                            cloudVersion = BuildConfig.VERSION_CODE,
+                            cloudVersionName = BuildConfig.VERSION_NAME,
+                        ).wrapAsResponse(),
+                    )
                 }.onFailure {
                     call.respond(HttpResponse.error<String>(it))
                 }
@@ -717,6 +729,92 @@ object KtorService : LifeUpService {
                             call.respond(it.wrapAsResponse())
                         }.onFailure {
                             logger.log(Level.WARNING, "Failed to get pomodoro records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+
+            route("/coin_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<CoinRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get coin records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/inventory_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<InventoryRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get inventory records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/exp_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<ExpRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get exp records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+
+            route("/step_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<StepRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get step records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/level_defines") {
+                get {
+                    LifeUpApi.getContentProviderApi<LevelDefinesApi>()
+                        .getDefines()
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get level defines", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/statistics") {
+                get {
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<StatisticsApi>()
+                        .getStatistics(timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get statistics", it)
                             call.respond(HttpResponse.error<String>(it))
                         }
                 }

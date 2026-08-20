@@ -35,6 +35,24 @@ test("items?id= repeats keys", () => {
   assert.deepEqual(request.query, { id: [1, 4] })
 })
 
+test("coin_records is server-paged", () => {
+  const request = listRequest({ resource: "coin_records", offset: 10, limit: 5 })
+  assert.equal(request.path, "/coin_records")
+  assert.equal(request.serverPaged, true)
+  assert.equal(request.query.offset, 10)
+  assert.equal(request.query.limit, 5)
+})
+
+test("statistics and level_defines are singular", () => {
+  assert.equal(listRequest({ resource: "statistics" }).singular, true)
+  assert.equal(listRequest({ resource: "level_defines" }).path, "/level_defines")
+  assert.equal(listRequest({ resource: "step_records" }).serverPaged, true)
+})
+
+test("achievement_conditions needs a positive categoryId", () => {
+  assert.throws(() => listRequest({ resource: "achievement_conditions" }), /achievement id/)
+  assert.equal(listRequest({ resource: "achievement_conditions", categoryId: 4 }).path, "/achievement_conditions/4")
+})
 test("feelings compact keeps Cloud isFav", () => {
   const page = presentList(
     "feelings",
