@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[이 도구는 휴대폰을 API 서버로 바꾸어 다른 기기에서 HTTP API와 Content Provider를 통해 <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>과 상호작용할 수 있게 해줍니다.
 <br/><br/><b># 기능:</b>
 <br/>• <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">공식 데스크톱 클라이언트</a>와 함께 사용 가능
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• 완전한 게임 연동을 위한 포괄적인 API 제공
 <br/>• 사용자 정의 개발 및 확장 지원:
 <br/>  - 자체 데스크톱 / 웹 클라이언트 구축

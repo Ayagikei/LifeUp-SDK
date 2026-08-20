@@ -34,6 +34,7 @@
     <string name="about_text"><![CDATA[Esta é uma ferramenta que transforma seu telefone em um servidor de API, permitindo interagir com o <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> de outros dispositivos por meio de APIs HTTP e Content Provider.
 <br/><br/><b># Recursos:</b>
 <br/>• Funciona com o <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">cliente oficial para desktop</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Fornece APIs abrangentes para integração completa com o jogo
 <br/>• Permite desenvolvimento e extensões personalizadas:
 <br/>  - Criar seus próprios clientes desktop/web

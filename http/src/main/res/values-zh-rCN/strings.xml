@@ -36,6 +36,7 @@
     <string name="about_text"><![CDATA[这是一个能将手机转变为 API 服务器的工具，让你能通过 HTTP API 和 Content Provider 从其他设备与《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互动。
 <br/><br/><b># 功能特性：</b>
 <br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 也可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_mcp">MCP &amp; Skills</a> 给 AI 客户端使用
 <br/>• 提供完整的游戏化集成接口
 <br/>• 支持自定义开发和扩展：
 <br/>  - 构建自己的桌面端/网页端

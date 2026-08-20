@@ -5,15 +5,15 @@ LifeUp app Intents (`app.lifeup.*`) are received by **Cloud** (same phone) and e
 | Transport | When | MCP tool |
 |---|---|---|
 | `GET /events` | Always, while Cloud is running | `list_events` (default) |
-| `WS /events` | Cloud setting **WebSocket event push** on | `subscribe_events` |
+| `WS /events` | Cloud **WebSocket event push** (on by default) | `subscribe_events` |
 
 MCP cannot receive Android broadcasts itself.
 
 ## Prerequisites
 
 1. LifeUp: `Settings` → `Labs` → `Developer mode` → **Broadcast events**
-2. Cloud running. HTTP pull works with no extra Cloud toggle.
-3. Optional: Cloud advanced → **WebSocket event push** for `subscribe_events`
+2. Cloud running. HTTP pull always works.
+3. Cloud **WebSocket event push** is on by default (3.0.0+). Turn it off in Cloud if you only want GET.
 
 ## HTTP
 

@@ -41,6 +41,9 @@ import net.lifeupapp.lifeup.api.Val
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN_HANT
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_CN
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_HANT
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
@@ -177,10 +180,16 @@ class MainActivity : AppCompatActivity() {
 
             // Route both documentation entry points to the same action.
             binding.documentHeader.setOnClickListener {
-                openDocumentation()
+                openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
             }
             binding.btnDocument.setOnClickListener {
-                openDocumentation()
+                openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
+            }
+            binding.mcpHeader.setOnClickListener {
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
+            }
+            binding.btnMcp.setOnClickListener {
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
             }
 
             lifecycleScope.launchWhenResumed {
@@ -425,28 +434,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openDocumentation() {
+    private fun openLocalizedUrl(en: String, cn: String, hant: String) {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             resources.configuration.locales.get(0)
         } else {
+            @Suppress("DEPRECATION")
             resources.configuration.locale
         }
-        val intent = Intent(Intent.ACTION_VIEW)
         val url = when {
-            locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
-                DOCUMENT_LINK_CN
-            }
-
-            locale.language == "zh" -> {
-                DOCUMENT_LINK_CN_HANT
-            }
-
-            else -> {
-                DOCUMENT_LINK
-            }
+            locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> cn
+            locale.language == "zh" -> hant
+            else -> en
         }
-        intent.data = Uri.parse(url)
-        startActivity(intent)
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
     private fun setupExpandablePanel(

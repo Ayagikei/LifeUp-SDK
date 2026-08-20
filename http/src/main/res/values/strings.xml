@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[This is a tool that turns your phone into an API server, allowing you to interact with <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> from other devices through HTTP APIs and Content Provider.
 <br/><br/><b># Features:</b>
 <br/>• Works with the <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">official desktop client</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Provides comprehensive APIs for full game integration
 <br/>• Enables custom development and extensions:
 <br/>  - Build your own desktop/web clients
@@ -57,6 +58,7 @@
     <string name="switch_event_ws">WebSocket event push</string>
     <string name="title_advanced">Advanced Settings</string>
     <string name="title_document">Documentation</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
     <string name="wake_lock_duration">Wake Lock Duration</string>
     <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
     <string name="wake_lock_duration_error">Please enter a number between 1-60</string>

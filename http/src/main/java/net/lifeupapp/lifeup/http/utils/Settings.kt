@@ -10,7 +10,7 @@ class Settings private constructor(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     var enableCors: Boolean by BooleanPreference(prefs, KEY_ENABLE_CORS, false)
-    var enableEventWs: Boolean by BooleanPreference(prefs, KEY_ENABLE_EVENT_WS, false)
+    var enableEventWs: Boolean by BooleanPreference(prefs, KEY_ENABLE_EVENT_WS, true)
     var wakeLockDuration: Int by IntPreference(prefs, KEY_WAKE_LOCK_DURATION, 10)
     var customPort: Int by IntPreference(prefs, KEY_CUSTOM_PORT, 0)
     var apiToken: String by StringPreference(prefs, KEY_API_TOKEN, "")

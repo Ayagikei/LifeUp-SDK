@@ -14,6 +14,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
   - You may need to replace `category_id` with your actual available achievement list id to test this example
   - The decoded content of `conditions_json` is `[{"type":7,"target":1000000}]`
 - Edit existing achievement: [lifeup://api/achievement?edit_id=1&name=New Achievement Name&exp=100](lifeup://api/achievement?edit_id=1&name=New Achievement Name&exp=100)
+- Set an emoji icon: `call_api` `achievement` `icon_uri=🏆` (param is `icon_uri`, not `icon`)
 
 #### 1. Achievement Parameters
 
@@ -23,6 +24,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | is_subcategory| Is subcategory    | true or false        | false     | No       | Defaults to false               |
 | name          | Achievement name   | any text             | Collector | No*      | Required for new achievements   |
 | desc          | Description       | any text             | Collect 100 items | No |                               |
+| icon_uri      | Icon              | emoji, http(s) URL, content URI, or empty | 🏆 | No | Not `icon`. Emoji is stored as an `emoji_` file. Empty clears. |
 | order         | Sort order        | integer              | 1         | No       | Position in list                |
 | category_id   | Category ID       | number greater than 0 | 1        | No*      | Required when creating subcategory |
 | unlocked      | Unlock status     | true or false        | true      | No       | true - unlock immediately<br/>false - reset to locked |
@@ -54,8 +56,10 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
 | Parameter     | Meaning           | Values               | Example   | Required | Notes                           |
 | ------------ | ----------------- | -------------------- | --------- | -------- | ------------------------------- |
+| is_subcategory | Must be true | true | true | Yes | Required to create/edit a subcategory |
 | is_collapsed | Collapse status   | true or false        | false     | No       | Only applies to subcategories   |
 
+Subcategories reject `icon_uri` (including emoji) with `unsupported_parameter`. Editing a subcategory without `is_subcategory=true` returns `is_subcategory_required`, not a missing `edit_id`.
 **Response:**
 
 | Field  | Type    | Description      | Example | Notes                    |

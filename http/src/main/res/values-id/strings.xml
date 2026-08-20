@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[Alat ini mengubah ponsel Anda menjadi server API, sehingga Anda dapat berinteraksi dengan <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> dari perangkat lain melalui HTTP API dan Content Provider.
 <br/><br/><b># Fitur:</b>
 <br/>• Bekerja dengan <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">klien desktop resmi</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Menyediakan API lengkap untuk integrasi penuh dengan game
 <br/>• Mendukung pengembangan dan ekstensi khusus:
 <br/>  - Membangun klien desktop / web Anda sendiri

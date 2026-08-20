@@ -34,6 +34,7 @@
     <string name="about_text"><![CDATA[Bu, telefonunuzu bir API sunucusuna dönüştüren bir araç olup diğer cihazlardan HTTP API\'leri ve Content Provider üzerinden <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> ile etkileşim kurmanızı sağlar.
 <br/><br/><b># Özellikler:</b>
 <br/>• <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">resmi masaüstü istemcisi</a> ile çalışır
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Tam oyun entegrasyonu için kapsamlı API\'ler sunar
 <br/>• Özel geliştirme ve uzantıları destekler:
 <br/>  - Kendi masaüstü/web istemcilerinizi oluşturma

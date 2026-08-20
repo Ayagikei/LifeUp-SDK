@@ -48,7 +48,7 @@ export function registerTools(server: McpServer, session: Session): void {
   }, async () => text(session.status()))
 
   server.registerTool("discover", {
-    description: "Browse LAN for LifeUp Cloud via mDNS. If exactly one instance is found, connect to it.",
+    description: "Browse LAN for LifeUp Cloud via mDNS (_lifeup._tcp). Auto-connects if exactly one. Empty on corporate Wi-Fi is normal — ask for IP:port from the Cloud app and call connect.",
     inputSchema: z.object({}),
   }, async () => {
     const { discoverCloud } = await import("./discover.js")
@@ -56,9 +56,16 @@ export function registerTools(server: McpServer, session: Session): void {
     session.rememberDiscover(found)
     if (found.length === 1) {
       const endpoint = await session.connect({ host: `${found[0].host}:${found[0].port}` })
-      return text({ found, connected: true, endpoint, ...session.status() })
+      return text({ found, endpoint, ...session.status() })
     }
-    return text({ found, connected: false })
+    return text({
+      found,
+      connected: false,
+      hint:
+        found.length > 1
+          ? "Multiple Clouds. Pass host to connect, like 192.168.1.8:13276."
+          : "mDNS found nothing. Common on corporate Wi-Fi (multicast blocked / AP isolation / different VLAN). Ask the user for the IP:port shown in LifeUp Cloud, then connect { host }. Default port 13276.",
+    })
   })
 
   server.registerTool("connect", {
@@ -292,7 +299,7 @@ export function registerTools(server: McpServer, session: Session): void {
   }, async ({ after, limit }) => text(await session.listEvents(after ?? 0, limit ?? 50)))
 
   server.registerTool("subscribe_events", {
-    description: "Open Cloud WebSocket /events (Cloud setting enableEventWs). HTTP list_events still works. on=false closes.",
+    description: "Open Cloud WebSocket /events (on by default in Cloud 3.0.0+). HTTP list_events still works. on=false closes.",
     inputSchema: z.object({
       after: z.number().int().optional(),
       on: z.boolean().optional(),

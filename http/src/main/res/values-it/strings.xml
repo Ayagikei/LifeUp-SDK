@@ -34,6 +34,7 @@
     <string name="about_text"><![CDATA[Questo strumento trasforma il tuo telefono in un server API, permettendoti di interagire con <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> da altri dispositivi tramite API HTTP e Content Provider.
 <br/><br/><b># Funzionalità:</b>
 <br/>• Funziona con il <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">client desktop ufficiale</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Fornisce API complete per un\'integrazione totale
 <br/>• Supporta sviluppo ed estensioni personalizzate:
 <br/>  - Creare i tuoi client desktop/web

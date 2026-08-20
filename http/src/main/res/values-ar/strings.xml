@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[تحوّل هذه الأداة هاتفك إلى خادم API، مما يتيح لك التفاعل مع <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> من أجهزة أخرى عبر HTTP API وContent Provider.
 <br/><br/><b># الميزات:</b>
 <br/>• تعمل مع <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">عميل سطح المكتب الرسمي</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• توفر واجهات API شاملة لدمج اللعبة بالكامل
 <br/>• تتيح التطوير المخصص والإضافات:
 <br/>  - إنشاء عملاء سطح مكتب أو ويب خاصين بك

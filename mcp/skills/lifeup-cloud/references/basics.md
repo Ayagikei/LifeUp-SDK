@@ -16,7 +16,7 @@ Typical failures:
 
 | Signal | Meaning | What to do |
 |---|---|---|
-| discover empty | Cloud off / different Wi‑Fi / AP isolation | Ask user to start Cloud; or take `host:port` |
+| discover empty | Cloud off, different Wi‑Fi, or **corporate LAN** (mDNS multicast blocked / AP isolation / VLAN) | Ask for the IP:port shown in LifeUp Cloud; `connect` `{ host }`. Do not keep calling discover. |
 | connect timeout / NetworkError | phone sleep, Wi‑Fi drop | `connect` once more; then ask user |
 | `token required or invalid` (HTTP 401) | Cloud has a token, or the token is wrong | ask user; `connect` `{ token }` |
 | `LifeUp is not running, or Read LifeUp Data is not granted` (code 10001) | LifeUp closed, or Cloud has no read permission | open LifeUp / grant in Cloud |
