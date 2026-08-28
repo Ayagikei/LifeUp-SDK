@@ -13,13 +13,16 @@ import net.lifeupapp.lifeup.api.utils.getStringOrNull
 
 class SynthesisApi(private val context: Context) : ContentProviderApi {
 
-    fun listCategories(categoryId: Long? = null): Result<List<SynthesisCategory>> {
+    fun listCategories(categoryId: Long? = null, includeHidden: Boolean = false): Result<List<SynthesisCategory>> {
         val categories = mutableListOf<SynthesisCategory>()
         try {
             val uri = buildString {
                 append(ContentProviderUrl.SYNTHESIS_CATEGORIES)
                 if (categoryId != null) {
                     append("/$categoryId")
+                }
+                if (includeHidden) {
+                    append("?include_hidden=true")
                 }
             }
             context.forEachContent(uri) {
@@ -28,6 +31,7 @@ class SynthesisApi(private val context: Context) : ContentProviderApi {
                 val isAsc = it.getBooleanOrNull("isAsc")
                 val sort = it.getStringOrNull("sort")
                 val order = it.getIntOrNull("order")
+                val hidden = (it.getIntOrNull("hidden") ?: 0) == 1
 
                 categories.add(
                     SynthesisCategory.builder {
@@ -36,6 +40,7 @@ class SynthesisApi(private val context: Context) : ContentProviderApi {
                         setIsAsc(isAsc ?: false)
                         setSort(sort ?: "")
                         setOrder(order ?: 0)
+                        setHidden(hidden)
                     }
                 )
             }

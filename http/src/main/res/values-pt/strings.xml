@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">O Android bloqueou a inicialização do serviço em primeiro plano a partir do segundo plano. Abra o app e tente novamente.</string>
     <string name="server_error_unknown">Erro de inicialização desconhecido</string>
     <string name="ipAddressUnknown">Nenhum endereço IP (conectado ao Wi-Fi?)</string>
-    <string name="app_introduction"><![CDATA[Esta é uma ferramenta de extensão para o app <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, que permite controlar o LifeUp pelo seu computador ou por outros dispositivos. Certifique-se de ter instalado o LifeUp primeiro.]]></string>
+    <string name="app_introduction"><![CDATA[Ferramenta de extensão para <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> que transforma o telefone em uma ponte API. Controle o LifeUp pelo PC ou outros dispositivos, crie integrações ou use agentes IA via MCP — veja <b>Documentação</b> e <b>MCP &amp; Skills</b> abaixo. Instale o LifeUp primeiro.]]></string>
     <string name="localIpAddressMessage">Conectado ao(s) seguinte(s) IP(s):\n%1$s\n\nDependendo da sua rede, pode haver vários endereços IP pertencentes a segmentos diferentes. Em uma LAN comum, normalmente você deve escolher o endereço no formato 192.168.x.x.\nQuando o serviço for iniciado, você poderá abri-lo no seu computador conectado ao mesmo Wi-Fi.\n\nSe o endereço IP exibido aqui não estiver correto, você também pode verificar o seu IP local nas configurações de Wi-Fi. A porta do servidor é 13276.</string>
     <string name="overlay_permission">Permissão de sobreposição</string>
     <string name="overlay_permission_desc">Conceda permissão para mostrar páginas em segundo plano e abrir páginas da API do LifeUp (Android 10+)</string>
@@ -34,6 +34,7 @@
     <string name="about_text"><![CDATA[Esta é uma ferramenta que transforma seu telefone em um servidor de API, permitindo interagir com o <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> de outros dispositivos por meio de APIs HTTP e Content Provider.
 <br/><br/><b># Recursos:</b>
 <br/>• Funciona com o <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">cliente oficial para desktop</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Fornece APIs abrangentes para integração completa com o jogo
 <br/>• Permite desenvolvimento e extensões personalizadas:
 <br/>  - Criar seus próprios clientes desktop/web
@@ -65,4 +66,19 @@
     <string name="btn_save">Salvar</string>
     <string name="api_token_setting">Token da API</string>
     <string name="api_token_desc">Defina um token de API para proteger seu servidor. Quando configurado, todas as solicitações devem incluir esse token no cabeçalho Authorization.</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">Escanear QR code da API LifeUp</string>
+    <string name="qrcode_help_content_description">Sobre a leitura de QR code</string>
+    <string name="qrcode_help_title">Leitura de QR code</string>
+    <string name="qrcode_help_message">Transforme qualquer URL lifeup://api/… em um QR code — imprima e cole na mesa, parede ou equipamento.\n\nToque em Escanear no LifeUp Cloud para executar a API na hora.\n\nExemplos:\n• Iniciar temporizador pomodoro\n• Registrar ou concluir uma tarefa\n• Abrir diálogos de compra ou uso\n• Recompensas, toasts, etc.\n\nConecte o LifeUp a ações reais: escaneie na academia, na mesa ou no trabalho.\n\nMais ideias de API em Documentação.</string>
+    <string name="qrcode_help_ok">Entendi</string>
+    <string name="cloud_scheme_hint">Atalhos para iniciar ou parar o servidor. Toque para copiar — atalho da tela inicial, tag NFC ou ação do Tasker.</string>
+    <string name="cloud_scheme_copied">%1$s copiado</string>
+    <string name="lifeup_broadcasts_on">LifeUp broadcast events: on</string>
+    <string name="lifeup_broadcasts_off">LifeUp broadcast events: off</string>
+    <string name="lifeup_broadcasts_unknown">LifeUp broadcast events: unknown. Open Labs if this LifeUp version cannot report the switch.</string>
+    <string name="lifeup_broadcasts_enable">Enable LifeUp broadcasts</string>
+    <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
+    <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
+
 </resources>

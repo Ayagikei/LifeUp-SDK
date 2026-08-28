@@ -8,7 +8,8 @@
 
 ### Modules
 - `core/`: Main SDK layer. Contains URL-scheme helpers, ContentProvider APIs, serializable models, and parsing logic.
-- `http/`: Android app module built on Ktor/Netty. Exposes the SDK through HTTP routes such as `/tasks`, `/history`, `/items`, and `/api`.
+- `http/`: Android app module built on Ktor/Netty. Exposes the SDK through HTTP routes such as `/tasks`, `/history`, `/items`, `/api`, and `/events`.
+- `mcp/`: `@lifeup/mcp` plus bundled skills at `mcp/skills/lifeup-cloud/` (same files agents can copy and customize).
 - `desktop/`: Desktop-related assets / experiments. Do not touch unless the task is explicitly desktop-scoped.
 - `scripts/`: Small project utilities.
 - `docs/`: Local notes. `docs/plans/` is ignored and is not part of normal commits.

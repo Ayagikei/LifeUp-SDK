@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">منع Android تشغيل خدمة المقدمة من الخلفية. افتح التطبيق ثم حاول مرة أخرى.</string>
     <string name="server_error_unknown">خطأ بدء غير معروف</string>
     <string name="ipAddressUnknown">لا يوجد عنوان IP (هل أنت متصل بشبكة WiFi؟)</string>
-    <string name="app_introduction"><![CDATA[هذه أداة إضافية لتطبيق <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> تتيح لك التحكم في LifeUp من الكمبيوتر أو من أجهزة أخرى. تأكد من تثبيت LifeUp أولاً.]]></string>
+    <string name="app_introduction"><![CDATA[أداة امتداد لـ <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> تحوّل هاتفك إلى جسر API. تحكم في LifeUp من الكمبيوتر أو أجهزة أخرى، أنشئ تكاملات مخصصة، أو استخدم وكلاء AI عبر MCP — راجع <b>الوثائق</b> و<b>MCP &amp; Skills</b> أدناه. ثبّت LifeUp أولاً.]]></string>
     <string name="localIpAddressMessage">متصل بعناوين IP التالية:\n%1$s\n\nوفقًا لحالة الشبكة لديك، قد تظهر هنا عدة عناوين IP من مقاطع شبكية مختلفة. في الشبكة المحلية العادية اختر عادةً عنوانًا بالشكل 192.168.x.x.\nبعد تشغيل الخدمة يمكنك فتحها على جهاز كمبيوتر متصل بنفس شبكة WiFi.\n\nإذا لم يكن عنوان IP المعروض هنا دقيقًا، يمكنك أيضًا التحقق من إعدادات WiFi لمعرفة عنوان IP المحلي ومنفذ الخادم 13276.</string>
     <string name="overlay_permission">إذن الظهور فوق التطبيقات</string>
     <string name="overlay_permission_desc">امنح الإذن لعرض الصفحات من الخلفية وفتح صفحات API الخاصة بـ LifeUp (Android 10+)</string>
@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[تحوّل هذه الأداة هاتفك إلى خادم API، مما يتيح لك التفاعل مع <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> من أجهزة أخرى عبر HTTP API وContent Provider.
 <br/><br/><b># الميزات:</b>
 <br/>• تعمل مع <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">عميل سطح المكتب الرسمي</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• توفر واجهات API شاملة لدمج اللعبة بالكامل
 <br/>• تتيح التطوير المخصص والإضافات:
 <br/>  - إنشاء عملاء سطح مكتب أو ويب خاصين بك
@@ -66,4 +67,19 @@
     <string name="btn_save">حفظ</string>
     <string name="api_token_setting">رمز API</string>
     <string name="api_token_desc">عيّن رمز API لحماية الخادم. عند تعيينه، يجب أن تتضمن جميع الطلبات هذا الرمز في ترويسة Authorization.</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">مسح رمز QR لواجهة LifeUp API</string>
+    <string name="qrcode_help_content_description">حول مسح رمز QR</string>
+    <string name="qrcode_help_title">مسح رمز QR</string>
+    <string name="qrcode_help_message">حوّل أي رابط lifeup://api/… إلى رمز QR — اطبعه وضعه على المكتب أو الحائط أو الجهاز.\n\nاضغط مسح في LifeUp Cloud لتنفيذ الواجهة فوراً.\n\nأمثلة:\n• بدء مؤقت pomodoro\n• تسجيل أو إكمال مهمة\n• فتح نوافذ الشراء أو الاستخدام\n• المكافآت و Toast وغيرها\n\nاربط LifeUp بالعالم الحقيقي: امسح في النادي أو المكتب أو مكان العمل.\n\nراجع التوثيق لمزيد من أفكار الواجهات.</string>
+    <string name="qrcode_help_ok">حسناً</string>
+    <string name="cloud_scheme_hint">اختصارات لتشغيل الخادم أو إيقافه. اضغط للنسخ — اختصار الشاشة أو NFC أو Tasker.</string>
+    <string name="cloud_scheme_copied">تم نسخ %1$s</string>
+    <string name="lifeup_broadcasts_on">LifeUp broadcast events: on</string>
+    <string name="lifeup_broadcasts_off">LifeUp broadcast events: off</string>
+    <string name="lifeup_broadcasts_unknown">LifeUp broadcast events: unknown. Open Labs if this LifeUp version cannot report the switch.</string>
+    <string name="lifeup_broadcasts_enable">Enable LifeUp broadcasts</string>
+    <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
+    <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
+
 </resources>

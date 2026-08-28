@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android 阻止了背景前台服務啟動，請打開應用後重試。</string>
     <string name="server_error_unknown">未知啟動錯誤</string>
     <string name="ipAddressUnknown">未取得 IP 位址 (沒有連接到 WIFI?)</string>
-    <string name="app_introduction"><![CDATA[這是一個《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的擴充工具，能讓你從電腦或其他裝置控制人升。請確保你已經安裝了人升應用程式。]]></string>
+    <string name="app_introduction"><![CDATA[這是一個《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的擴充工具，把手機變成 API 橋樑：可從電腦或其他裝置控制人升、做二次擴充開發，也可搭配 AI Agent（MCP）使用。詳見下方「文件」與「MCP &amp; Skills」。請先安裝人升應用程式。]]></string>
     <string name="localIpAddressMessage">連接到了以下IP（根據你的組網情況，這裡可能會出現多個分屬不同網段的IP位址，一般區域網路你應該選擇192.168.x.x形式的位址）：\n\n%1$s\n\n服務啟動後，你可以嘗試用處於相同 WIFI 下的電腦（瀏覽器）訪問該連結了！\n\n如果這裡顯示的 IP 位址不準確，你也可以前往 WIFI 設定確認你的本機 IP。</string>
     <string name="overlay_permission">懸浮視窗權限</string>
     <string name="overlay_permission_desc">授予權限以便在背景顯示頁面並拉起《人升》API 頁面（Android 10+）</string>
@@ -36,6 +36,7 @@
     <string name="about_text"><![CDATA[這是一個能將手機轉變為 API 伺服器的工具，讓你能透過 HTTP API 和 Content Provider 從其他裝置與《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互動。
 <br/><br/><b># 功能特色：</b>
 <br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 也可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_mcp">MCP &amp; Skills</a> 給 AI 客戶端使用
 <br/>• 提供完整的遊戲化整合介面
 <br/>• 支援自訂開發和擴充：
 <br/>  - 建立自己的桌面端/網頁端
@@ -66,4 +67,19 @@
     <string name="btn_save">儲存</string>
     <string name="api_token_setting">存取權杖</string>
     <string name="api_token_desc">設定存取權杖以保護您的伺服器。設定後，所有請求都必須在 Authorization 請求標頭中包含此權杖。</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">掃描人升 API 二維碼</string>
+    <string name="qrcode_help_content_description">了解二維碼掃描</string>
+    <string name="qrcode_help_title">二維碼掃描</string>
+    <string name="qrcode_help_message">將任意 lifeup://api/… 連結生成二維碼，可列印貼在桌面、牆面或裝置旁。\n\n開啟雲人升，點擊掃碼即可立即執行對應 API。\n\n示例：\n• 開始番茄鐘計時\n• 完成任務打卡\n• 彈出購買/使用商品對話框\n• 發放獎勵、Toast 提示等\n\n把 App 裡的遊戲化行為與現實場景聯動：在健身房、書桌、工位掃碼即可完成對應操作。\n\n更多 API 見下方「文件」。</string>
+    <string name="qrcode_help_ok">知道了</string>
+    <string name="cloud_scheme_hint">用於啟動或暫停服務的快捷連結。點按即可複製，可做成桌面快捷方式、NFC 標籤或 Tasker 動作。</string>
+    <string name="cloud_scheme_copied">已複製 %1$s</string>
+    <string name="lifeup_broadcasts_on">人升廣播事件：已開啟</string>
+    <string name="lifeup_broadcasts_off">人升廣播事件：未開啟</string>
+    <string name="lifeup_broadcasts_unknown">人升廣播事件：無法偵測。目前人升版本可能不支援，請到實驗頁查看。</string>
+    <string name="lifeup_broadcasts_enable">開啟人升廣播</string>
+    <string name="lifeup_broadcasts_open_lab">打開人升實驗頁</string>
+    <string name="lifeup_broadcasts_enable_failed">無法開啟人升廣播</string>
+
 </resources>

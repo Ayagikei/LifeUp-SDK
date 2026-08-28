@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android blocked the background foreground-service start. Open the app and try again.</string>
     <string name="server_error_unknown">Unknown startup error</string>
     <string name="ipAddressUnknown">No IP address (connected to WiFi?)</string>
-    <string name="app_introduction"><![CDATA[This is an extension tool for <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> app, which allows you to control LifeUp from your computer or other devices. Please make sure you have installed LifeUp first.]]></string>
+    <string name="app_introduction"><![CDATA[This is an extension tool for <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> that turns your phone into an API bridge. Control LifeUp from your computer or other devices, build custom integrations, or pair with AI agents via MCP — see <b>Documentation</b> and <b>MCP &amp; Skills</b> below. Please install LifeUp first.]]></string>
     <string name="localIpAddressMessage">Connected to the following IP(s):\n%1$s\n\nAccording to your networking situation, there may be multiple IP addresses which may belong to different network segments here, and you should choose the address in the form of 192.168.x.x for general LAN.\nWhen service started, you can open it on your computer which connected to the same WIFI.\n\nIf the IP address displayed here is not accurate, you can also go to the WIFI settings to confirm your local IP and the server port is 13276.</string>
     <string name="overlay_permission">Overlay Permission</string>
     <string name="overlay_permission_desc">Grant permission to show pages from background and launch LifeUp API pages (Android 10+)</string>
@@ -35,6 +35,7 @@
     <string name="about_text"><![CDATA[This is a tool that turns your phone into an API server, allowing you to interact with <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> from other devices through HTTP APIs and Content Provider.
 <br/><br/><b># Features:</b>
 <br/>• Works with the <a href="https://docs.lifeupapp.fun/en/#/guide/api_desktop">official desktop client</a>
+<br/>• Works with <a href="https://docs.lifeupapp.fun/en/#/guide/api_mcp">MCP &amp; Skills</a> for AI clients
 <br/>• Provides comprehensive APIs for full game integration
 <br/>• Enables custom development and extensions:
 <br/>  - Build your own desktop/web clients
@@ -48,14 +49,21 @@
     <string name="content_provider_permission">Content provider permission</string>
     <string name="content_provider_permission_desc">Grant permission to read the data of LifeUp</string>
     <string name="qrcode_scanning">Scanning...</string>
+    <string name="qrcode_scan_content_description">Scan LifeUp API QR code</string>
+    <string name="qrcode_help_content_description">About QR code scanning</string>
+    <string name="qrcode_help_title">QR code scanning</string>
+    <string name="qrcode_help_message">Turn any lifeup://api/… URL into a QR code — print it and place it on a desk, wall, or device.\n\nTap Scan in LifeUp Cloud to run the API instantly.\n\nExamples:\n• Start a pomodoro timer\n• Check in or complete a task\n• Open purchase or use-item dialogs\n• Trigger rewards, toasts, or custom workflows\n\nBridge LifeUp with real-world actions: scan at your gym, study desk, or workstation to log habits in-game.\n\nSee Documentation for more API ideas.</string>
+    <string name="qrcode_help_ok">Got it</string>
     <string name="lifeup_status_unknown">The status of LifeUp is unknown, please make sure you have authorized the permission to read LifeUp data, and LifeUp is running</string>
     <string name="lifeup_status_normal">LifeUp is running, data permission granted...</string>
     <string name="lifeup_permission_granted">You have successfully obtained permission.</string>
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
     <string name="switch_cors">Allow Cross-Origin Access (CORS)</string>
+    <string name="switch_event_ws">WebSocket event push</string>
     <string name="title_advanced">Advanced Settings</string>
     <string name="title_document">Documentation</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
     <string name="wake_lock_duration">Wake Lock Duration</string>
     <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
     <string name="wake_lock_duration_error">Please enter a number between 1-60</string>
@@ -66,5 +74,14 @@
     <string name="btn_save">Save</string>
     <string name="api_token_setting">API Token</string>
     <string name="api_token_desc">Set an API token to secure your server. When set, all requests must include this token in the Authorization header.</string>
+    <string name="cloud_scheme_hint">Shortcuts to start or stop the server. Tap a URL to copy — use it as a home-screen shortcut, NFC tag, or Tasker action.</string>
+    <string name="cloud_scheme_copied">Copied %1$s</string>
+
+    <string name="lifeup_broadcasts_on">LifeUp broadcast events: on</string>
+    <string name="lifeup_broadcasts_off">LifeUp broadcast events: off</string>
+    <string name="lifeup_broadcasts_unknown">LifeUp broadcast events: unknown. Open Labs if this LifeUp version cannot report the switch.</string>
+    <string name="lifeup_broadcasts_enable">Enable LifeUp broadcasts</string>
+    <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
+    <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
 </resources>

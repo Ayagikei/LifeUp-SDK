@@ -31,10 +31,12 @@
     <string name="status_server">服务状态</string>
     <string name="switch_start_service">启动服务</string>
     <string name="switch_cors">允许跨域访问 (CORS)</string>
+    <string name="switch_event_ws">WebSocket 事件推送</string>
     <string name="title_about">关于</string>
     <string name="about_text"><![CDATA[这是一个能将手机转变为 API 服务器的工具，让你能通过 HTTP API 和 Content Provider 从其他设备与《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》互动。
 <br/><br/><b># 功能特性：</b>
 <br/>• 可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_desktop">官方桌面端</a>使用
+<br/>• 也可配合<a href="https://wiki.lifeupapp.fun/zh-cn/#/guide/api_mcp">MCP &amp; Skills</a> 给 AI 客户端使用
 <br/>• 提供完整的游戏化集成接口
 <br/>• 支持自定义开发和扩展：
 <br/>  - 构建自己的桌面端/网页端
@@ -65,5 +67,20 @@
     <string name="btn_save">保存</string>
     <string name="api_token_setting">访问令牌</string>
     <string name="api_token_desc">设置访问令牌以保护您的服务器。设置后，所有请求都必须在 Authorization 请求头中包含此令牌。</string>
-    <string name="app_introduction"><![CDATA[这是一个《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的扩展工具，能让你从电脑或其他设备控制人升。请确保你已经安装了人升应用。]]></string>
+    <string name="app_introduction"><![CDATA[这是一个《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的扩展工具，把手机变成 API 桥梁：可从电脑或其他设备控制人升、做二次扩展开发，也可搭配 AI Agent（MCP）使用。详见下方「文档」与「MCP &amp; Skills」。请先安装人升应用。]]></string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">扫描人升 API 二维码</string>
+    <string name="qrcode_help_content_description">了解二维码扫描</string>
+    <string name="qrcode_help_title">二维码扫描</string>
+    <string name="qrcode_help_message">将任意 lifeup://api/… 链接生成二维码，可打印贴在桌面、墙面或设备旁。\n\n打开云人升，点击扫码即可立即执行对应 API。\n\n示例：\n• 开始番茄钟计时\n• 完成任务打卡\n• 弹出购买/使用商品对话框\n• 发放奖励、Toast 提示等\n\n把 App 里的游戏化行为与现实场景联动：在健身房、书桌、工位扫码即可完成对应操作。\n\n更多 API 见下方「文档」。</string>
+    <string name="qrcode_help_ok">知道了</string>
+    <string name="cloud_scheme_hint">用于启动或暂停服务的快捷链接。点按即可复制，可做成桌面快捷方式、NFC 标签或 Tasker 动作。</string>
+    <string name="cloud_scheme_copied">已复制 %1$s</string>
+    <string name="lifeup_broadcasts_on">人升广播事件：已开启</string>
+    <string name="lifeup_broadcasts_off">人升广播事件：未开启</string>
+    <string name="lifeup_broadcasts_unknown">人升广播事件：无法检测。当前人升版本可能不支持，请到实验页查看。</string>
+    <string name="lifeup_broadcasts_enable">开启人升广播</string>
+    <string name="lifeup_broadcasts_open_lab">打开人升实验页</string>
+    <string name="lifeup_broadcasts_enable_failed">无法开启人升广播</string>
+
 </resources>

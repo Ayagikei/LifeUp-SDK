@@ -8,4 +8,8 @@ object Val {
     const val DOCUMENT_LINK = "https://docs.lifeupapp.fun/en/#/guide/api_cloud"
     const val DOCUMENT_LINK_CN = "https://docs.lifeupapp.fun/zh-cn/#/guide/api_cloud"
     const val DOCUMENT_LINK_CN_HANT = "https://docs.lifeupapp.fun/zh-hant/#/guide/api_cloud"
+
+    const val DOCUMENT_LINK_MCP = "https://docs.lifeupapp.fun/en/#/guide/api_mcp"
+    const val DOCUMENT_LINK_MCP_CN = "https://docs.lifeupapp.fun/zh-cn/#/guide/api_mcp"
+    const val DOCUMENT_LINK_MCP_HANT = "https://docs.lifeupapp.fun/zh-hant/#/guide/api_mcp"
 }

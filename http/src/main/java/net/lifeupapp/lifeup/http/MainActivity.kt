@@ -3,6 +3,8 @@ package net.lifeupapp.lifeup.http
 import android.app.Activity
 import android.app.ForegroundServiceStartNotAllowedException
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -29,7 +31,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import android.widget.TextView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ktor.util.toLowerCasePreservingASCIIRules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,12 +45,17 @@ import net.lifeupapp.lifeup.api.Val
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_CN_HANT
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_CN
+import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_HANT
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
+import net.lifeupapp.lifeup.http.service.BroadcastGate
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
+import net.lifeupapp.lifeup.http.utils.CloudControl
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
 import net.lifeupapp.lifeup.http.utils.setHtmlText
 
@@ -82,12 +91,22 @@ class MainActivity : AppCompatActivity() {
         bindEdgeToEdge()
 
         initView()
+        if (savedInstanceState == null) {
+            handleCloudControlIntent(intent)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleCloudControlIntent(intent)
     }
 
     override fun onResume() {
         super.onResume()
         updatePermissionStatus()
         updateLocalIpAddress()
+        refreshBroadcastStatus()
     }
 
     private fun initView() {
@@ -148,11 +167,30 @@ class MainActivity : AppCompatActivity() {
             binding.switchCors.isChecked = settings.enableCors
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableCors = isChecked
-                // Restart the service so the new setting takes effect immediately.
                 if (binding.switchStartService.isChecked) {
-                    KtorService.stop()
-                    KtorService.start()
+                    KtorService.restart()
                 }
+            }
+
+            binding.switchEventWs.isChecked = settings.enableEventWs
+            binding.switchEventWs.setOnCheckedChangeListener { _, isChecked ->
+                settings.enableEventWs = isChecked
+                if (binding.switchStartService.isChecked) {
+                    KtorService.restart()
+                }
+            }
+
+            binding.btnEnableBroadcasts.setOnClickListener {
+                lifecycleScope.launch {
+                    val ok = withContext(Dispatchers.IO) { BroadcastGate.enable() }
+                    renderBroadcastStatus()
+                    if (!ok) {
+                        Toast.makeText(this@MainActivity, R.string.lifeup_broadcasts_enable_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            binding.btnOpenLab.setOnClickListener {
+                LifeUpApi.startApiActivity(this@MainActivity, "lifeup://api/goto?page=lab")
             }
 
             // Configure the expandable sections.
@@ -169,10 +207,16 @@ class MainActivity : AppCompatActivity() {
 
             // Route both documentation entry points to the same action.
             binding.documentHeader.setOnClickListener {
-                openDocumentation()
+                openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
             }
             binding.btnDocument.setOnClickListener {
-                openDocumentation()
+                openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
+            }
+            binding.mcpHeader.setOnClickListener {
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
+            }
+            binding.btnMcp.setOnClickListener {
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
             }
 
             lifecycleScope.launchWhenResumed {
@@ -225,6 +269,11 @@ class MainActivity : AppCompatActivity() {
             }
             updateLocalIpAddress()
         }
+
+        binding.tvCloudSchemeStart.text = CloudControl.URL_START
+        binding.tvCloudSchemeStop.text = CloudControl.URL_STOP
+        binding.tvCloudSchemeStart.setOnClickListener { copyCloudScheme(CloudControl.URL_START) }
+        binding.tvCloudSchemeStop.setOnClickListener { copyCloudScheme(CloudControl.URL_STOP) }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             binding.includeBatteryConfig.btn.isGone = true
@@ -284,6 +333,10 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             binding.includeOverlayConfig.btn.isGone = true
+        }
+
+        binding.btnQrcodeHelp.setOnClickListener {
+            showQrcodeHelpDialog()
         }
 
         binding.btnQrcodeScan.setOnClickListener {
@@ -417,28 +470,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openDocumentation() {
+    private fun openLocalizedUrl(en: String, cn: String, hant: String) {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             resources.configuration.locales.get(0)
         } else {
+            @Suppress("DEPRECATION")
             resources.configuration.locale
         }
-        val intent = Intent(Intent.ACTION_VIEW)
         val url = when {
-            locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> {
-                DOCUMENT_LINK_CN
-            }
-
-            locale.language == "zh" -> {
-                DOCUMENT_LINK_CN_HANT
-            }
-
-            else -> {
-                DOCUMENT_LINK
-            }
+            locale.language == "zh" && locale.country.toLowerCasePreservingASCIIRules() == "cn" -> cn
+            locale.language == "zh" -> hant
+            else -> en
         }
-        intent.data = Uri.parse(url)
-        startActivity(intent)
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
     private fun setupExpandablePanel(
@@ -492,8 +536,7 @@ class MainActivity : AppCompatActivity() {
             binding.portSettingLayout.error = null
             // Restart the service so the new port is applied immediately.
             if (binding.switchStartService.isChecked) {
-                KtorService.stop()
-                KtorService.start()
+                KtorService.restart()
             }
         } else {
             binding.portSettingLayout.error = getString(R.string.port_setting_error)
@@ -513,13 +556,75 @@ class MainActivity : AppCompatActivity() {
 
         // Restart the service so the new token is applied immediately.
         if (binding.switchStartService.isChecked) {
-            KtorService.stop()
-            KtorService.start()
+            KtorService.restart()
         }
     }
 
     private fun CompoundButton.isUserTriggeredCheckChange(): Boolean {
         return isPressed
+    }
+
+    private fun showQrcodeHelpDialog() {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.qrcode_help_title)
+            .setMessage(R.string.qrcode_help_message)
+            .setPositiveButton(R.string.qrcode_help_ok, null)
+            .show()
+        dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
+            setLineSpacing(0f, 1.3f)
+        }
+    }
+
+    private fun refreshBroadcastStatus() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { BroadcastGate.refresh(force = true) }
+            renderBroadcastStatus()
+        }
+    }
+
+    private fun renderBroadcastStatus() {
+        if (!::binding.isInitialized) return
+        when (BroadcastGate.status) {
+            BroadcastGate.Status.On -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_on)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isGone = true
+            }
+            BroadcastGate.Status.Off -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_off)
+                binding.btnEnableBroadcasts.isVisible = true
+                binding.btnOpenLab.isGone = true
+            }
+            BroadcastGate.Status.Unsupported -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_unknown)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isVisible = true
+            }
+            BroadcastGate.Status.Unknown -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_unknown)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isVisible = true
+            }
+        }
+    }
+
+    private fun handleCloudControlIntent(intent: Intent?) {
+        when (CloudControl.parse(intent?.data?.scheme, intent?.data?.host)) {
+            CloudControl.Action.START -> {
+                latestServiceError = null
+                KtorService.start()
+            }
+            CloudControl.Action.STOP -> KtorService.stop()
+            null -> Unit
+        }
+    }
+
+    private fun copyCloudScheme(url: String) {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("lifeupcloud", url))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(this, getString(R.string.cloud_scheme_copied, url), Toast.LENGTH_SHORT).show()
+        }
     }
 
 }

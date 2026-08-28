@@ -34,7 +34,15 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.isActive
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,11 +70,18 @@ import net.lifeupapp.lifeup.api.content.data.DataApi
 import net.lifeupapp.lifeup.api.content.feelings.FeelingsApi
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.api.content.pomodoro.PomodoroApi
+import net.lifeupapp.lifeup.api.content.records.CoinRecordsApi
+import net.lifeupapp.lifeup.api.content.records.ExpRecordsApi
+import net.lifeupapp.lifeup.api.content.records.InventoryRecordsApi
+import net.lifeupapp.lifeup.api.content.records.LevelDefinesApi
+import net.lifeupapp.lifeup.api.content.records.StatisticsApi
+import net.lifeupapp.lifeup.api.content.records.StepRecordsApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
+import net.lifeupapp.lifeup.http.BuildConfig
 import net.lifeupapp.lifeup.http.base.appCtx
 import net.lifeupapp.lifeup.http.utils.Settings
 import net.lifeupapp.lifeup.http.utils.WakeLockManager
@@ -136,16 +151,22 @@ object KtorService : LifeUpService {
         }
 
     override fun start() {
-        startInternal()
+        scope.launch(Dispatchers.IO) { startInternal() }
     }
 
-    private fun startInternal(portOverride: Int? = null) {
+    fun restart() {
         scope.launch(Dispatchers.IO) {
+            stopInternal()
+            startInternal()
+        }
+    }
+
+    private suspend fun startInternal(portOverride: Int? = null) {
             var retryWithNextPort: Int? = null
             mutex.withLock {
                 if (_isRunning.value != LifeUpService.RunningState.NOT_RUNNING || isStarting) {
                     logger.info("Server is already running or starting")
-                    return@launch
+                    return
                 }
                 isStarting = true
                 _errorMessage.value = null
@@ -182,6 +203,7 @@ object KtorService : LifeUpService {
                     _errorMessage.value = null
                     val duration = Settings.getInstance(appCtx).wakeLockDuration
                     wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                    EventHub.start(appCtx)
                     mDnsService.registerNsdService(port.value)
                     _isRunning.value = LifeUpService.RunningState.RUNNING
                 } else {
@@ -195,6 +217,7 @@ object KtorService : LifeUpService {
                 server = null
                 ServerNotificationService.cancel(appCtx)
                 wakeLockManager.release()
+                EventHub.stop(appCtx)
                 mDnsService.unregisterNsdService()
 
                 // Retry on the next port only when automatic port selection is in use.
@@ -208,38 +231,41 @@ object KtorService : LifeUpService {
             retryWithNextPort?.let { nextPort ->
                 startInternal(nextPort)
             }
-        }
     }
 
     override fun stop() {
-        scope.launch(Dispatchers.IO) {
-            mutex.withLock {
-                if (_isRunning.value == LifeUpService.RunningState.NOT_RUNNING || isStopping) {
-                    logger.info("Server is already stopped or stopping")
-                    return@launch
-                }
-                isStopping = true
-            }
+        scope.launch(Dispatchers.IO) { stopInternal() }
+    }
 
-            try {
-                server?.stop(1000, 2000)
-                server = null
-                ServerNotificationService.cancel(appCtx)
-                wakeLockManager.release()
-                mDnsService.unregisterNsdService()
-                _errorMessage.value = null
-                _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
-
-                // Give the runtime a moment to release networking resources.
-                delay(500)
-            } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error stopping server", e)
-                _errorMessage.value = e
-            } finally {
-                isStopping = false
+    private suspend fun stopInternal() {
+        mutex.withLock {
+            if (_isRunning.value == LifeUpService.RunningState.NOT_RUNNING || isStopping) {
+                logger.info("Server is already stopped or stopping")
+                return
             }
+            isStopping = true
+        }
+
+        try {
+            EventHub.stop(appCtx)
+            server?.stop(1000, 2000)
+            server = null
+            ServerNotificationService.cancel(appCtx)
+            wakeLockManager.release()
+            mDnsService.unregisterNsdService()
+            _errorMessage.value = null
+            _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
+
+            // Give the runtime a moment to release networking resources.
+            delay(500)
+        } catch (e: Exception) {
+            logger.log(Level.SEVERE, "Error stopping server", e)
+            _errorMessage.value = e
+        } finally {
+            isStopping = false
         }
     }
+
 
     private fun createServer() = embeddedServer(Netty, port.value, watchPaths = emptyList()) {
         install(WebSockets)
@@ -282,7 +308,8 @@ object KtorService : LifeUpService {
             install(createApplicationPlugin("ApiTokenValidation") {
                 onCall { call ->
                     val authHeader = call.request.headers[HttpHeaders.Authorization]
-                    if (authHeader != apiToken) {
+                    val queryToken = call.request.queryParameters["token"]
+                    if (authHeader != apiToken && queryToken != apiToken) {
                         call.respond(
                             HttpStatusCode.Unauthorized,
                             HttpResponse.error<String>(
@@ -551,7 +578,9 @@ object KtorService : LifeUpService {
 
             route("/items_categories") {
                 get {
-                    LifeUpApi.getContentProviderApi<ItemsApi>().listCategories().onSuccess {
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<ItemsApi>().listCategories(includeHidden).onSuccess {
                         call.respond(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
@@ -560,8 +589,13 @@ object KtorService : LifeUpService {
             }
 
             get("/info") {
-                LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess {
-                    call.respond(it.wrapAsResponse())
+                LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess { info ->
+                    call.respond(
+                        info.copy(
+                            cloudVersion = BuildConfig.VERSION_CODE,
+                            cloudVersionName = BuildConfig.VERSION_NAME,
+                        ).wrapAsResponse(),
+                    )
                 }.onFailure {
                     call.respond(HttpResponse.error<String>(it))
                 }
@@ -638,7 +672,9 @@ object KtorService : LifeUpService {
 
             route("/synthesis_categories") {
                 get {
-                    LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories()
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(includeHidden = includeHidden)
                         .onSuccess {
                             call.respond(it.wrapAsResponse())
                         }.onFailure {
@@ -648,12 +684,40 @@ object KtorService : LifeUpService {
                 route("/{id}") {
                     get {
                         val id = call.parameters["id"]?.toLongOrNull()
-                        LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id)
+                        val includeHidden =
+                            call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                        LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id, includeHidden)
                             .onSuccess {
                                 call.respond(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
+                    }
+                }
+            }
+
+            route("/skill_groups") {
+                get {
+                    val includeHidden =
+                        call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
+                    LifeUpApi.getContentProviderApi<SkillsApi>().listSkillGroups(includeHidden).onSuccess {
+                        call.respond(it.wrapAsResponse())
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+            }
+
+            route("/achievement_conditions") {
+                route("/{id}") {
+                    get {
+                        val id = call.parameters["id"]?.toLongOrNull()
+                            ?: return@get call.respond(HttpResponse.error<String>(IllegalArgumentException("id")))
+                        LifeUpApi.getContentProviderApi<AchievementApi>().listConditions(id).onSuccess {
+                            call.respond(it.wrapAsResponse())
+                        }.onFailure {
+                            call.respond(HttpResponse.error<String>(it))
+                        }
                     }
                 }
             }
@@ -673,6 +737,92 @@ object KtorService : LifeUpService {
                             call.respond(it.wrapAsResponse())
                         }.onFailure {
                             logger.log(Level.WARNING, "Failed to get pomodoro records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+
+            route("/coin_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<CoinRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get coin records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/inventory_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<InventoryRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get inventory records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/exp_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<ExpRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get exp records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+
+            route("/step_records") {
+                get {
+                    val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+                    val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<StepRecordsApi>()
+                        .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get step records", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/level_defines") {
+                get {
+                    LifeUpApi.getContentProviderApi<LevelDefinesApi>()
+                        .getDefines()
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get level defines", it)
+                            call.respond(HttpResponse.error<String>(it))
+                        }
+                }
+            }
+            route("/statistics") {
+                get {
+                    val timeRangeStart = call.request.queryParameters["time_range_start"]?.toLongOrNull()
+                    val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
+                    LifeUpApi.getContentProviderApi<StatisticsApi>()
+                        .getStatistics(timeRangeStart, timeRangeEnd)
+                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onFailure {
+                            logger.log(Level.WARNING, "Failed to get statistics", it)
                             call.respond(HttpResponse.error<String>(it))
                         }
                 }
@@ -746,6 +896,55 @@ object KtorService : LifeUpService {
                         call.respond(HttpResponse.error<String>("No file received"))
                     }
 
+                }
+            }
+
+            get("/events") {
+                val after = call.request.queryParameters["after"]?.toLongOrNull() ?: 0L
+                val limit = (call.request.queryParameters["limit"]?.toIntOrNull() ?: 50).coerceIn(1, EventBuffer.CAPACITY)
+                call.respond(
+                    HttpResponse.success(
+                        EventsPage(
+                            latestId = EventHub.latestId,
+                            eventWs = Settings.getInstance(appCtx).enableEventWs,
+                            events = EventHub.since(after, limit),
+                            broadcasts = BroadcastGate.refresh(),
+                        )
+                    )
+                )
+            }
+
+            if (Settings.getInstance(appCtx).enableEventWs) {
+                webSocket("/events") {
+                    val duration = Settings.getInstance(appCtx).wakeLockDuration
+                    wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                    val after = call.request.queryParameters["after"]?.toLongOrNull() ?: 0L
+                    val channel = Channel<CloudEvent>(Channel.UNLIMITED)
+                    val replayed = mutableSetOf<Long>()
+                    val listener: (CloudEvent) -> Unit = { event ->
+                        if (replayed.add(event.id)) channel.trySend(event)
+                    }
+                    EventHub.addListener(listener)
+                    try {
+                        EventHub.since(after).forEach { event ->
+                            if (replayed.add(event.id)) {
+                                send(Frame.Text(Json.encodeToString(event)))
+                            }
+                        }
+                        launch {
+                            while (isActive) {
+                                delay(30_000)
+                                send(Frame.Ping(ByteArray(0)))
+                                wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
+                            }
+                        }
+                        for (event in channel) {
+                            send(Frame.Text(Json.encodeToString(event)))
+                        }
+                    } finally {
+                        EventHub.removeListener(listener)
+                        channel.close()
+                    }
                 }
             }
 

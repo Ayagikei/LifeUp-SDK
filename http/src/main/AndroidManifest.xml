@@ -25,14 +25,16 @@
         android:name=".base.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locale_config"
+        android:resizeableActivity="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="31">
+        tools:targetApi="36">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -42,9 +44,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="lifeupcloud" android:host="start" />
+                <data android:scheme="lifeupcloud" android:host="stop" />
+            </intent-filter>
         </activity>
 
-        <activity android:name=".qrcode.BarcodeScanningActivity" />
+        <activity
+            android:name=".qrcode.BarcodeScanningActivity"
+            android:exported="false" />
 
         <service
             android:name=".service.ServerNotificationService"

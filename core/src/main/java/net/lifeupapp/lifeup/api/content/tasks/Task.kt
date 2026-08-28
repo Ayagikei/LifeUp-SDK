@@ -28,7 +28,8 @@ data class Task(
     val items: List<RewardItem>,
     val subTasks: List<SubTask>,
     val countProgress: TaskCountProgress? = null,
-    val repeatEndCondition: TaskRepeatEndCondition? = null
+    val repeatEndCondition: TaskRepeatEndCondition? = null,
+    val weekdays: String = ""
 ) {
     class Builder {
         private var id: Long? = null
@@ -40,6 +41,7 @@ data class Task(
         private var deadline: Long? = null
         private var remindTime: Long? = null
         private var frequency: Int = 0
+        private var weekdays: String = ""
         private var exp: Int = 0
         private var skillIds: List<Long> = emptyList()
         private var coin: Long = 0
@@ -71,6 +73,8 @@ data class Task(
         fun setRemindTime(remindTime: Long?) = apply { this.remindTime = remindTime }
 
         fun setFrequency(frequency: Int) = apply { this.frequency = frequency }
+
+        fun setWeekdays(weekdays: String) = apply { this.weekdays = weekdays }
 
         fun setExp(exp: Int) = apply { this.exp = exp }
 
@@ -131,7 +135,8 @@ data class Task(
                 items = items,
                 subTasks = subTasks,
                 countProgress = countProgress,
-                repeatEndCondition = repeatEndCondition
+                repeatEndCondition = repeatEndCondition,
+                weekdays = weekdays
             )
         }
     }
