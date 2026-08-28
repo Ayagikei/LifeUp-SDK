@@ -1,0 +1,49 @@
+name: Publish Play-signed APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: Play versionCode (e.g. 30000)
+        required: true
+        type: string
+      tag:
+        description: GitHub tag to attach the APK (e.g. v3.0.0). Empty = artifact only.
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Play-signed universal APK
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          PACKAGE_NAME: net.lifeupapp.lifeup.http
+          VERSION_CODE: ${{ inputs.version_code }}
+          OUT: app-release.apk
+          MAX_TRIES: "40"
+          SLEEP_SECS: "30"
+        run: bash scripts/play-download-universal-apk.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: play-signed-apk
+          path: app-release.apk
+
+      - name: Attach to GitHub Release
+        if: ${{ inputs.tag != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          files: app-release.apk
+          prerelease: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

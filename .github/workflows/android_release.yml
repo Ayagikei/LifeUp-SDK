@@ -132,25 +132,9 @@ jobs:
             -H "Authorization: Bearer $ACCESS_TOKEN"
           echo "Edit committed, Play processing started"
 
-          # ---- poll generatedapks (Play-signed APK) ----
-          echo "Polling generatedapks for Play-signed APK..."
-          DOWNLOAD_URL=""
-          API_BASE="https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PACKAGE_NAME/generatedapks/$BUNDLE_VC"
-          for ((i=1; i<=30; i++)); do
-            RESP=$(curl -fsS "$API_BASE" -H "Authorization: Bearer $ACCESS_TOKEN" 2>/dev/null || echo '{"error":true}')
-            ERROR=$(echo "$RESP" | jq -r '.error.code // empty')
-            if [ -z "$ERROR" ]; then
-              DOWNLOAD_URL=$(echo "$RESP" | jq -r '.generatedApks[0].generatedApk.downloadUrl // empty')
-              if [ -n "$DOWNLOAD_URL" ]; then
-                echo "Got Play-signed APK URL (poll #$i)"
-                break
-              fi
-            fi
-            sleep 30
-          done
-
-          if [ -n "$DOWNLOAD_URL" ] && [ "$DOWNLOAD_URL" != "null" ]; then
-            curl -fsSL -o "app-release.apk" "$DOWNLOAD_URL"
+          # ---- Play-signed APK (short wait; fallback to local universal) ----
+          if VERSION_CODE="$BUNDLE_VC" OUT=app-release.apk MAX_TRIES=6 SLEEP_SECS=20 \
+               bash scripts/play-download-universal-apk.sh; then
             echo "Downloaded Play-signed APK"
           else
             echo "Play-signed APK not available yet; building universal APK locally via bundletool"
