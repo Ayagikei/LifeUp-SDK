@@ -73,4 +73,6 @@
     <string name="qrcode_help_title">QR-Code scannen</string>
     <string name="qrcode_help_message">Wandeln Sie jede lifeup://api/…-URL in einen QR-Code um — drucken und an Schreibtisch, Wand oder Gerät anbringen.\n\nIn LifeUp Cloud auf Scannen tippen, um die API sofort auszuführen.\n\nBeispiele:\n• Pomodoro-Timer starten\n• Aufgabe einchecken oder abschließen\n• Kauf-/Nutzungsdialoge öffnen\n• Belohnungen, Toasts usw.\n\nVerbinden Sie LifeUp mit realen Aktionen: im Fitnessstudio, am Schreibtisch oder am Arbeitsplatz scannen.\n\nWeitere APIs in der Dokumentation.</string>
     <string name="qrcode_help_ok">Verstanden</string>
+    <string name="cloud_scheme_hint">Kurzbefehle zum Starten oder Stoppen des Servers. Tippen zum Kopieren — als Startbildschirm-Verknüpfung, NFC-Tag oder Tasker-Aktion.</string>
+    <string name="cloud_scheme_copied">%1$s kopiert</string>
 </resources>

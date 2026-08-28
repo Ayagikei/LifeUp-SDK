@@ -233,6 +233,39 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/ipAddressUnknown" />
 
+                <TextView
+                    android:id="@+id/tv_cloud_scheme_hint"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/cloud_scheme_hint" />
+
+                <TextView
+                    android:id="@+id/tv_cloud_scheme_start"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingVertical="4dp"
+                    android:textIsSelectable="true"
+                    tools:text="lifeupcloud://start" />
+
+                <TextView
+                    android:id="@+id/tv_cloud_scheme_stop"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingVertical="4dp"
+                    android:textIsSelectable="true"
+                    tools:text="lifeupcloud://stop" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

@@ -73,4 +73,6 @@
     <string name="qrcode_help_title">Pemindaian QR code</string>
     <string name="qrcode_help_message">Ubah URL lifeup://api/… menjadi QR code — cetak dan tempel di meja, dinding, atau perangkat.\n\nKetuk Pindai di LifeUp Cloud untuk menjalankan API segera.\n\nContoh:\n• Mulai timer pomodoro\n• Check-in atau selesaikan tugas\n• Buka dialog beli/pakai item\n• Hadiah, toast, dll.\n\nHubungkan LifeUp dengan aksi nyata: pindai di gym, meja belajar, atau stasiun kerja.\n\nLihat Dokumentasi untuk ide API lainnya.</string>
     <string name="qrcode_help_ok">Mengerti</string>
+    <string name="cloud_scheme_hint">Pintasan untuk memulai atau menghentikan server. Ketuk untuk menyalin — pintasan layar utama, tag NFC, atau aksi Tasker.</string>
+    <string name="cloud_scheme_copied">%1$s disalin</string>
 </resources>

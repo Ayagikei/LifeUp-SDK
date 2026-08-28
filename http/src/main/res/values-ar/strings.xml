@@ -73,4 +73,6 @@
     <string name="qrcode_help_title">مسح رمز QR</string>
     <string name="qrcode_help_message">حوّل أي رابط lifeup://api/… إلى رمز QR — اطبعه وضعه على المكتب أو الحائط أو الجهاز.\n\nاضغط مسح في LifeUp Cloud لتنفيذ الواجهة فوراً.\n\nأمثلة:\n• بدء مؤقت pomodoro\n• تسجيل أو إكمال مهمة\n• فتح نوافذ الشراء أو الاستخدام\n• المكافآت و Toast وغيرها\n\nاربط LifeUp بالعالم الحقيقي: امسح في النادي أو المكتب أو مكان العمل.\n\nراجع التوثيق لمزيد من أفكار الواجهات.</string>
     <string name="qrcode_help_ok">حسناً</string>
+    <string name="cloud_scheme_hint">اختصارات لتشغيل الخادم أو إيقافه. اضغط للنسخ — اختصار الشاشة أو NFC أو Tasker.</string>
+    <string name="cloud_scheme_copied">تم نسخ %1$s</string>
 </resources>

@@ -72,4 +72,6 @@
     <string name="qrcode_help_title">QR kod tarama</string>
     <string name="qrcode_help_message">Herhangi bir lifeup://api/… URL\'sini QR koda dönüştürün — yazdırıp masaya, duvara veya cihazın yanına yapıştırın.\n\nLifeUp Cloud\'da Tara\'ya dokunarak API\'yi anında çalıştırın.\n\nÖrnekler:\n• Pomodoro zamanlayıcısı başlat\n• Görevi işaretle veya tamamla\n• Satın alma/kullanma diyaloglarını aç\n• Ödüller, toast vb.\n\nLifeUp\'ı gerçek dünyayla bağlayın: spor salonunda, masada veya iş istasyonunda tarayın.\n\nDaha fazla API fikri için Dokümantasyon\'a bakın.</string>
     <string name="qrcode_help_ok">Tamam</string>
+    <string name="cloud_scheme_hint">Sunucuyu başlatıp durdurmak için kısayollar. Kopyalamak için dokunun — ana ekran, NFC veya Tasker.</string>
+    <string name="cloud_scheme_copied">%1$s kopyalandı</string>
 </resources>

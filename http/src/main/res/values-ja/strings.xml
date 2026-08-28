@@ -73,4 +73,6 @@
     <string name="qrcode_help_title">QRコードスキャン</string>
     <string name="qrcode_help_message">lifeup://api/… の URL を QR コードにして、机・壁・機器に貼れます。\n\nLifeUp Cloud の「スキャン」で API を即座に実行できます。\n\n例：\n• ポモドーロタイマーを開始\n• タスクのチェックイン・完了\n• 購入/使用ダイアログを表示\n• 報酬、Toast など\n\n現実の行動と LifeUp をつなげます：ジム、机、職場でスキャンしてゲーム内に記録。\n\n詳しくは「ドキュメント」を参照。</string>
     <string name="qrcode_help_ok">OK</string>
+    <string name="cloud_scheme_hint">サーバーの開始/停止用ショートカット。タップしてコピーし、ホーム画面・NFC・Tasker に使えます。</string>
+    <string name="cloud_scheme_copied">%1$s をコピーしました</string>
 </resources>

@@ -72,4 +72,6 @@
     <string name="qrcode_help_title">Leitura de QR code</string>
     <string name="qrcode_help_message">Transforme qualquer URL lifeup://api/… em um QR code — imprima e cole na mesa, parede ou equipamento.\n\nToque em Escanear no LifeUp Cloud para executar a API na hora.\n\nExemplos:\n• Iniciar temporizador pomodoro\n• Registrar ou concluir uma tarefa\n• Abrir diálogos de compra ou uso\n• Recompensas, toasts, etc.\n\nConecte o LifeUp a ações reais: escaneie na academia, na mesa ou no trabalho.\n\nMais ideias de API em Documentação.</string>
     <string name="qrcode_help_ok">Entendi</string>
+    <string name="cloud_scheme_hint">Atalhos para iniciar ou parar o servidor. Toque para copiar — atalho da tela inicial, tag NFC ou ação do Tasker.</string>
+    <string name="cloud_scheme_copied">%1$s copiado</string>
 </resources>

@@ -74,5 +74,7 @@
     <string name="btn_save">Save</string>
     <string name="api_token_setting">API Token</string>
     <string name="api_token_desc">Set an API token to secure your server. When set, all requests must include this token in the Authorization header.</string>
+    <string name="cloud_scheme_hint">Shortcuts to start or stop the server. Tap a URL to copy — use it as a home-screen shortcut, NFC tag, or Tasker action.</string>
+    <string name="cloud_scheme_copied">Copied %1$s</string>
 
 </resources>

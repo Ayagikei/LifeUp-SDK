@@ -3,6 +3,8 @@ package net.lifeupapp.lifeup.http
 import android.app.Activity
 import android.app.ForegroundServiceStartNotAllowedException
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -52,6 +54,7 @@ import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
+import net.lifeupapp.lifeup.http.utils.CloudControl
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
 import net.lifeupapp.lifeup.http.utils.setHtmlText
 
@@ -87,6 +90,15 @@ class MainActivity : AppCompatActivity() {
         bindEdgeToEdge()
 
         initView()
+        if (savedInstanceState == null) {
+            handleCloudControlIntent(intent)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleCloudControlIntent(intent)
     }
 
     override fun onResume() {
@@ -244,6 +256,11 @@ class MainActivity : AppCompatActivity() {
             }
             updateLocalIpAddress()
         }
+
+        binding.tvCloudSchemeStart.text = CloudControl.URL_START
+        binding.tvCloudSchemeStop.text = CloudControl.URL_STOP
+        binding.tvCloudSchemeStart.setOnClickListener { copyCloudScheme(CloudControl.URL_START) }
+        binding.tvCloudSchemeStop.setOnClickListener { copyCloudScheme(CloudControl.URL_STOP) }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             binding.includeBatteryConfig.btn.isGone = true
@@ -544,6 +561,25 @@ class MainActivity : AppCompatActivity() {
             .show()
         dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
             setLineSpacing(0f, 1.3f)
+        }
+    }
+
+    private fun handleCloudControlIntent(intent: Intent?) {
+        when (CloudControl.parse(intent?.data?.scheme, intent?.data?.host)) {
+            CloudControl.Action.START -> {
+                latestServiceError = null
+                KtorService.start()
+            }
+            CloudControl.Action.STOP -> KtorService.stop()
+            null -> Unit
+        }
+    }
+
+    private fun copyCloudScheme(url: String) {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("lifeupcloud", url))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(this, getString(R.string.cloud_scheme_copied, url), Toast.LENGTH_SHORT).show()
         }
     }
 

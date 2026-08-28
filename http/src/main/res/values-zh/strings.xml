@@ -73,4 +73,6 @@
     <string name="qrcode_help_title">二維碼掃描</string>
     <string name="qrcode_help_message">將任意 lifeup://api/… 連結生成二維碼，可列印貼在桌面、牆面或裝置旁。\n\n開啟雲人升，點擊掃碼即可立即執行對應 API。\n\n示例：\n• 開始番茄鐘計時\n• 完成任務打卡\n• 彈出購買/使用商品對話框\n• 發放獎勵、Toast 提示等\n\n把 App 裡的遊戲化行為與現實場景聯動：在健身房、書桌、工位掃碼即可完成對應操作。\n\n更多 API 見下方「文件」。</string>
     <string name="qrcode_help_ok">知道了</string>
+    <string name="cloud_scheme_hint">用於啟動或暫停服務的快捷連結。點按即可複製，可做成桌面快捷方式、NFC 標籤或 Tasker 動作。</string>
+    <string name="cloud_scheme_copied">已複製 %1$s</string>
 </resources>

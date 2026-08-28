@@ -74,4 +74,6 @@
     <string name="qrcode_help_title">二维码扫描</string>
     <string name="qrcode_help_message">将任意 lifeup://api/… 链接生成二维码，可打印贴在桌面、墙面或设备旁。\n\n打开云人升，点击扫码即可立即执行对应 API。\n\n示例：\n• 开始番茄钟计时\n• 完成任务打卡\n• 弹出购买/使用商品对话框\n• 发放奖励、Toast 提示等\n\n把 App 里的游戏化行为与现实场景联动：在健身房、书桌、工位扫码即可完成对应操作。\n\n更多 API 见下方「文档」。</string>
     <string name="qrcode_help_ok">知道了</string>
+    <string name="cloud_scheme_hint">用于启动或暂停服务的快捷链接。点按即可复制，可做成桌面快捷方式、NFC 标签或 Tasker 动作。</string>
+    <string name="cloud_scheme_copied">已复制 %1$s</string>
 </resources>
