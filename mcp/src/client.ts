@@ -1,6 +1,6 @@
+import { WebSocket } from "undici"
 import { buildLifeUpUrl, type LifeUpParamValue } from "./lifeup-url.js"
 import type { CallVia } from "./results.js"
-
 
 export const SUCCESS = 200
 export const LIFEUP_NOT_RUNNING = 10001

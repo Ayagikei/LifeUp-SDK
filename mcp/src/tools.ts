@@ -305,6 +305,6 @@ export function registerTools(server: McpServer, session: Session): void {
       after: z.number().int().optional(),
       on: z.boolean().optional(),
     }),
-  }, async ({ after, on }) => text(session.setEventSubscription(on ?? true, after ?? 0)))
+  }, async ({ after, on }) => text(await session.setEventSubscription(on ?? true, after ?? 0)))
 }
 

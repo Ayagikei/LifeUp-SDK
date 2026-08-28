@@ -166,8 +166,7 @@ class MainActivity : AppCompatActivity() {
             binding.switchCors.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableCors = isChecked
                 if (binding.switchStartService.isChecked) {
-                    KtorService.stop()
-                    KtorService.start()
+                    KtorService.restart()
                 }
             }
 
@@ -175,8 +174,7 @@ class MainActivity : AppCompatActivity() {
             binding.switchEventWs.setOnCheckedChangeListener { _, isChecked ->
                 settings.enableEventWs = isChecked
                 if (binding.switchStartService.isChecked) {
-                    KtorService.stop()
-                    KtorService.start()
+                    KtorService.restart()
                 }
             }
 
@@ -523,8 +521,7 @@ class MainActivity : AppCompatActivity() {
             binding.portSettingLayout.error = null
             // Restart the service so the new port is applied immediately.
             if (binding.switchStartService.isChecked) {
-                KtorService.stop()
-                KtorService.start()
+                KtorService.restart()
             }
         } else {
             binding.portSettingLayout.error = getString(R.string.port_setting_error)
@@ -544,8 +541,7 @@ class MainActivity : AppCompatActivity() {
 
         // Restart the service so the new token is applied immediately.
         if (binding.switchStartService.isChecked) {
-            KtorService.stop()
-            KtorService.start()
+            KtorService.restart()
         }
     }
 

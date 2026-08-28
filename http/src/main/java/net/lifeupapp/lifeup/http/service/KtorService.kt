@@ -151,16 +151,22 @@ object KtorService : LifeUpService {
         }
 
     override fun start() {
-        startInternal()
+        scope.launch(Dispatchers.IO) { startInternal() }
     }
 
-    private fun startInternal(portOverride: Int? = null) {
+    fun restart() {
         scope.launch(Dispatchers.IO) {
+            stopInternal()
+            startInternal()
+        }
+    }
+
+    private suspend fun startInternal(portOverride: Int? = null) {
             var retryWithNextPort: Int? = null
             mutex.withLock {
                 if (_isRunning.value != LifeUpService.RunningState.NOT_RUNNING || isStarting) {
                     logger.info("Server is already running or starting")
-                    return@launch
+                    return
                 }
                 isStarting = true
                 _errorMessage.value = null
@@ -225,39 +231,41 @@ object KtorService : LifeUpService {
             retryWithNextPort?.let { nextPort ->
                 startInternal(nextPort)
             }
-        }
     }
 
     override fun stop() {
-        scope.launch(Dispatchers.IO) {
-            mutex.withLock {
-                if (_isRunning.value == LifeUpService.RunningState.NOT_RUNNING || isStopping) {
-                    logger.info("Server is already stopped or stopping")
-                    return@launch
-                }
-                isStopping = true
-            }
+        scope.launch(Dispatchers.IO) { stopInternal() }
+    }
 
-            try {
-                EventHub.stop(appCtx)
-                server?.stop(1000, 2000)
-                server = null
-                ServerNotificationService.cancel(appCtx)
-                wakeLockManager.release()
-                mDnsService.unregisterNsdService()
-                _errorMessage.value = null
-                _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
-
-                // Give the runtime a moment to release networking resources.
-                delay(500)
-            } catch (e: Exception) {
-                logger.log(Level.SEVERE, "Error stopping server", e)
-                _errorMessage.value = e
-            } finally {
-                isStopping = false
+    private suspend fun stopInternal() {
+        mutex.withLock {
+            if (_isRunning.value == LifeUpService.RunningState.NOT_RUNNING || isStopping) {
+                logger.info("Server is already stopped or stopping")
+                return
             }
+            isStopping = true
+        }
+
+        try {
+            EventHub.stop(appCtx)
+            server?.stop(1000, 2000)
+            server = null
+            ServerNotificationService.cancel(appCtx)
+            wakeLockManager.release()
+            mDnsService.unregisterNsdService()
+            _errorMessage.value = null
+            _isRunning.value = LifeUpService.RunningState.NOT_RUNNING
+
+            // Give the runtime a moment to release networking resources.
+            delay(500)
+        } catch (e: Exception) {
+            logger.log(Level.SEVERE, "Error stopping server", e)
+            _errorMessage.value = e
+        } finally {
+            isStopping = false
         }
     }
+
 
     private fun createServer() = embeddedServer(Netty, port.value, watchPaths = emptyList()) {
         install(WebSockets)
@@ -911,10 +919,17 @@ object KtorService : LifeUpService {
                     wakeLockManager.stayAwake(duration.minutes.toLong(DurationUnit.MILLISECONDS))
                     val after = call.request.queryParameters["after"]?.toLongOrNull() ?: 0L
                     val channel = Channel<CloudEvent>(Channel.UNLIMITED)
-                    val listener: (CloudEvent) -> Unit = { channel.trySend(it) }
+                    val replayed = mutableSetOf<Long>()
+                    val listener: (CloudEvent) -> Unit = { event ->
+                        if (replayed.add(event.id)) channel.trySend(event)
+                    }
                     EventHub.addListener(listener)
                     try {
-                        EventHub.since(after).forEach { send(Frame.Text(Json.encodeToString(it))) }
+                        EventHub.since(after).forEach { event ->
+                            if (replayed.add(event.id)) {
+                                send(Frame.Text(Json.encodeToString(event)))
+                            }
+                        }
                         launch {
                             while (isActive) {
                                 delay(30_000)
