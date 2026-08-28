@@ -81,7 +81,7 @@ export function registerTools(server: McpServer, session: Session): void {
 
   server.registerTool("help", {
     description:
-      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|gaps|broadcasts.",
+      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|sample_icons|item_structures|gaps|broadcasts.",
     inputSchema: z.object({
       topic: z.string().optional(),
     }),
@@ -209,6 +209,7 @@ export function registerTools(server: McpServer, session: Session): void {
       skills: z.array(z.number().int()).optional(),
       category: z.number().int().optional(),
       frequency: z.number().int().optional(),
+      weekdays: z.string().optional(),
       item_id: z.number().int().optional(),
       item_name: z.string().optional(),
     }),

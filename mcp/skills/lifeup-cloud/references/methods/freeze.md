@@ -22,7 +22,3 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 **Notice:**
 
 1. In order to be able to match the task, one of id, gid, and name must be provided.
-
-<br/>
-
-#### Unfreeze a task

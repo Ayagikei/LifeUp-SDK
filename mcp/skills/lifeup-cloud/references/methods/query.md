@@ -72,6 +72,7 @@ When querying task (v1.101.0+):
 | deadline    | Deadline time                | number      | -       | no       | Unix timestamp (milliseconds), may be empty |
 | remindTime  | Remind time                  | number      | -       | no       | Unix timestamp (milliseconds), may be empty |
 | frequency   | Repetition frequency         | number      | -       | yes      | -                               |
+| weekdays    | Weekdays                     | text        | 1,3,5   | no       | v1.106.0+; empty when not weekday mode. 1=Monday … 7=Sunday |
 | exp         | EXP reward                   | number      | -       | yes      | -                               |
 | skillIds    | Skill ID list                | JSON text   | -       | yes      | JSON array format               |
 | coin        | Coin reward                  | number      | -       | no       | May be empty                    |
@@ -83,7 +84,7 @@ When querying task (v1.101.0+):
 | categoryId  | Category ID                  | number      | -       | no       | May be empty                    |
 | order       | Order                        | number      | -       | yes      | -                               |
 | name_extended | Extended name              | text        | -       | yes      | Same as name                    |
-| subTasks    | Sub-task list                | JSON text   | -       | yes      | JSON array format, see below    |
+| subTasks    | Sub-task list                | JSON text   | -       | yes      | See **Sub-tasks** below |
 
 **Sub-tasks (subTasks) field description:**
 

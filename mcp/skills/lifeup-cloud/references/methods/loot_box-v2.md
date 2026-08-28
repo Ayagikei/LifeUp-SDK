@@ -42,8 +42,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 1. If changing an entry's `amount` would duplicate an existing entry with the same item and amount in the same box, LifeUp merges into the existing entry and continues applying the request's `probability` / `fixed` values.
 1. When deletion leaves the box empty, the entire loot box effect is soft-deleted (the item itself is preserved and you can re-add loot box entries later).
 
-<br/>
-
-#### Use items
-
-?> This API was introduced in version v1.93.0-beta01 (502).
+?> Use owned items from inventory: `help` `use_item`.

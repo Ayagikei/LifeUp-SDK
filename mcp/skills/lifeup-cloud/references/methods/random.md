@@ -17,6 +17,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | api       | Random API | Any text               | lifeup:%2F%2Fapi%2Ftoast%3Ftext%3Drock | Yes      | Supports calling in array form (i.e., multiple api parameters, as seen in the examples above) |
 | weight    | Weight     | Numbers greater than 0 | 1                                      | No       | Supports calling in array form.<br/><br/>If weight is not specified, all weights are equal (equal probability).<br/>If weights are specified, they are assigned sequentially: e.g., the first weight corresponds to the first api parameter.<br/><br/>**Please ensure that the number of weight parameters matches the number of api parameters, or it may not take effect.** |
 
-<br/>
-
-#### Confirm Dialog
+Pass nested `lifeup://api/...` URLs as plain strings in `params`; MCP encodes once (`help` `basics`).

@@ -11,6 +11,8 @@ export const HELP_TOPICS = [
   "tasks",
   "economy",
   "api-index",
+  "sample_icons",
+  "item_structures",
   "gaps",
   "broadcasts",
 ] as const
@@ -25,6 +27,8 @@ const FILES: Record<(typeof HELP_TOPICS)[number], string> = {
   tasks: "references/tasks.md",
   economy: "references/economy.md",
   "api-index": "references/api-index.md",
+  sample_icons: "references/sample_icons.md",
+  item_structures: "references/item_structures.md",
   gaps: "references/gaps.md",
   broadcasts: "references/broadcasts.md",
 }
@@ -45,7 +49,7 @@ export async function readHelp(topic: string): Promise<string> {
     return readFile(join(skillsDir(), "references", "methods", `${methodDocSlug(topic)}.md`), "utf8")
   }
   throw new Error(
-    `Unknown help topic "${topic}". Use overview|discovery|basics|query|tasks|economy|api-index|gaps|broadcasts, or a method from api-index.`,
+    `Unknown help topic "${topic}". Use overview|discovery|basics|query|tasks|economy|api-index|sample_icons|item_structures|gaps|broadcasts, or a method from api-index.`,
   )
 }
 
@@ -56,6 +60,6 @@ Workflow:
 2. Query with list_data / list_* (GET ContentProvider). Compact, prefer categoryId, page with hasMore. detail=true only when needed. Feelings/achievements/synthesis/pomodoro: list_data resource=...
 3. Mutate with complete_task / add_task / reward / purchase_item. Read calls[].ok and calls[].data.
 4. Long-tail: call_api or call_api_batch. Default via=contentprovider (has results). via=launch is UI-only. Destructive methods need confirm=true.
-5. Docs: help (no topic) then help api-index / method name / basics. Pass raw param values — MCP encodes.
+5. Docs: help (no topic) then help api-index / method name / basics / sample_icons / item_structures. Pass raw param values — MCP encodes.
 
 Do not dump every task into context. id changes for repeating tasks; gid stays. Wiki may lag; Cloud HTTP is source of truth.`

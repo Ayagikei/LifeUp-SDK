@@ -19,7 +19,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | order           | Sort order        | integer              | 1         | No       | Position in the list            |
 | hidden          | Hide category     | true or false        | false     | No       | tasks=archive; shop=shop hide; synthesis=hide. Achievement lists reject with `unsupported_parameter`. `false` unhides |
 | inventory_hidden| Hide in inventory | true or false        | false     | No       | Only supported for shop lists   |
-| icon_uri        | Icon URI          | URI text             | content://... | No  | Only supported for achievement lists |
+| icon_uri        | Icon URI          | emoji, http(s) URL, content URI, or empty | 🏆 | No | Only supported for achievement lists. Emoji stored as `emoji_*.webp`. Empty clears. |
 | desc            | Description       | any text             | This is a description | No | Only supported for achievement lists |
 | color           | Tag color         | color string         | #66CCFF   | No       | Only supported for task lists; # must be escaped as %23 |
 

@@ -6,13 +6,27 @@ Phone must run LifeUp and LifeUp Cloud on the same LAN. Grant **Read LifeUp Data
 
 ## Install
 
-```bash
-cd mcp
-npm install
-npm run build
+Until npm publish:
+
+```json
+{
+  "mcpServers": {
+    "lifeup": {
+      "command": "npx",
+      "args": ["-y", "github:Ayagikei/LifeUp-SDK#feat/mcp"]
+    }
+  }
+}
 ```
 
-Cursor / Claude Desktop / Codex:
+`npx` clones the repo and `prepare` builds `mcp/`. After `feat/mcp` lands on `main`, drop `#feat/mcp`.
+
+macOS GUI clients often lack `npx` on `PATH` — use an absolute `npx`/`node`, or build locally:
+
+```bash
+git clone -b feat/mcp https://github.com/Ayagikei/LifeUp-SDK.git
+cd LifeUp-SDK/mcp && npm install && npm run build
+```
 
 ```json
 {

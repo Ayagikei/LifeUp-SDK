@@ -32,9 +32,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 4. duration is at least 30000 milliseconds (30 seconds).
 5. If both start_time, duration, end_time are provided, duration should be less than or equal to (end_time - start_time).
 
-<br/>
-
-#### Edit Pomodoro Record
-
-> Introduced in v1.94.0
->
+?> Edit or delete records: `help` `edit_pomodoro`.

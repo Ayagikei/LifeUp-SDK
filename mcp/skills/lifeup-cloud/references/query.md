@@ -66,6 +66,7 @@ From LifeUp ContentProvider (not wiki). Compact rows keep these.
 |---|---|---|
 | `tasks` / `history` | `status` | `0` unfinished · `1` done · `2` overdue · `3` given up |
 | `tasks` | `frequency` | `0` once · `1` daily · `N>1` every N days · `-1` unlimited · `-3` Ebbinghaus · `-4` monthly · `-5` yearly |
+| `tasks` | `weekdays` | `1,3,5` (Mon=1 … Sun=7). Empty when not weekday mode. v1.106.0+ |
 | `tasks` | `repeatEndCondition.mode` | `COUNT` / `DATE` (writes use 0/1) |
 | `tasks` | `repeatEndCondition.behavior` | `TERMINATE` / `FREEZE` (writes use 0/1) |
 | `task_categories` | `status` | `0` normal · `1` archived |

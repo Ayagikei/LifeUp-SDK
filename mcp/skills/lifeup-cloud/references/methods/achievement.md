@@ -39,8 +39,8 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | item_id       | Item ID           | number greater than 0 | 1        | No*      | One of item_id or item_name required |
 | item_name     | Item name         | any text             | Treasure  | No*      | One of item_id or item_name required |
 | item_amount   | Item quantity     | [1, 99]             | 1         | No       | Defaults to 1                   |
-| items         | Item rewards JSON | JSON text            | [{"item_id":1,"amount":2}] | No | Set multiple item rewards, see format below |
-| conditions_json| Unlock conditions JSON | JSON text      | [{"type":7,"target":1000000}] | No | Set unlock conditions, see format below |
+| items         | Item rewards JSON | JSON text            | [{"item_id":1,"amount":2}] | No | `help` `item_structures` § Item Reward |
+| conditions_json| Unlock conditions JSON | JSON text      | [{"type":7,"target":1000000}] | No | See § Unlock Conditions below |
 | coin         | Coin reward       | [0, 999999]      | 10         | No       | Amount of coins earned when unlocking the achievement |
 | coin_var     | Coin reward variation | integer              | 5          | No       | Variation range for coin rewards |
 | coin_set_type| How to set coin value | One of:<br/>absolute<br/>relative | absolute | No | absolute - directly set coin to value<br/>relative - add/subtract from original coin value |

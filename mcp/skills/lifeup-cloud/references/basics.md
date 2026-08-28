@@ -50,7 +50,7 @@ Minimal shapes:
 
 `purchase_limit`: `[{ "limitType": 0, "limitNumber": 5 }]`.  
 `effects`: `[{ "type": 2, "info": { "min": 100, "max": 200 } }]`.  
-Full type tables: `help` for `add_item` / `achievement` when you actually need them.
+Item rewards / shop limits / effects tables: `help` `item_structures`.
 
 `extendInfo` inside `purchase_limit` is itself a JSON string.
 
@@ -87,12 +87,22 @@ Cloud envelope: `{ code, message, data }`. MCP mutation tools return `{ via, cal
 - JSON-looking strings inside `data` are parsed (e.g. `skillIds`).
 
 
+## Icons
+
+Three inline forms for `icon` / `set_icon` / `icon_uri`:
+
+| Form | Example | Notes |
+| --- | --- | --- |
+| Emoji | `☕` | Stored as `emoji_*.webp`. Name emoji does **not** set the icon. |
+| Built-in sample | `lifeup_sample_122.png` | 208 flat icons; pass filename directly. Full catalog: `help` `sample_icons`. |
+| URL | `https://...` | Remote image. |
+
 ## IDs and names
 
-Enable LifeUp 实验 → 开发者模式 to see ids.
+Agents: prefer MCP `list_tasks` / `list_items` / `list_data` (`resource=skills`, etc.) with `detail=true` when you need ids. Human wiki readers: enable LifeUp Labs → Developer mode in the app.
 
 - Task `id` changes each repeat cycle; `gid` does not.
 - Name match: exact case-insensitive first, then substring. Prefer id when names collide.
-- Provide exactly one selector when the wiki says `否*` (`id` | `gid` | `name`).
+- Provide exactly one selector when the wiki marks a param as `No*` (one of `id` | `gid` | `name`).
 - `order` is only relative; do not change one item’s `order` alone.
 

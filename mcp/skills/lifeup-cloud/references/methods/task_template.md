@@ -29,6 +29,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | category | List ID | number >= 0 | 0 | No | Alias: category_id |
 | category_id | List ID | number >= 0 | 0 | No | Alias of category |
 | frequency | Repeat frequency | integer | 0 | No | Same as add_task |
+| weekdays | Weekdays | `1,3,5` | 1,3,5 | No | v1.106.0+; same as add_task; create rejects `none` |
 | importance | Importance level | [1, 4] | 1 | No | - |
 | difficulty | Difficulty level | [1, 4] | 1 | No | - |
 | coin | Coin reward | number | 10 | No | - |

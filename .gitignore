@@ -33,3 +33,7 @@ commit-prompt.txt
 # Local planning docs
 /docs/plan/
 /docs/plans/
+
+# npx github:Ayagikei/LifeUp-SDK wrapper (see package.json)
+/node_modules/
+/package-lock.json

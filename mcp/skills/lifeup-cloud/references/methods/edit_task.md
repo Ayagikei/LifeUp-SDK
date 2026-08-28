@@ -22,6 +22,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | skills             | Skill IDs            | array of numbers greater than 0 | 1 | No    | Supports arrays (e.g., &skills=1&skills=2) |
 | category           | List ID              | number greater than or equal to 0 | 0 | No  | 0 for default list, smart lists not supported |
 | frequency          | Repeat frequency     | integer              | 0         | No       | Defaults to 0 (once)<br/>0 - Once<br/>1 - Daily<br/>N (N>1) - Every N days<br/>-1 - Unlimited<br/>-3 - Ebbinghaus (requires v1.99.1)<br/>-4 - Monthly<br/>-5 - Yearly |
+| weekdays           | Weekdays             | `1,3,5` or `none`    | 1,3,5     | No       | v1.106.0+; same as add_task. Omit to leave unchanged; `none` clears to daily; setting frequency to a non-1 value also clears weekdays |
 | importance         | Importance level     | [1, 4]              | 1         | No       | Defaults to 1                   |
 | difficulty         | Difficulty level     | [1, 4]              | 2         | No       | Defaults to 1                   |
 | deadline           | Due date             | timestamp (milliseconds) | 1640995200000 | No |                               |
@@ -36,7 +37,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | item_id            | Item ID              | number greater than 0 | 1        | No*      | One of item_id or item_name required |
 | item_name          | Item name            | any text             | Treasure  | No*      | One of item_id or item_name required |
 | item_amount        | Item amount          | [1, 99]             | 1         | No       | Defaults to 1                   |
-| items              | Items reward JSON    | JSON text           | [{"itemId":1,"amount":1}] | No | Set multiple item rewards |
+| items              | Items reward JSON    | JSON text           | [{"item_id":1,"amount":1}] | No | `help` `item_structures` § Item Reward |
 | auto_use_item      | Auto use item        | true or false        | false     | No       |                                |
 | frozen             | Freeze status        | true or false        | false     | No       | Defaults to false              |
 | freeze_until       | Freeze until         | timestamp (milliseconds) | 1640995200000 | No | Only effective when frozen is true |

@@ -17,8 +17,8 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | ----------- | -------------- | -------------------- | ------------------------------ | -------- | ------------------------------ |
 | id          | Formula ID     | number greater than 0 | 1                             | No       | Required for modify or delete  |
 | delete      | Delete flag    | true or false        | true                          | No       | Used only for deletion         |
-| inputItems  | Input items    | Item array, see below | [{"item_id":1,"amount":2}]     | Yes      | Required for create or modify  |
-| outputItems | Output items   | Item array, see below | [{"item_id":3,"amount":1}]     | Yes      | Required for create or modify  |
+| inputItems  | Input items    | JSON array | [{"item_id":1,"amount":2}]     | Yes      | `help` `item_structures` § Item Reward |
+| outputItems | Output items   | JSON array | [{"item_id":3,"amount":1}]     | Yes      | Same shape as `inputItems` |
 | category    | Category ID    | number greater than 0 | 1                             | No       | Defaults to common category    |
 
 !> inputItems and outputItems are JSON arrays where each item contains item_id and amount fields. All item IDs must exist and amounts must be greater than 0

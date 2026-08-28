@@ -28,8 +28,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 1. `name` and `sub_name` try exact matching first, then fall back to fuzzy matching.
 1. The legacy `loot_box` API keeps its compatibility behavior: if the same content item appears multiple times with different amounts, it edits the first matched entry and does not use `sub_amount` for disambiguation. Use `loot_box/v2` when you need amount-specific editing, deletion, or merge behavior.
 
-<br/>
-
-#### Adjust the Loot Box effect (v2)
-
-?> This API was introduced in version v1.104.2.
+?> v2 API (`sub_amount`, delete): `help` `loot_box/v2`.

@@ -29,7 +29,7 @@ const SERVER_PAGED = new Set<ListResource>(["history", "feelings", "pomodoro_rec
 const SINGULAR = new Set<ListResource>(["coin", "info", "level_defines", "statistics"])
 
 const COMPACT: Record<string, string[]> = {
-  tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "coin", "exp", "deadline", "countProgress", "repeatEndCondition"],
+  tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "weekdays", "coin", "exp", "deadline", "countProgress", "repeatEndCondition"],
   history: ["id", "gid", "name", "status", "endTime", "coin", "exp", "countProgress"],
   items: ["id", "name", "categoryId", "price", "ownNumber", "stockNumber", "disablePurchase", "maxPurchaseNumber"],
   skills: ["id", "name", "level", "exp", "untilNextLevelExp"],

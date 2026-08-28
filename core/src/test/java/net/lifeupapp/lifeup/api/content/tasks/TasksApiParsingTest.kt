@@ -166,4 +166,16 @@ class TasksApiParsingTest {
         assertEquals(7, task.repeatEndCondition?.targetCycleCount)
         assertTrue(task.repeatEndCondition?.inclusive == true)
     }
+
+    @Test
+    fun taskBuilder_shouldExposeWeekdays() {
+        val task = Task.builder {
+            setName("task")
+            setFrequency(1)
+            setWeekdays("1,3,5")
+        }
+
+        assertEquals(1, task.frequency)
+        assertEquals("1,3,5", task.weekdays)
+    }
 }

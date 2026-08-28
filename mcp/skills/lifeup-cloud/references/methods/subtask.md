@@ -29,7 +29,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | item_id      | Item ID            | number greater than 0 | 1         | No*      | One of item_id or item_name required |
 | item_name    | Item name          | any text             | Health Potion| No*    | One of item_id or item_name required |
 | item_amount  | Item amount        | number greater than 0 | 1         | No       | Only valid when setting item reward |
-| items        | Items JSON         | JSON text            | [{"item_id":1,"amount":1}] | No | Set multiple item rewards at once |
+| items        | Items JSON         | JSON text            | [{"item_id":1,"amount":1}] | No | `help` `item_structures` § Item Reward |
 | coin_set_type     | How to set coin value | One of:<br/>absolute<br/>relative | absolute | No | absolute - directly set coin to value<br/>relative - add/subtract from original coin value |
 | exp_set_type      | How to set exp value | One of:<br/>absolute<br/>relative | absolute | No | absolute - directly set exp to value<br/>relative - add/subtract from original exp value |
 

@@ -6,6 +6,8 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
 **Note:** This interface itself does not handle any logic, but you can use it with callback and broadcast.
 
+?> Phone event catalog for agents: `help` `broadcasts`. This file keeps placeholder/callback/Tasker prose from wiki.
+
 **Example:**
 
 - [lifeup://api/placeholder?broadcast=app.lifeup.item.rest](lifeup://api/placeholder?broadcast=app.lifeup.item.rest)
@@ -57,7 +59,7 @@ This can also be used to splice multiple interfaces, for example, if you want to
 
 lifeup://api/goto?page=lab + lifeup://api/toast?text=callback
 
-You can use the callback parameter. Please also refer to the above **Basics - Escaping**. You can write this kind of processing:
+You can use the callback parameter. Nested callback URLs need double encoding in raw URLs; MCP `params` pass plain strings (`help` `basics` § Encoding). Example:
 
 <a href="lifeup://api/goto?page=lab&callback=lifeup:%2F%2Fapi%2Ftoast%3Ftext%3Dtest callback">lifeup://api/goto?page=lab&callback=lifeup:%2F%2Fapi%2Ftoast%3Ftext%3Dtest callback</a>
 
@@ -95,13 +97,7 @@ The value of broadcast is equivalent to the value of the operation column of "In
 
 4. Then you can judge the number of gold coins in Tasker to achieve various effects. (For example, change the desktop wallpaper according to the number of gold coins?)
 
-![](_media/api/broadcast_01.png ':size=30%')
-
-![](_media/api/broadcast_02.png ':size=30%')
-
-![](_media/api/broadcast_03.png ':size=30%')
-
-![](_media/api/broadcast_04.png ':size=30%')
+(Wiki includes Tasker screenshot steps; not bundled in MCP skills.)
 
 <br/>
 
@@ -133,13 +129,7 @@ You can enable it in `Settings`-`Labs`-`Developer mode`-`Broadcast events`.
 10. Exit and check if this configuration is enabled.
 11. Use the "Wallpaper Change" item in `LifeUp`, you should be able to see the wallpaper change successfully
 
-![](_media/api/broadcast_sample_01.png ':size=30%')
-
-![](_media/api/broadcast_sample_02.png ':size=30%')
-
-![](_media/api/broadcast_sample_03.png ':size=30%')
-
-![](_media/api/broadcast_sample_04.png ':size=30%')
+(Wiki includes setup screenshots; not bundled in MCP skills.)
 
 Using `No Action`+`Broadcast return value` can achieve this effect in a more concise way, you can explore it.
 

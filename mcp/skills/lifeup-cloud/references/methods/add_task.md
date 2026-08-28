@@ -19,6 +19,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | skills           | Skill IDs           | array of numbers > 0 | 1          | No       | Supports arrays (e.g., &skills=1&skills=2) |
 | category         | List ID             | number >= 0          | 0          | No       | Defaults to 0 (default list); smart lists not allowed |
 | frequency        | Repeat frequency    | integer              | 0          | No       | Defaults to 0 (once)<br/>0 - Once<br/>1 - Daily<br/>N (N>1) - Every N days<br/>-1 - Unlimited<br/>-3 - Ebbinghaus (requires v1.99.1)<br/>-4 - Monthly<br/>-5 - Yearly |
+| weekdays         | Weekdays            | `1,3,5` or `none`    | 1,3,5      | No       | v1.106.0+; 1=Monday … 7=Sunday, days **to repeat**. If present, frequency must be omitted or 1. `none` is rejected on add; on edit, `none` clears back to daily. All 7 days is treated as daily |
 | importance       | Importance level    | [1, 4]              | 1          | No       | Defaults to 1                   |
 | difficulty       | Difficulty level    | [1, 4]              | 1          | No       | Defaults to 1                   |
 | deadline         | Due time            | timestamp (milliseconds) | 1640995200000 | No |                               |
@@ -41,7 +42,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | item_id          | Item ID             | number > 0          | 1          | No*      | Either item_id or item_name required |
 | item_name        | Item name           | any text            | Treasure   | No*      | Either item_id or item_name required |
 | item_amount      | Item quantity       | [1, 99]             | 1          | No       | Defaults to 1                  |
-| items            | Item rewards        | JSON text           | See [Item Rewards Structure](#1-item-rewards-structure) | No | Set multiple item rewards |
+| items            | Item rewards        | JSON text           | `help` `item_structures` § Item Reward | No | Set multiple item rewards |
 | task_type        | Task type           | [0, 4]              | 0          | No       | Requires v1.99.1<br/>0 - Normal task<br/>1 - Count task<br/>2 - Negative task<br/>3 - API task<br/>4 - Timed task (v1.102.0+) |
 | target_times     | Target times        | number > 0          | 1          | No       | Only valid when task_type is 1 (count task) |
 | is_affect_shop_reward | Affect shop reward | true/false      | false    | No       | Only valid when task_type is 1 (count task), whether to affect the reward calculation of items |
@@ -58,7 +59,3 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | -------- | ------- | ---------------- | ------- | ------------------------ |
 | task_id  | Number  | Task ID          | 1000    |                          |
 | task_gid | Number  | Task group ID    | 1000    |                          |
-
-<br/>
-
-#### Complete a Task

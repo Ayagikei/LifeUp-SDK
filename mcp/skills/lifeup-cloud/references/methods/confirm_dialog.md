@@ -25,6 +25,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | neutral_action  | the link response of the neutral button  | URL (other interface) | Same as above | no |  |
 | cancel_action   | the link response of the cancel action   | URL (other interface) | Same as above | no |  |
 
-<br/>
-
-#### No Action
+Nested actions: pass plain `lifeup://api/...` strings; MCP encodes once (`help` `basics`).

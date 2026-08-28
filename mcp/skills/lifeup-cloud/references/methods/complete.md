@@ -35,7 +35,3 @@ The method of obtaining the id is to open the "Developer Mode" on the "Labs" pag
 
 1. In order to be able to match the task, one of id, gid, and name must be provided.
 2. Timed tasks cannot be completed manually via this API (v1.102.0+).
-
-<br/>
-
-#### Give up a Task

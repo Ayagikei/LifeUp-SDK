@@ -20,6 +20,4 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | --------- | ------------------------------------ | ----------------- | ------- | -------- | ----- |
 | result    | Whether the operation was successful | `true` or `false` | true    | yes      | -     |
 
-<br/>
-
-#### Withdraw
+?> Withdraw coins from ATM: `help` `withdraw`.
