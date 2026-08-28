@@ -39,6 +39,14 @@ test("item_structures help returns purchase limits and effect types", async () =
   assert.match(structures, /item_id/)
 })
 
+test("qr_scanning help documents Cloud scan and non-lifeup schemes", async () => {
+  const qr = await readHelp("qr_scanning")
+  assert.match(qr, /not limited to LifeUp/)
+  assert.match(qr, /lifeup:\/\/api/)
+  assert.match(qr, /weixin:\/\//)
+  assert.match(qr, /Not QR scanning/)
+})
+
 test("unknown help topic is rejected", async () => {
   await assert.rejects(() => readHelp("explode"), /Unknown help topic/)
 })

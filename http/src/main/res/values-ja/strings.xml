@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android によりバックグラウンドからのフォアグラウンドサービス起動がブロックされました。アプリを開いてから再試行してください。</string>
     <string name="server_error_unknown">不明な起動エラー</string>
     <string name="ipAddressUnknown">IP アドレスがありません（WiFi に接続されていますか？）</string>
-    <string name="app_introduction"><![CDATA[これは <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> の拡張ツールで、パソコンや他のデバイスから LifeUp を操作できます。先に LifeUp をインストールしておいてください。]]></string>
+    <string name="app_introduction"><![CDATA[これは <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> の拡張ツールで、スマホを API ブリッジにします。PC や他デバイスから LifeUp を操作したり、カスタム連携や AI Agent（MCP）と組み合わせられます。詳細は下の「ドキュメント」「MCP &amp; Skills」を参照してください。先に LifeUp をインストールしてください。]]></string>
     <string name="localIpAddressMessage">以下の IP アドレスに接続しています:\n%1$s\n\nネットワーク構成によっては、ここに異なるネットワークセグメントの IP アドレスが複数表示される場合があります。通常の LAN では 192.168.x.x 形式のアドレスを選んでください。\nサービスを起動したら、同じ WiFi に接続したパソコンから開くことができます。\n\nここに表示される IP アドレスが正確でない場合は、WiFi 設定で端末のローカル IP とサーバーポート 13276 を確認してください。</string>
     <string name="overlay_permission">オーバーレイ権限</string>
     <string name="overlay_permission_desc">バックグラウンドからページを表示し、LifeUp API ページを起動するための権限を付与してください（Android 10+）</string>
@@ -67,4 +67,10 @@
     <string name="btn_save">保存</string>
     <string name="api_token_setting">API トークン</string>
     <string name="api_token_desc">サーバーを保護するための API トークンを設定します。設定すると、すべてのリクエストで Authorization ヘッダーにこのトークンを含める必要があります。</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">LifeUp API QRコードをスキャン</string>
+    <string name="qrcode_help_content_description">QRコードスキャンについて</string>
+    <string name="qrcode_help_title">QRコードスキャン</string>
+    <string name="qrcode_help_message">lifeup://api/… の URL を QR コードにして、机・壁・機器に貼れます。\n\nLifeUp Cloud の「スキャン」で API を即座に実行できます。\n\n例：\n• ポモドーロタイマーを開始\n• タスクのチェックイン・完了\n• 購入/使用ダイアログを表示\n• 報酬、Toast など\n\n現実の行動と LifeUp をつなげます：ジム、机、職場でスキャンしてゲーム内に記録。\n\n詳しくは「ドキュメント」を参照。</string>
+    <string name="qrcode_help_ok">OK</string>
 </resources>

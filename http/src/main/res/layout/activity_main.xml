@@ -57,11 +57,25 @@
 
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_qrcode_help"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="@null"
+            android:contentDescription="@string/qrcode_help_content_description"
+            android:src="@drawable/ic_help"
+            android:tint="?android:attr/textColorPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_qrcode_scan"
+            app:layout_constraintEnd_toStartOf="@+id/btn_qrcode_scan"
+            app:layout_constraintTop_toTopOf="@+id/btn_qrcode_scan" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_qrcode_scan"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_marginEnd="16dp"
             android:background="@null"
+            android:contentDescription="@string/qrcode_scan_content_description"
             android:src="@drawable/qrcode_scan"
             android:tint="?android:attr/textColorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="tv_title_introduction,btn_qrcode_scan" />
+            app:constraint_referenced_ids="tv_title_introduction,btn_qrcode_scan,btn_qrcode_help" />
 
         <include
             android:id="@+id/include_overlay_config"

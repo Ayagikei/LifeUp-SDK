@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android a bloqué le démarrage du service au premier plan depuis l\'arrière-plan. Ouvrez l\'application puis réessayez.</string>
     <string name="server_error_unknown">Erreur de démarrage inconnue</string>
     <string name="ipAddressUnknown">Aucune adresse IP (connecté au Wi-Fi ?)</string>
-    <string name="app_introduction"><![CDATA[Il s\'agit d\'un outil d\'extension pour l\'application <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, qui vous permet de contrôler LifeUp depuis votre ordinateur ou d\'autres appareils. Assurez-vous d\'avoir installé LifeUp au préalable.]]></string>
+    <string name="app_introduction"><![CDATA[Outil d\'extension pour <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> qui transforme votre téléphone en passerelle API. Contrôlez LifeUp depuis un PC ou d\'autres appareils, créez des intégrations ou utilisez des agents IA via MCP — voir <b>Documentation</b> et <b>MCP &amp; Skills</b> ci-dessous. Installez LifeUp d\'abord.]]></string>
     <string name="localIpAddressMessage">Connecté aux adresses IP suivantes :\n%1$s\n\nSelon votre environnement réseau, plusieurs adresses IP appartenant à différents segments peuvent apparaître ici. Pour un réseau local classique, choisissez en général une adresse au format 192.168.x.x.\nUne fois le service démarré, vous pouvez l\'ouvrir depuis votre ordinateur connecté au même Wi-Fi.\n\nSi l\'adresse IP affichée ici n\'est pas correcte, vous pouvez aussi vérifier votre IP locale dans les réglages Wi-Fi. Le port du serveur est 13276.</string>
     <string name="overlay_permission">Autorisation de superposition</string>
     <string name="overlay_permission_desc">Accordez l\'autorisation pour afficher des pages depuis l\'arrière-plan et ouvrir les pages API de LifeUp (Android 10+)</string>
@@ -66,4 +66,10 @@
     <string name="btn_save">Enregistrer</string>
     <string name="api_token_setting">Jeton API</string>
     <string name="api_token_desc">Définissez un jeton API pour sécuriser votre serveur. Une fois défini, toutes les requêtes doivent inclure ce jeton dans l\'en-tête Authorization.</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">Scanner un QR code API LifeUp</string>
+    <string name="qrcode_help_content_description">À propos du scan QR</string>
+    <string name="qrcode_help_title">Scan de QR code</string>
+    <string name="qrcode_help_message">Transformez toute URL lifeup://api/… en QR code — imprimez-le et placez-le sur un bureau, un mur ou un appareil.\n\nAppuyez sur Scanner dans LifeUp Cloud pour exécuter l\'API instantanément.\n\nExemples :\n• Démarrer un pomodoro\n• Cocher ou terminer une tâche\n• Ouvrir les dialogues d\'achat ou d\'utilisation\n• Récompenses, toasts, etc.\n\nReliez LifeUp au monde réel : scannez à la salle, au bureau ou au poste de travail.\n\nVoir Documentation pour plus d\'idées d\'API.</string>
+    <string name="qrcode_help_ok">Compris</string>
 </resources>

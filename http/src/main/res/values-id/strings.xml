@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android memblokir start layanan latar depan dari latar belakang. Buka aplikasi lalu coba lagi.</string>
     <string name="server_error_unknown">Kesalahan startup tidak diketahui</string>
     <string name="ipAddressUnknown">Tidak ada alamat IP (terhubung ke WiFi?)</string>
-    <string name="app_introduction"><![CDATA[Ini adalah alat ekstensi untuk <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> yang memungkinkan Anda mengontrol LifeUp dari komputer atau perangkat lain. Pastikan Anda sudah memasang LifeUp terlebih dahulu.]]></string>
+    <string name="app_introduction"><![CDATA[Alat ekstensi untuk <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> yang mengubah ponsel menjadi jembatan API. Kendalikan LifeUp dari PC atau perangkat lain, buat integrasi kustom, atau gunakan AI agent via MCP — lihat <b>Dokumentasi</b> dan <b>MCP &amp; Skills</b> di bawah. Pasang LifeUp terlebih dahulu.]]></string>
     <string name="localIpAddressMessage">Terhubung ke alamat IP berikut:\n%1$s\n\nSesuai kondisi jaringan Anda, beberapa alamat IP dari segmen jaringan yang berbeda mungkin muncul di sini. Untuk LAN biasa, sebaiknya pilih alamat dengan format 192.168.x.x.\nSaat layanan sudah berjalan, Anda dapat membukanya di komputer yang terhubung ke WiFi yang sama.\n\nJika alamat IP yang ditampilkan di sini tidak akurat, Anda juga dapat memeriksa pengaturan WiFi untuk melihat IP lokal perangkat dan port server 13276.</string>
     <string name="overlay_permission">Izin overlay</string>
     <string name="overlay_permission_desc">Berikan izin untuk menampilkan halaman dari latar belakang dan membuka halaman API LifeUp (Android 10+)</string>
@@ -67,4 +67,10 @@
     <string name="btn_save">Simpan</string>
     <string name="api_token_setting">Token API</string>
     <string name="api_token_desc">Atur token API untuk melindungi server Anda. Jika disetel, semua permintaan harus menyertakan token ini di header Authorization.</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">Pindai QR code API LifeUp</string>
+    <string name="qrcode_help_content_description">Tentang pemindaian QR</string>
+    <string name="qrcode_help_title">Pemindaian QR code</string>
+    <string name="qrcode_help_message">Ubah URL lifeup://api/… menjadi QR code — cetak dan tempel di meja, dinding, atau perangkat.\n\nKetuk Pindai di LifeUp Cloud untuk menjalankan API segera.\n\nContoh:\n• Mulai timer pomodoro\n• Check-in atau selesaikan tugas\n• Buka dialog beli/pakai item\n• Hadiah, toast, dll.\n\nHubungkan LifeUp dengan aksi nyata: pindai di gym, meja belajar, atau stasiun kerja.\n\nLihat Dokumentasi untuk ide API lainnya.</string>
+    <string name="qrcode_help_ok">Mengerti</string>
 </resources>

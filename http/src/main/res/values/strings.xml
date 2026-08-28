@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android blocked the background foreground-service start. Open the app and try again.</string>
     <string name="server_error_unknown">Unknown startup error</string>
     <string name="ipAddressUnknown">No IP address (connected to WiFi?)</string>
-    <string name="app_introduction"><![CDATA[This is an extension tool for <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> app, which allows you to control LifeUp from your computer or other devices. Please make sure you have installed LifeUp first.]]></string>
+    <string name="app_introduction"><![CDATA[This is an extension tool for <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> that turns your phone into an API bridge. Control LifeUp from your computer or other devices, build custom integrations, or pair with AI agents via MCP — see <b>Documentation</b> and <b>MCP &amp; Skills</b> below. Please install LifeUp first.]]></string>
     <string name="localIpAddressMessage">Connected to the following IP(s):\n%1$s\n\nAccording to your networking situation, there may be multiple IP addresses which may belong to different network segments here, and you should choose the address in the form of 192.168.x.x for general LAN.\nWhen service started, you can open it on your computer which connected to the same WIFI.\n\nIf the IP address displayed here is not accurate, you can also go to the WIFI settings to confirm your local IP and the server port is 13276.</string>
     <string name="overlay_permission">Overlay Permission</string>
     <string name="overlay_permission_desc">Grant permission to show pages from background and launch LifeUp API pages (Android 10+)</string>
@@ -49,6 +49,11 @@
     <string name="content_provider_permission">Content provider permission</string>
     <string name="content_provider_permission_desc">Grant permission to read the data of LifeUp</string>
     <string name="qrcode_scanning">Scanning...</string>
+    <string name="qrcode_scan_content_description">Scan LifeUp API QR code</string>
+    <string name="qrcode_help_content_description">About QR code scanning</string>
+    <string name="qrcode_help_title">QR code scanning</string>
+    <string name="qrcode_help_message">Turn any lifeup://api/… URL into a QR code — print it and place it on a desk, wall, or device.\n\nTap Scan in LifeUp Cloud to run the API instantly.\n\nExamples:\n• Start a pomodoro timer\n• Check in or complete a task\n• Open purchase or use-item dialogs\n• Trigger rewards, toasts, or custom workflows\n\nBridge LifeUp with real-world actions: scan at your gym, study desk, or workstation to log habits in-game.\n\nSee Documentation for more API ideas.</string>
+    <string name="qrcode_help_ok">Got it</string>
     <string name="lifeup_status_unknown">The status of LifeUp is unknown, please make sure you have authorized the permission to read LifeUp data, and LifeUp is running</string>
     <string name="lifeup_status_normal">LifeUp is running, data permission granted...</string>
     <string name="lifeup_permission_granted">You have successfully obtained permission.</string>

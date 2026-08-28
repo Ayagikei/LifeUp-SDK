@@ -7,7 +7,7 @@
     <string name="server_error_background_restricted">Android arka planda ön plan hizmeti başlatmayı engelledi. Uygulamayı açıp tekrar deneyin.</string>
     <string name="server_error_unknown">Bilinmeyen başlatma hatası</string>
     <string name="ipAddressUnknown">IP adresi yok (Wi-Fi bağlantısı var mı?)</string>
-    <string name="app_introduction"><![CDATA[Bu, <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> uygulaması için bir eklenti aracıdır. Bilgisayarınızdan veya diğer cihazlardan LifeUp uygulamasını kontrol etmenizi sağlar. Lütfen önce LifeUp uygulamasını kurduğunuzdan emin olun.]]></string>
+    <string name="app_introduction"><![CDATA[<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> için telefonunuzu bir API köprüsüne dönüştüren bir eklenti. LifeUp\'ı bilgisayardan veya diğer cihazlardan yönetin, özel entegrasyonlar kurun veya MCP ile AI ajanları kullanın — aşağıdaki <b>Dokümantasyon</b> ve <b>MCP &amp; Skills</b> bölümlerine bakın. Önce LifeUp\'ı yükleyin.]]></string>
     <string name="localIpAddressMessage">Aşağıdaki IP adres(ler)ine bağlanıldı:\n%1$s\n\nAğ yapınıza bağlı olarak burada farklı ağ segmentlerine ait birden fazla IP adresi görünebilir. Genel yerel ağ kullanımında genellikle 192.168.x.x biçimindeki adresi seçmelisiniz.\nHizmet başladığında, aynı Wi-Fi ağına bağlı bilgisayarınızdan bunu açabilirsiniz.\n\nBurada görünen IP adresi doğru değilse yerel IP adresinizi Wi-Fi ayarlarından doğrulayabilirsiniz. Sunucu portu 13276 olarak ayarlanmıştır.</string>
     <string name="overlay_permission">Üstte gösterme izni</string>
     <string name="overlay_permission_desc">Arka plandan sayfa göstermek ve LifeUp API sayfalarını açmak için izin verin (Android 10+)</string>
@@ -66,4 +66,10 @@
     <string name="btn_save">Kaydet</string>
     <string name="api_token_setting">API belirteci</string>
     <string name="api_token_desc">Sunucunuzu korumak için bir API belirteci ayarlayın. Ayarlandığında tüm istekler Authorization başlığında bu belirteci içermelidir.</string>
+    <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="qrcode_scan_content_description">LifeUp API QR kodunu tara</string>
+    <string name="qrcode_help_content_description">QR tarama hakkında</string>
+    <string name="qrcode_help_title">QR kod tarama</string>
+    <string name="qrcode_help_message">Herhangi bir lifeup://api/… URL\'sini QR koda dönüştürün — yazdırıp masaya, duvara veya cihazın yanına yapıştırın.\n\nLifeUp Cloud\'da Tara\'ya dokunarak API\'yi anında çalıştırın.\n\nÖrnekler:\n• Pomodoro zamanlayıcısı başlat\n• Görevi işaretle veya tamamla\n• Satın alma/kullanma diyaloglarını aç\n• Ödüller, toast vb.\n\nLifeUp\'ı gerçek dünyayla bağlayın: spor salonunda, masada veya iş istasyonunda tarayın.\n\nDaha fazla API fikri için Dokümantasyon\'a bakın.</string>
+    <string name="qrcode_help_ok">Tamam</string>
 </resources>

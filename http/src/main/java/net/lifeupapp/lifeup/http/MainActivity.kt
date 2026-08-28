@@ -29,7 +29,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import android.widget.TextView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ktor.util.toLowerCasePreservingASCIIRules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -303,6 +305,10 @@ class MainActivity : AppCompatActivity() {
             binding.includeOverlayConfig.btn.isGone = true
         }
 
+        binding.btnQrcodeHelp.setOnClickListener {
+            showQrcodeHelpDialog()
+        }
+
         binding.btnQrcodeScan.setOnClickListener {
             resultLauncher.launch(Intent(this, BarcodeScanningActivity::class.java))
         }
@@ -528,6 +534,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun CompoundButton.isUserTriggeredCheckChange(): Boolean {
         return isPressed
+    }
+
+    private fun showQrcodeHelpDialog() {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.qrcode_help_title)
+            .setMessage(R.string.qrcode_help_message)
+            .setPositiveButton(R.string.qrcode_help_ok, null)
+            .show()
+        dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
+            setLineSpacing(0f, 1.3f)
+        }
     }
 
 }
