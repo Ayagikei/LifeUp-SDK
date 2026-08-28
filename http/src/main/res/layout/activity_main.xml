@@ -340,6 +340,31 @@
                     android:layout_marginTop="12dp"
                     android:text="@string/switch_event_ws"
                     android:checked="true" />
+
+                <TextView
+                    android:id="@+id/tv_lifeup_broadcasts"
+                    style="@style/Item_Desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/lifeup_broadcasts_unknown" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_enable_broadcasts"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lifeup_broadcasts_enable"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_open_lab"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lifeup_broadcasts_open_lab"
+                    android:visibility="gone" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/wake_lock_duration_layout"
                     android:layout_width="match_parent"

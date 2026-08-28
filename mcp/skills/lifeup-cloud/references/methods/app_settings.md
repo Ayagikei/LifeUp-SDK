@@ -19,6 +19,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 | restart_activities    | Restart interface | true or false   | true    | No       | Apply interface changes immediately |
 | exp_punishment_factor | Global exp punishment | 0–10 float | 0.2 | No | Default 0.2 |
 | coin_punishment_factor| Global coin punishment | 0–10 float | 0 | No | Default 0 |
+| broadcast_event | LifeUp Labs broadcast events | true or false | true | No | Default false. Same switch as Settings → Labs |
 
 **Response:**
 

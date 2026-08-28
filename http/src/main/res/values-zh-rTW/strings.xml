@@ -75,4 +75,11 @@
     <string name="qrcode_help_ok">知道了</string>
     <string name="cloud_scheme_hint">用於啟動或暫停服務的快捷連結。點按即可複製，可做成桌面快捷方式、NFC 標籤或 Tasker 動作。</string>
     <string name="cloud_scheme_copied">已複製 %1$s</string>
+    <string name="lifeup_broadcasts_on">人升廣播事件：已開啟</string>
+    <string name="lifeup_broadcasts_off">人升廣播事件：未開啟</string>
+    <string name="lifeup_broadcasts_unknown">人升廣播事件：無法偵測。目前人升版本可能不支援，請到實驗頁查看。</string>
+    <string name="lifeup_broadcasts_enable">開啟人升廣播</string>
+    <string name="lifeup_broadcasts_open_lab">打開人升實驗頁</string>
+    <string name="lifeup_broadcasts_enable_failed">無法開啟人升廣播</string>
+
 </resources>

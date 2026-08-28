@@ -10,7 +10,7 @@ Source: lifeup-wiki `docs/en/guide/api.md` (may lag).
 
 | Parameter   | Meaning              | Type                                                         | Example | Required                                    | Notes                                                        |
 | ----------- | -------------------- | ------------------------------------------------------------ | ------- | ------------------------------------------- | ------------------------------------------------------------ |
-| key         | type of query        | coin / atm / item / item_id_list / tomato / task / achievement / credit_limit / punishment | coin    | yes | `punishment` returns `{exp_factor, coin_factor}` |
+| key         | type of query        | coin / atm / item / item_id_list / tomato / task / achievement / credit_limit / punishment / broadcast | coin    | yes | `punishment` returns `{exp_factor, coin_factor}`; `broadcast` returns `{enabled}` |
 | item_id     | the id of the item   | a number greater than 0                                      | 1       | When the key is `item`, it must be provided |                                                              |
 | category_id | the Shop category id | Number greater than or equal to 0                            | 0       | no*                                         | Required only when the key is `item_id_list`, representing the ID of the list to be queried. |
 | task_id / taskId | Task ID          | Number greater than 0                                        | 1       | When key is `task`, one of three* is required | Queried task ID |

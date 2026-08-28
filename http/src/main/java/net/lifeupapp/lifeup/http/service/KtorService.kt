@@ -908,6 +908,7 @@ object KtorService : LifeUpService {
                             latestId = EventHub.latestId,
                             eventWs = Settings.getInstance(appCtx).enableEventWs,
                             events = EventHub.since(after, limit),
+                            broadcasts = BroadcastGate.refresh(),
                         )
                     )
                 )

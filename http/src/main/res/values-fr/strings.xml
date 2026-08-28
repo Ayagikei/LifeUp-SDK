@@ -74,4 +74,11 @@
     <string name="qrcode_help_ok">Compris</string>
     <string name="cloud_scheme_hint">Raccourcis pour démarrer ou arrêter le serveur. Touchez pour copier — raccourci d’écran d’accueil, tag NFC ou action Tasker.</string>
     <string name="cloud_scheme_copied">%1$s copié</string>
+    <string name="lifeup_broadcasts_on">LifeUp broadcast events: on</string>
+    <string name="lifeup_broadcasts_off">LifeUp broadcast events: off</string>
+    <string name="lifeup_broadcasts_unknown">LifeUp broadcast events: unknown. Open Labs if this LifeUp version cannot report the switch.</string>
+    <string name="lifeup_broadcasts_enable">Enable LifeUp broadcasts</string>
+    <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
+    <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
+
 </resources>

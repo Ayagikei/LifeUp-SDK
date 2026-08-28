@@ -77,4 +77,11 @@
     <string name="cloud_scheme_hint">Shortcuts to start or stop the server. Tap a URL to copy — use it as a home-screen shortcut, NFC tag, or Tasker action.</string>
     <string name="cloud_scheme_copied">Copied %1$s</string>
 
+    <string name="lifeup_broadcasts_on">LifeUp broadcast events: on</string>
+    <string name="lifeup_broadcasts_off">LifeUp broadcast events: off</string>
+    <string name="lifeup_broadcasts_unknown">LifeUp broadcast events: unknown. Open Labs if this LifeUp version cannot report the switch.</string>
+    <string name="lifeup_broadcasts_enable">Enable LifeUp broadcasts</string>
+    <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
+    <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
+
 </resources>

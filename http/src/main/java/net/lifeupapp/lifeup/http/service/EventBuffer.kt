@@ -15,6 +15,7 @@ data class EventsPage(
     val latestId: Long,
     val eventWs: Boolean,
     val events: List<CloudEvent>,
+    val broadcasts: Boolean? = null,
 )
 
 class EventBuffer(private val capacity: Int = CAPACITY) {

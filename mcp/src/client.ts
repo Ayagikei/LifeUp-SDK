@@ -24,8 +24,8 @@ export type EventsPage = {
   latestId: number
   eventWs: boolean
   events: CloudEvent[]
+  broadcasts?: boolean
 }
-
 export type CallUrlResult = {
   url: string
   result: unknown

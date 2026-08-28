@@ -52,6 +52,7 @@ import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
+import net.lifeupapp.lifeup.http.service.BroadcastGate
 import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
 import net.lifeupapp.lifeup.http.utils.CloudControl
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         updatePermissionStatus()
         updateLocalIpAddress()
+        refreshBroadcastStatus()
     }
 
     private fun initView() {
@@ -176,6 +178,19 @@ class MainActivity : AppCompatActivity() {
                 if (binding.switchStartService.isChecked) {
                     KtorService.restart()
                 }
+            }
+
+            binding.btnEnableBroadcasts.setOnClickListener {
+                lifecycleScope.launch {
+                    val ok = withContext(Dispatchers.IO) { BroadcastGate.enable() }
+                    renderBroadcastStatus()
+                    if (!ok) {
+                        Toast.makeText(this@MainActivity, R.string.lifeup_broadcasts_enable_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            binding.btnOpenLab.setOnClickListener {
+                LifeUpApi.startApiActivity(this@MainActivity, "lifeup://api/goto?page=lab")
             }
 
             // Configure the expandable sections.
@@ -557,6 +572,39 @@ class MainActivity : AppCompatActivity() {
             .show()
         dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
             setLineSpacing(0f, 1.3f)
+        }
+    }
+
+    private fun refreshBroadcastStatus() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { BroadcastGate.refresh(force = true) }
+            renderBroadcastStatus()
+        }
+    }
+
+    private fun renderBroadcastStatus() {
+        if (!::binding.isInitialized) return
+        when (BroadcastGate.status) {
+            BroadcastGate.Status.On -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_on)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isGone = true
+            }
+            BroadcastGate.Status.Off -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_off)
+                binding.btnEnableBroadcasts.isVisible = true
+                binding.btnOpenLab.isGone = true
+            }
+            BroadcastGate.Status.Unsupported -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_unknown)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isVisible = true
+            }
+            BroadcastGate.Status.Unknown -> {
+                binding.tvLifeupBroadcasts.setText(R.string.lifeup_broadcasts_unknown)
+                binding.btnEnableBroadcasts.isGone = true
+                binding.btnOpenLab.isVisible = true
+            }
         }
     }
 

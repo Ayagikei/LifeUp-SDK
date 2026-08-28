@@ -11,13 +11,13 @@ MCP cannot receive Android broadcasts itself.
 
 ## Prerequisites
 
-1. LifeUp: `Settings` → `Labs` → `Developer mode` → **Broadcast events**
+1. LifeUp: `Settings` → `Labs` → `Developer mode` → **Broadcast events** (default off). Cloud Advanced can show the status and enable it in one tap.
 2. Cloud running. HTTP pull always works.
-3. Cloud **WebSocket event push** is on by default (3.0.0+). Turn it off in Cloud if you only want GET.
+3. Cloud **WebSocket event push** is on by default (3.0.0+). That switch is transport only; it does not turn on LifeUp broadcasts.
 
 ## HTTP
 
-`list_events` `{ after, limit }` → `{ latestId, eventWs, events: [{ id, time, action, extras }] }`
+`list_events` `{ after, limit }` → `{ latestId, eventWs, broadcasts?, events: [{ id, time, action, extras }] }`. `broadcasts` is LifeUp's source switch; omitted if Cloud cannot read it (old LifeUp / query failed).
 
 `after` is the last `id` you saw. Process restart resets ids.
 

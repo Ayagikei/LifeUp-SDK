@@ -105,16 +105,16 @@ export class Session {
     this.eventWs = page.eventWs
     this.eventSub?.close()
     this.eventSub = undefined
-    if (!on) return { subscribed: false, eventWs: this.eventWs, pushed: this.pushed }
+    if (!on) return { subscribed: false, eventWs: this.eventWs, pushed: this.pushed, broadcasts: page.broadcasts }
     if (!page.eventWs) {
-      return { subscribed: false, eventWs: false, error: "Cloud WebSocket event push is off. Use list_events or enable the Cloud setting." }
+      return { subscribed: false, eventWs: false, error: "Cloud WebSocket event push is off. Use list_events or enable the Cloud setting.", broadcasts: page.broadcasts }
     }
     this.pushed = []
     this.eventSub = this.requireClient().subscribeEvents(after, (event) => {
       this.pushed.push(event)
       if (this.pushed.length > 200) this.pushed.shift()
     })
-    return { subscribed: true, eventWs: true, after, latestId: page.latestId }
+    return { subscribed: true, eventWs: true, after, latestId: page.latestId, broadcasts: page.broadcasts }
   }
 
   private async resolveEndpoint(
