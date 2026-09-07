@@ -6,20 +6,35 @@ Phone must run LifeUp and LifeUp Cloud on the same LAN. Grant **Read LifeUp Data
 
 ## Install
 
-Until npm publish:
+**npm (recommended):**
 
 ```json
 {
   "mcpServers": {
     "lifeup": {
       "command": "npx",
-      "args": ["-y", "github:Ayagikei/LifeUp-SDK#feat/mcp"]
+      "args": ["-y", "@lifeup/mcp"]
     }
   }
 }
 ```
 
-`npx` clones the repo and `prepare` builds `mcp/`. After `feat/mcp` lands on `main`, drop `#feat/mcp`.
+If the default npm registry is slow or unreachable, add `--registry=https://registry.npmmirror.com` to the `npx` command line.
+
+**GitHub** (tracks repo `main`, builds via `prepare`):
+
+```json
+{
+  "mcpServers": {
+    "lifeup": {
+      "command": "npx",
+      "args": ["-y", "github:Ayagikei/LifeUp-SDK"]
+    }
+  }
+}
+```
+
+`npx` clones the repo and builds `mcp/`.
 
 From a local clone, prefer the installer (builds MCP and upserts detected clients; re-runs do not register a second copy):
 
@@ -32,7 +47,7 @@ Default clients: Codex, Cursor, Claude Code, Claude Desktop, Pi. Pi configs that
 macOS GUI clients often lack `npx` on `PATH` — use an absolute `npx`/`node`, or:
 
 ```bash
-git clone -b feat/mcp https://github.com/Ayagikei/LifeUp-SDK.git
+git clone https://github.com/Ayagikei/LifeUp-SDK.git
 cd LifeUp-SDK/mcp && npm install && npm run build
 ```
 
