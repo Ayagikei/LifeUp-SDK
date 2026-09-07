@@ -1,0 +1,66 @@
+name: Publish @lifeup/mcp
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semver to publish (e.g. 0.1.1)
+        required: true
+        type: string
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Resolve target version
+        id: version
+        working-directory: .
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TARGET="${{ inputs.version }}"
+          else
+            TARGET="${GITHUB_REF_NAME#v}"
+          fi
+          echo "value=${TARGET}" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version (idempotent)
+        id: bump
+        run: |
+          TARGET="${{ steps.version.outputs.value }}"
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "$CURRENT" != "$TARGET" ]; then
+            npm version "$TARGET" --no-git-tag-version
+            echo "bumped=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already $TARGET"
+            echo "bumped=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
+
+      - run: npm publish --provenance --access public
+
+      - name: Commit version bump back
+        if: steps.bump.outputs.bumped == 'true'
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mcp/package.json mcp/package-lock.json
+          git commit -m "chore(mcp): bump version to ${{ steps.bump.outputs.target }} [skip ci]"
+          git push origin HEAD:main
