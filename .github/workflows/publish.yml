@@ -53,6 +53,7 @@ jobs:
           fi
           echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
 
+      - run: npm ci
       - run: npm publish --provenance --access public
 
       - name: Commit version bump back
