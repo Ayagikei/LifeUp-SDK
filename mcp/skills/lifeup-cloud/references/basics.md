@@ -37,6 +37,7 @@ Pass **raw** values in tool `params`. `call_api` / typed tools encode query valu
 - Wiki examples often show **already-encoded** inner URLs (`lifeup:%2F%2Fapi%2Ftoast%3F...`). Do not copy that form into `params`.
 - `#` in colors: pass `#66CCFF` raw.
 - Arrays: pass JSON arrays in params (`skills: [1,2]`); MCP repeats the key.
+- Extra query keys that are not in that method's parameter table are ignored; the call can still succeed. Use `help` `<method>` for the real keys.
 
 ## JSON fields
 

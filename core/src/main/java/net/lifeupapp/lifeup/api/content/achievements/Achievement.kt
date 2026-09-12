@@ -20,7 +20,8 @@ data class Achievement(
     val itemId: Long?,
     val itemAmount: Int?,
     val unlockedTime: Long?,
-    val items: List<RewardItem>?    
+    val items: List<RewardItem>?,
+    val color: String? = null
 ) {
     class Builder {
         private var id: Long? = null
@@ -39,6 +40,7 @@ data class Achievement(
         private var itemAmount: Int? = null
         private var unlockedTime: Long? = null
         private var items: List<RewardItem>? = null
+        private var color: String? = null
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -55,6 +57,7 @@ data class Achievement(
         fun setItemAmount(itemAmount: Int?) = apply { this.itemAmount = itemAmount }
         fun setItems(items: List<RewardItem>?) = apply { this.items = items }
         fun setUnlockedTime(unlockedTime: Long?) = apply { this.unlockedTime = unlockedTime }
+        fun setColor(color: String?) = apply { this.color = color }
 
         fun build(): Achievement {
             return Achievement(
@@ -73,7 +76,8 @@ data class Achievement(
                 itemId = itemId,
                 itemAmount = itemAmount,
                 unlockedTime = unlockedTime,
-                items = items
+                items = items,
+                color = color
             )
         }
     }

@@ -68,6 +68,12 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                 val order = it.getIntOrNull("order")
                 val disablePurchase = it.getIntOrNull("disablePurchase")
                 val maxPurchaseNumber = it.getIntOrNull("maxPurchaseNumber")
+                val titleColorString = it.getStringOrNull("titleColorString")
+                val actionText = it.getStringOrNull("actionText")
+                val unlist = it.getIntOrNull("unlist")
+                val disableUse = it.getIntOrNull("disableUse")
+                val purchaseLimit = it.getStringOrNull("purchaseLimit")
+                val limitScope = it.getStringOrNull("limitScope")
 
                 items.add(
                     ShopItem.builder {
@@ -82,6 +88,12 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                         setOrder(order ?: 0)
                         setDisablePurchase(disablePurchase == 1)
                         setMaxPurchaseNumber(maxPurchaseNumber)
+                        setTitleColorString(titleColorString)
+                        setActionText(actionText)
+                        setUnlist(unlist == 1)
+                        setDisableUse(disableUse == 1)
+                        setPurchaseLimit(purchaseLimit)
+                        setLimitScope(limitScope)
                     }
                 )
             }
@@ -113,6 +125,12 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                 val order = it.getIntOrNull("order")
                 val disablePurchase = it.getIntOrNull("disablePurchase")
                 val maxPurchaseNumber = it.getIntOrNull("maxPurchaseNumber")
+                val titleColorString = it.getStringOrNull("titleColorString")
+                val actionText = it.getStringOrNull("actionText")
+                val unlist = it.getIntOrNull("unlist")
+                val disableUse = it.getIntOrNull("disableUse")
+                val purchaseLimit = it.getStringOrNull("purchaseLimit")
+                val limitScope = it.getStringOrNull("limitScope")
 
                 items.add(
                     ShopItem.builder {
@@ -127,6 +145,12 @@ class ItemsApi(private val context: Context) : ContentProviderApi {
                         setOrder(order ?: 0)
                         setDisablePurchase(disablePurchase == 1)
                         setMaxPurchaseNumber(maxPurchaseNumber)
+                        setTitleColorString(titleColorString)
+                        setActionText(actionText)
+                        setUnlist(unlist == 1)
+                        setDisableUse(disableUse == 1)
+                        setPurchaseLimit(purchaseLimit)
+                        setLimitScope(limitScope)
                     }
                 )
             }

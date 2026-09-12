@@ -44,6 +44,10 @@ When querying an item:
 | disable_purchase | Whether to disable purchase     | true or false | true | yes |       |
 | purchase_limit   | Restriction rules               | JSON text | [{"limitType":0,"limitNumber":5}] | yes | Current restriction list |
 | limit_scope      | Restriction scope               | purchase / use / both | use | yes | Returned as API text value |
+| title_color_string | Title color | color string | #66CCFF | no | Empty when using the default color |
+| action_text | Use-button text | any text | rest | no | |
+| unlist | Hidden from shop | true or false | false | yes | |
+| disable_use | Use disabled | true or false | false | yes | |
 
 When querying item_id_list:
 

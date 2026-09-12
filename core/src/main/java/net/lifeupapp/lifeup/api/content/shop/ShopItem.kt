@@ -14,7 +14,13 @@ data class ShopItem(
     val price: Long,
     val order: Int,
     val disablePurchase: Boolean,
-    val maxPurchaseNumber: Int?
+    val maxPurchaseNumber: Int?,
+    val titleColorString: String? = null,
+    val actionText: String? = null,
+    val unlist: Boolean = false,
+    val disableUse: Boolean = false,
+    val purchaseLimit: String? = null,
+    val limitScope: String? = null
 ) {
     class Builder {
         private var id: Long? = null
@@ -28,6 +34,12 @@ data class ShopItem(
         private var order: Int = 0
         private var disablePurchase: Boolean = false
         private var maxPurchaseNumber: Int? = null
+        private var titleColorString: String? = null
+        private var actionText: String? = null
+        private var unlist: Boolean = false
+        private var disableUse: Boolean = false
+        private var purchaseLimit: String? = null
+        private var limitScope: String? = null
         fun setId(id: Long?) = apply { this.id = id }
         fun setName(name: String) = apply { this.name = name }
         fun setDesc(notes: String) = apply { this.desc = notes }
@@ -41,6 +53,13 @@ data class ShopItem(
             apply { this.disablePurchase = disablePurchase }
         fun setMaxPurchaseNumber(maxPurchaseNumber: Int?) =
             apply { this.maxPurchaseNumber = maxPurchaseNumber }
+        fun setTitleColorString(titleColorString: String?) =
+            apply { this.titleColorString = titleColorString }
+        fun setActionText(actionText: String?) = apply { this.actionText = actionText }
+        fun setUnlist(unlist: Boolean) = apply { this.unlist = unlist }
+        fun setDisableUse(disableUse: Boolean) = apply { this.disableUse = disableUse }
+        fun setPurchaseLimit(purchaseLimit: String?) = apply { this.purchaseLimit = purchaseLimit }
+        fun setLimitScope(limitScope: String?) = apply { this.limitScope = limitScope }
 
         fun build(): ShopItem {
             return ShopItem(
@@ -54,7 +73,13 @@ data class ShopItem(
                 price = price,
                 order = order,
                 disablePurchase = disablePurchase,
-                maxPurchaseNumber = maxPurchaseNumber
+                maxPurchaseNumber = maxPurchaseNumber,
+                titleColorString = titleColorString,
+                actionText = actionText,
+                unlist = unlist,
+                disableUse = disableUse,
+                purchaseLimit = purchaseLimit,
+                limitScope = limitScope
             )
         }
     }

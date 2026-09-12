@@ -94,6 +94,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                 val unlockedTime = it.getLongOrNull("unlocked_time")
                 val itemsJson = it.getStringOrNull("items")
                 val items = itemsJson?.decodeFromStringOrNull<List<RewardItem>>() ?: emptyList()
+                val color = it.getStringOrNull("color")
 
                 achievements.add(
                     Achievement.builder {
@@ -113,6 +114,7 @@ class AchievementApi(private val context: Context) : ContentProviderApi {
                         setItemAmount(itemAmount)
                         setUnlockedTime(unlockedTime)
                         setItems(items)
+                        setColor(color)
                     }
                 )
             }
