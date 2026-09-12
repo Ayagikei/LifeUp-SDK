@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "lifeup": {
-      "command": "/opt/homebrew/Cellar/node@24/24.16.0/bin/npx",
+      "command": "npx",
       "args": ["-y", "@lifeup/mcp"]
     }
   }
