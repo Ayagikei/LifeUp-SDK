@@ -300,7 +300,7 @@ export function registerTools(server: McpServer, session: Session): void {
   }, async ({ after, limit }) => text(await session.listEvents(after ?? 0, limit ?? 50)))
 
   server.registerTool("subscribe_events", {
-    description: "Open Cloud WebSocket /events (on by default in Cloud 3.0.0+). HTTP list_events still works. on=false closes.",
+    description: "Open Cloud WebSocket /events (on by default in Cloud 3.0.1+). HTTP list_events still works. on=false closes.",
     inputSchema: z.object({
       after: z.number().int().optional(),
       on: z.boolean().optional(),

@@ -1,5 +1,5 @@
 export const MIN_LIFEUP = "1.106.0"
-export const MIN_CLOUD = "3.0.0"
+export const MIN_CLOUD = "3.0.1"
 
 export function cmpVersion(a: string, b: string): number {
   const left = a.split(".").map((part) => Number.parseInt(part, 10) || 0)
@@ -23,7 +23,7 @@ export function versionAdvice(info?: { appVersionName?: string; cloudVersionName
   const cloud = info?.cloudVersionName
   if (!cloud || cmpVersion(cloud, MIN_CLOUD) < 0) {
     notes.push(
-      `LifeUp Cloud ${cloud ?? "unknown"} < ${MIN_CLOUD}. Update Cloud — GET routes and version fields need 3.0.0+.`,
+      `LifeUp Cloud ${cloud ?? "unknown"} < ${MIN_CLOUD}. Update Cloud — GET routes and version fields need 3.0.1+.`,
     )
   }
   return notes
