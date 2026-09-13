@@ -31,9 +31,9 @@ const SINGULAR = new Set<ListResource>(["coin", "info", "level_defines", "statis
 const COMPACT: Record<string, string[]> = {
   tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "weekdays", "coin", "exp", "deadline", "countProgress", "repeatEndCondition"],
   history: ["id", "gid", "name", "status", "endTime", "coin", "exp", "countProgress"],
-  items: ["id", "name", "categoryId", "price", "ownNumber", "stockNumber", "disablePurchase", "maxPurchaseNumber"],
+  items: ["id", "name", "categoryId", "price", "ownNumber", "stockNumber", "disablePurchase", "maxPurchaseNumber", "titleColorString", "actionText", "unlist", "disableUse", "purchaseLimit", "limitScope"],
   skills: ["id", "name", "level", "exp", "untilNextLevelExp"],
-  achievements: ["id", "name", "categoryId", "status", "progress", "exp", "coin"],
+  achievements: ["id", "name", "categoryId", "status", "progress", "exp", "coin", "color"],
   feelings: ["id", "content", "time", "isFav"],
   synthesis: ["id", "name", "categoryId", "canSynthesisTimes"],
 
