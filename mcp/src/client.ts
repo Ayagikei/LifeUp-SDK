@@ -76,11 +76,18 @@ export type FetchLike = (
 ) => Promise<{
   status: number
   text(): Promise<string>
+  headers?: { get(name: string): string | null }
 }>
 
 const REQUEST_TIMEOUT_MS = 10_000
+// ponytail: FIFO cap 32; key by full URL and raise the cap if one session outgrows it
+const RESOURCE_CACHE_MAX = 32
+
+type CachedGet = { etag: string; data: unknown }
 
 export class LifeUpClient {
+  private readonly resourceCache = new Map<string, CachedGet>()
+
   constructor(
     readonly host: string,
     readonly port: number,
@@ -110,6 +117,24 @@ export class LifeUpClient {
     }
   }
 
+  private remember(url: string, etag: string, data: unknown) {
+    if (!this.resourceCache.has(url) && this.resourceCache.size >= RESOURCE_CACHE_MAX) {
+      const oldest = this.resourceCache.keys().next().value
+      if (oldest !== undefined) this.resourceCache.delete(oldest)
+    }
+    this.resourceCache.set(url, { etag, data })
+  }
+
+  private async readGet<T>(url: string, response: Awaited<ReturnType<FetchLike>>): Promise<T> {
+    const body = await response.text()
+    const envelope = decodeEnvelope<T>(response.status, body)
+    const data = envelope.data as T
+    const etag = response.headers?.get("etag")
+    if (etag) this.remember(url, etag, data)
+    else this.resourceCache.delete(url)
+    return data
+  }
+
   async get<T>(path: string, query: Record<string, string | number | number[] | undefined> = {}): Promise<T> {
     const url = new URL(path, this.baseUrl)
     for (const [key, value] of Object.entries(query)) {
@@ -121,10 +146,16 @@ export class LifeUpClient {
       }
     }
 
-    const response = await this.request(url.toString(), { headers: this.headers() })
-    const body = await response.text()
-    const envelope = decodeEnvelope<T>(response.status, body)
-    return envelope.data as T
+    const href = url.toString()
+    const cached = this.resourceCache.get(href)
+    const headers = this.headers()
+    if (cached) headers["If-None-Match"] = cached.etag
+    const response = await this.request(href, { headers })
+    if (response.status === 304) {
+      if (cached) return cached.data as T
+      return this.readGet(href, await this.request(href, { headers: this.headers() }))
+    }
+    return this.readGet(href, response)
   }
 
   async callApi(
