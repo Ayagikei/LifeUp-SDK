@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -271,22 +269,15 @@ object KtorService : LifeUpService {
         install(WebSockets)
         install(CallLogging)
         install(ContentNegotiation) {
-            json()
+            json(CloudJson)
         }
+        installResourceConditionalGet()
         install(RequestMoreWakeLockPlugin)
 
         if (Settings.getInstance(appCtx).enableCors) {
             Log.i("KtorService", "enableCors is true")
             install(CORS) {
-                allowMethod(HttpMethod.Options)
-                allowMethod(HttpMethod.Get)
-                allowMethod(HttpMethod.Post)
-                allowMethod(HttpMethod.Put)
-                allowMethod(HttpMethod.Delete)
-                allowHeader(HttpHeaders.ContentType)
-                allowHeader(HttpHeaders.Authorization)
-                allowHeader(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
+                configureCloudCors()
             }
         } else {
             Log.i("KtorService", "enableCors is false")
@@ -303,24 +294,7 @@ object KtorService : LifeUpService {
         }
 
         // Enforce the optional API token before dispatching request handlers.
-        val apiToken = Settings.getInstance(appCtx).apiToken
-        if (apiToken.isNotBlank()) {
-            install(createApplicationPlugin("ApiTokenValidation") {
-                onCall { call ->
-                    val authHeader = call.request.headers[HttpHeaders.Authorization]
-                    val queryToken = call.request.queryParameters["token"]
-                    if (authHeader != apiToken && queryToken != apiToken) {
-                        call.respond(
-                            HttpStatusCode.Unauthorized,
-                            HttpResponse.error<String>(
-                                "Invalid API token",
-                                HttpStatusCode.Unauthorized.value
-                            )
-                        )
-                    }
-                }
-            })
-        }
+        installApiTokenValidation(Settings.getInstance(appCtx).apiToken)
 
         routing {
             get("/") {
@@ -495,7 +469,7 @@ object KtorService : LifeUpService {
                 // get all tasks
                 get {
                     LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null).onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -505,7 +479,7 @@ object KtorService : LifeUpService {
                     get {
                         LifeUpApi.getContentProviderApi<TasksApi>()
                             .listTasks(call.parameters["id"]?.toLongOrNull()).onSuccess {
-                                call.respond(it.wrapAsResponse())
+                                call.respondResource(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
@@ -521,7 +495,7 @@ object KtorService : LifeUpService {
                     LifeUpApi.getContentProviderApi<TasksApi>()
                         .listHistory(offset, limit, filterGid)
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -537,7 +511,7 @@ object KtorService : LifeUpService {
                     } else {
                         LifeUpApi.getContentProviderApi<ItemsApi>().listItems(null)
                     }.onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -547,7 +521,7 @@ object KtorService : LifeUpService {
                         val listId = call.parameters["listId"]?.toLongOrNull()
 
                         LifeUpApi.getContentProviderApi<ItemsApi>().listItems(listId).onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -558,7 +532,7 @@ object KtorService : LifeUpService {
             route("/tasks_categories") {
                 get {
                     LifeUpApi.getContentProviderApi<TasksApi>().listCategories().onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -569,7 +543,7 @@ object KtorService : LifeUpService {
                 get {
                     LifeUpApi.getContentProviderApi<AchievementApi>().listCategories()
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -581,7 +555,7 @@ object KtorService : LifeUpService {
                     val includeHidden =
                         call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
                     LifeUpApi.getContentProviderApi<ItemsApi>().listCategories(includeHidden).onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -590,7 +564,7 @@ object KtorService : LifeUpService {
 
             get("/info") {
                 LifeUpApi.getContentProviderApi<InfoApi>().getInfo().onSuccess { info ->
-                    call.respond(
+                    call.respondResource(
                         info.copy(
                             cloudVersion = BuildConfig.VERSION_CODE,
                             cloudVersionName = BuildConfig.VERSION_NAME,
@@ -604,7 +578,7 @@ object KtorService : LifeUpService {
             route("/skills") {
                 get {
                     LifeUpApi.getContentProviderApi<SkillsApi>().listSkills().onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -615,7 +589,7 @@ object KtorService : LifeUpService {
                 get {
                     LifeUpApi.getContentProviderApi<AchievementApi>().listAchievements()
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -624,7 +598,7 @@ object KtorService : LifeUpService {
                     get {
                         LifeUpApi.getContentProviderApi<AchievementApi>()
                             .listAchievements(call.parameters["id"]?.toLongOrNull()).onSuccess {
-                                call.respond(it.wrapAsResponse())
+                                call.respondResource(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
@@ -639,7 +613,7 @@ object KtorService : LifeUpService {
 
                     LifeUpApi.getContentProviderApi<FeelingsApi>().listFeelings(offset, limit)
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             logger.log(Level.WARNING, "Failed to get feelings", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -651,7 +625,7 @@ object KtorService : LifeUpService {
                 get {
                     LifeUpApi.getContentProviderApi<SynthesisApi>().listSynthesis(null)
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             Log.e("LifeUp-Http", "Failed to get synthesis", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -662,7 +636,7 @@ object KtorService : LifeUpService {
                         val id = call.parameters["id"]?.toLongOrNull()
                         LifeUpApi.getContentProviderApi<SynthesisApi>().listSynthesis(id)
                             .onSuccess {
-                                call.respond(it.wrapAsResponse())
+                                call.respondResource(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
@@ -676,7 +650,7 @@ object KtorService : LifeUpService {
                         call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
                     LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(includeHidden = includeHidden)
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -688,7 +662,7 @@ object KtorService : LifeUpService {
                             call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
                         LifeUpApi.getContentProviderApi<SynthesisApi>().listCategories(id, includeHidden)
                             .onSuccess {
-                                call.respond(it.wrapAsResponse())
+                                call.respondResource(it.wrapAsResponse())
                             }.onFailure {
                                 call.respond(HttpResponse.error<String>(it))
                             }
@@ -701,7 +675,7 @@ object KtorService : LifeUpService {
                     val includeHidden =
                         call.request.queryParameters["include_hidden"]?.toBooleanStrictOrNull() ?: false
                     LifeUpApi.getContentProviderApi<SkillsApi>().listSkillGroups(includeHidden).onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }
@@ -714,7 +688,7 @@ object KtorService : LifeUpService {
                         val id = call.parameters["id"]?.toLongOrNull()
                             ?: return@get call.respond(HttpResponse.error<String>(IllegalArgumentException("id")))
                         LifeUpApi.getContentProviderApi<AchievementApi>().listConditions(id).onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             call.respond(HttpResponse.error<String>(it))
                         }
@@ -734,7 +708,7 @@ object KtorService : LifeUpService {
                     LifeUpApi.getContentProviderApi<PomodoroApi>()
                         .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
                         .onSuccess {
-                            call.respond(it.wrapAsResponse())
+                            call.respondResource(it.wrapAsResponse())
                         }.onFailure {
                             logger.log(Level.WARNING, "Failed to get pomodoro records", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -750,7 +724,7 @@ object KtorService : LifeUpService {
                     val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
                     LifeUpApi.getContentProviderApi<CoinRecordsApi>()
                         .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get coin records", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -765,7 +739,7 @@ object KtorService : LifeUpService {
                     val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
                     LifeUpApi.getContentProviderApi<InventoryRecordsApi>()
                         .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get inventory records", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -780,7 +754,7 @@ object KtorService : LifeUpService {
                     val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
                     LifeUpApi.getContentProviderApi<ExpRecordsApi>()
                         .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get exp records", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -796,7 +770,7 @@ object KtorService : LifeUpService {
                     val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
                     LifeUpApi.getContentProviderApi<StepRecordsApi>()
                         .listRecords(offset, limit, timeRangeStart, timeRangeEnd)
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get step records", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -807,7 +781,7 @@ object KtorService : LifeUpService {
                 get {
                     LifeUpApi.getContentProviderApi<LevelDefinesApi>()
                         .getDefines()
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get level defines", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -820,7 +794,7 @@ object KtorService : LifeUpService {
                     val timeRangeEnd = call.request.queryParameters["time_range_end"]?.toLongOrNull()
                     LifeUpApi.getContentProviderApi<StatisticsApi>()
                         .getStatistics(timeRangeStart, timeRangeEnd)
-                        .onSuccess { call.respond(it.wrapAsResponse()) }
+                        .onSuccess { call.respondResource(it.wrapAsResponse()) }
                         .onFailure {
                             logger.log(Level.WARNING, "Failed to get statistics", it)
                             call.respond(HttpResponse.error<String>(it))
@@ -956,7 +930,7 @@ object KtorService : LifeUpService {
                                 emptyMap()
                             )
                     }.onSuccess {
-                        call.respond(it.wrapAsResponse())
+                        call.respondResource(it.wrapAsResponse())
                     }.onFailure {
                         call.respond(HttpResponse.error<String>(it))
                     }

@@ -34,6 +34,10 @@ commit-prompt.txt
 /docs/plan/
 /docs/plans/
 
+# Local agent state
+/.pi/
+/.tmp/
+
 # npx github:Ayagikei/LifeUp-SDK wrapper (see package.json)
 /node_modules/
 /package-lock.json

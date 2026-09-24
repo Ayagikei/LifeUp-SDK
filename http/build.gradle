@@ -61,7 +61,7 @@ android {
         applicationId "net.lifeupapp.lifeup.http"
         minSdk 21
         targetSdk 36
-        versionName "3.0.1"
+        versionName "3.0.2"
         versionCode computeVersionCode(versionName)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -136,6 +136,8 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-conditional-headers:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation "io.ktor:ktor-websockets:$ktorVersion"
     testImplementation "io.ktor:ktor-client-websockets:$ktorVersion"
     testImplementation "io.ktor:ktor-client-cio:$ktorVersion"
