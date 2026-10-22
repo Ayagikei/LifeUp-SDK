@@ -29,7 +29,9 @@ data class Task(
     val subTasks: List<SubTask>,
     val countProgress: TaskCountProgress? = null,
     val repeatEndCondition: TaskRepeatEndCondition? = null,
-    val weekdays: String = ""
+    val weekdays: String = "",
+    val importance: Int? = null,
+    val difficulty: Int? = null
 ) {
     class Builder {
         private var id: Long? = null
@@ -57,6 +59,8 @@ data class Task(
         private var subTasks: List<SubTask> = emptyList()
         private var countProgress: TaskCountProgress? = null
         private var repeatEndCondition: TaskRepeatEndCondition? = null
+        private var importance: Int? = null
+        private var difficulty: Int? = null
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -110,6 +114,10 @@ data class Task(
             this.repeatEndCondition = repeatEndCondition
         }
 
+        fun setImportance(importance: Int?) = apply { this.importance = importance }
+
+        fun setDifficulty(difficulty: Int?) = apply { this.difficulty = difficulty }
+
         fun build(): Task {
             return Task(
                 id = id,
@@ -136,7 +144,9 @@ data class Task(
                 subTasks = subTasks,
                 countProgress = countProgress,
                 repeatEndCondition = repeatEndCondition,
-                weekdays = weekdays
+                weekdays = weekdays,
+                importance = importance,
+                difficulty = difficulty
             )
         }
     }

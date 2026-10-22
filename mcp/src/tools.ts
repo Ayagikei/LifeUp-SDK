@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server"
 import { z } from "zod"
 import { assertCallableMethod } from "./methods.js"
-import { readHelp } from "./help.js"
+import { HELP_TOOL_DESCRIPTION, HELP_TOPIC_DESCRIPTION, readHelp } from "./help.js"
 
 import type { Session } from "./session.js"
 import type { LifeUpParamValue } from "./lifeup-url.js"
@@ -80,10 +80,9 @@ export function registerTools(server: McpServer, session: Session): void {
   })
 
   server.registerTool("help", {
-    description:
-      "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. Also basics|discovery|query|tasks|economy|sample_icons|item_structures|qr_scanning|gaps|broadcasts.",
+    description: HELP_TOOL_DESCRIPTION,
     inputSchema: z.object({
-      topic: z.string().optional(),
+      topic: z.string().optional().describe(HELP_TOPIC_DESCRIPTION),
     }),
   }, async ({ topic }) => text(await readHelp(topic ?? "overview")))
 

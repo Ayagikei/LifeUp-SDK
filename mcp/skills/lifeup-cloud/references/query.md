@@ -1,5 +1,12 @@
 # Query (GET / ContentProvider)
 
+This page is the **compact MCP listing guide**. Full **HTTP JSON** query parameters, response wrappers, pagination rules, and complete Task/History field tables live in generated help topics:
+
+1. `help` `query-index` — section index (stable `:id=` anchors from the wiki).
+2. `help` `query/<anchor>` — excerpt for one section, e.g. `query/task-history-models`, `query/task-queries`, `query/response-errors`, `query/pagination`.
+
+Those files are generated from [LifeUp Wiki `docs/en/guide/api-reference.md`](https://github.com/Ayagikei/LifeUp-Wiki/blob/master/docs/en/guide/api-reference.md). From the LifeUp-SDK root, run `python3 mcp/scripts/extract-wiki-queries.py` after wiki changes; do not hand-edit the generated `references/queries/` tree.
+
 Two Cloud layers:
 
 | Layer | HTTP | MCP |
@@ -67,6 +74,7 @@ From LifeUp ContentProvider (not wiki). Compact rows keep these.
 | `tasks` / `history` | `status` | `0` unfinished · `1` done · `2` overdue · `3` given up |
 | `tasks` | `frequency` | `0` once · `1` daily · `N>1` every N days · `-1` unlimited · `-3` Ebbinghaus · `-4` monthly · `-5` yearly |
 | `tasks` | `weekdays` | `1,3,5` (Mon=1 … Sun=7). Empty when not weekday mode. v1.106.0+ |
+| `tasks` | `importance` / `difficulty` | Integer `1`–`4` ascending on `GET /tasks` when the task-list Provider exposes `taskUrgencyDegree` / `taskDifficultyDegree`; `null` on older providers. `/history` JSON uses `null` because that Provider omits the columns (not because the App lacks stored values). **Not** included in MCP compact rows — use `detail=true` or read HTTP/`help` `query/task-history-models`. |
 | `tasks` | `repeatEndCondition.mode` | `COUNT` / `DATE` (writes use 0/1) |
 | `tasks` | `repeatEndCondition.behavior` | `TERMINATE` / `FREEZE` (writes use 0/1) |
 | `task_categories` | `status` | `0` normal · `1` archived |
@@ -103,6 +111,6 @@ MCP list tools then wrap `data` as:
 { ok, code: 200, source: "contentprovider", resource, offset, limit, total?, count, hasMore, items }
 ```
 
-`total` only when Cloud returned the full list (not server-paged). Compact drops notes/icons/subTasks.
+`total` only when Cloud returned the full list (not server-paged). Compact drops notes/icons/subTasks and other HTTP-only fields (e.g. task `importance` / `difficulty`). Use `detail=true` for the full HTTP-shaped record.
 
 History query name is `gid` (not wiki `filterGid`). Files: `GET /files/{url}` — not a list tool.
