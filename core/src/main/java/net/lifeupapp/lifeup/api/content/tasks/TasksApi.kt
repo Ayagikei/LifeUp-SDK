@@ -98,7 +98,7 @@ class TasksApi(private val context: Context) : ContentProviderApi {
     }
 }
 
-private fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Boolean): Task {
+internal fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Boolean): Task {
     val id = getLongOrNull("_ID")
     val gid = getLongOrNull("_GID")
     val name = getStringOrNull("name")
@@ -138,6 +138,8 @@ private fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Bo
         null
     }
 
+    val importance = getIntOrNull("importance")
+    val difficulty = getIntOrNull("difficulty")
     return Task.builder {
         setId(id)
         setGid(gid)
@@ -164,6 +166,8 @@ private fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Bo
         setSubTasks(parseSubTasksJson(subTasksJson))
         setCountProgress(countProgress)
         setRepeatEndCondition(repeatEndCondition)
+        setImportance(importance)
+        setDifficulty(difficulty)
     }
 }
 

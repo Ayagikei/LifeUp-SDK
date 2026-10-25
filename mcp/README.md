@@ -82,3 +82,9 @@ There is no separate npm skill package. Fork the folder if you want a custom wor
 ## First tools
 
 `discover` (auto-connects if one Cloud) → `list_tasks` / `complete_task` / `reward` / `call_api`.
+
+## Help topics
+
+- **`help` `query`** — compact MCP list/read usage (`list_data`, paging, compact vs `detail=true`).
+- **`help` `query-index`** → **`help` `query/<anchor>`** — generated HTTP query reference (wiki `api-reference.md` via `mcp/scripts/extract-wiki-queries.py`).
+- **`help` `api-index`** → **`help` `<method>`** — URL Scheme / action parameters (unchanged).
