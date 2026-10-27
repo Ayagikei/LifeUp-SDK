@@ -43,7 +43,8 @@ jobs:
         with:
           tag_name: ${{ inputs.tag }}
           files: app-release.apk
-          prerelease: true
+          prerelease: false
+          make_latest: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
