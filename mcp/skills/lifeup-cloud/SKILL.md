@@ -20,7 +20,7 @@ Details: `help` `discovery`. Errors / encoding / JSON: `help` `basics`. Built-in
 
 | Want | Tool |
 |---|---|
-| Lists | `list_data` (or `list_tasks` / `list_items` …). Compact. Prefer `categoryId`. |
+| Lists | `list_data` (or `list_tasks` / `list_items` …). Compact. Use `categoryId` or `smartListType` (`daily`/`weekly`/`monthly`) for tasks, not both. |
 | History / feelings / pomodoro | `list_data` resource=`history`\|`feelings`\|`pomodoro_records` (server-paged) |
 
 | Coins / info | `get_coin` / `get_info` |
@@ -48,10 +48,10 @@ After writes, read `calls[].ok` and `calls[].data` (full return: ids, codes, que
 **Queries (HTTP JSON read models):**
 
 1. `help` `query-index` — catalog of generated query docs from [LifeUp Wiki `docs/en/guide/api-reference.md`](https://github.com/Ayagikei/LifeUp-Wiki/blob/master/docs/en/guide/api-reference.md). From the LifeUp-SDK root, regenerate with `python3 mcp/scripts/extract-wiki-queries.py`.
-2. `help` `query/<anchor>` — full field tables and examples for that section, e.g. `query/task-history-models` (Task fields including `importance` / `difficulty`), `query/task-queries`, `query/response-errors`, `query/pagination`.
+2. `help` `query/<anchor>` — full field tables and examples for that section, e.g. `query/task-history-models` (Task fields including `isFrozen`, `importance` / `difficulty`), `query/task-queries`, `query/response-errors`, `query/pagination`.
 3. `help` `query` — compact MCP `list_data` usage on this page; not a substitute for the generated HTTP reference.
 
-Query docs describe **Cloud HTTP JSON** (`{code, message, data}`), not raw Android Cursor columns or the MCP list envelope. Use `detail=true` on list tools when you need the full HTTP task object; compact rows omit fields such as `importance` and `difficulty`.
+Query docs describe **Cloud HTTP JSON** (`{code, message, data}`), not raw Android Cursor columns or the MCP list envelope. Use `detail=true` on list tools when you need the full HTTP task object; compact rows omit fields such as `importance` and `difficulty`, but include `isFrozen` when the provider exposes it.
 
 
 Destructive: `delete_task`, `edit_coin`, `export_backup`, `history_operation` need `confirm: true`.

@@ -21,6 +21,7 @@ All fields below appear in the current HTTP object. Missing provider values are 
 | `name` | string | Task name. A missing provider name becomes `ERROR: name is null`. |
 | `notes` | string | Notes; empty string if absent. |
 | `status` | integer | Task status; missing value defaults to `0`. See the status table below. |
+| `isFrozen` | boolean or `null` | Frozen state, independent of `status` (`status=0` can still be frozen). Actual boolean when the LifeUp provider and Cloud SDK expose the column; `null` when the column is missing or null on older Apps—unknown, not the same as `false`. |
 | `startTime` | integer | Configured start time in milliseconds; SDK fallback `0`. |
 | `deadline` | integer | Due time in milliseconds; SDK fallback `0` if absent. |
 | `remindTime` | integer | Reminder time in milliseconds; SDK fallback `0` if absent. |
@@ -43,6 +44,9 @@ All fields below appear in the current HTTP object. Missing provider values are 
 | `subTasks` | `SubTask[]` | Nested subtasks; empty array if unavailable. |
 | `countProgress` | `TaskCountProgress` or `null` | Count-progress snapshot when available; can appear in both views. |
 | `repeatEndCondition` | `TaskRepeatEndCondition` or `null` | Repetition end rule in `/tasks`; always `null` in `/history`. |
+
+> [!NOTE]
+> Adding `isFrozen` does not change existing list membership or default filtering; filter on this field in the client when available. The field requires an updated LifeUp provider and Cloud SDK—MCP alone cannot supply it. After Cloud is updated, MCP task/history records include `isFrozen` with `detail=true`; older MCP compact whitelists may omit it until MCP is updated.
 
 ### Task status and timestamps :id=task-times
 

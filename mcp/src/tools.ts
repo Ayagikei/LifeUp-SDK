@@ -7,7 +7,7 @@ import type { Session } from "./session.js"
 import type { LifeUpParamValue } from "./lifeup-url.js"
 import { presentCalls, type CallVia } from "./results.js"
 import { buildLifeUpUrl } from "./lifeup-url.js"
-import { listRequest, presentList, LIST_RESOURCES, type ListArgs } from "./query.js"
+import { listRequest, presentList, LIST_RESOURCES, SMART_LIST_TYPES, taskQueryConflict, type ListArgs } from "./query.js"
 
 
 async function mutate(
@@ -40,6 +40,34 @@ function oneOf<T extends Record<string, unknown>>(obj: T, keys: (keyof T)[]): ke
   }
   return present[0]
 }
+
+export const listTasksInputSchema = z.object({
+  categoryId: z.number().int().optional(),
+  smartListType: z.enum(SMART_LIST_TYPES).optional(),
+  offset: z.number().int().optional(),
+  limit: z.number().int().optional(),
+  detail: z.boolean().optional(),
+}).superRefine((value, ctx) => {
+  const message = taskQueryConflict({ resource: "tasks", ...value })
+  if (message) ctx.addIssue(message)
+})
+
+export const listDataInputSchema = z.object({
+  resource: z.enum(LIST_RESOURCES),
+  categoryId: z.number().int().optional(),
+  smartListType: z.enum(SMART_LIST_TYPES).optional(),
+  ids: z.array(z.number().int()).optional(),
+  gid: z.number().int().optional(),
+  offset: z.number().int().optional(),
+  limit: z.number().int().optional(),
+  detail: z.boolean().optional(),
+  timeRangeStart: z.number().int().optional(),
+  timeRangeEnd: z.number().int().optional(),
+  includeHidden: z.boolean().optional(),
+}).superRefine((value, ctx) => {
+  const message = taskQueryConflict(value)
+  if (message) ctx.addIssue(message)
+})
 
 export function registerTools(server: McpServer, session: Session): void {
   server.registerTool("status", {
@@ -88,19 +116,8 @@ export function registerTools(server: McpServer, session: Session): void {
 
   server.registerTool("list_data", {
     description:
-      "Query LifeUp ContentProvider lists (GET). Compact by default. Also coin_records, inventory_records, exp_records, step_records, level_defines, statistics.",
-    inputSchema: z.object({
-      resource: z.enum(LIST_RESOURCES),
-      categoryId: z.number().int().optional(),
-      ids: z.array(z.number().int()).optional(),
-      gid: z.number().int().optional(),
-      offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
-      detail: z.boolean().optional(),
-      timeRangeStart: z.number().int().optional(),
-      timeRangeEnd: z.number().int().optional(),
-      includeHidden: z.boolean().optional(),
-    }),
+      "Query LifeUp ContentProvider lists (GET). Compact by default. Also coin_records, inventory_records, exp_records, step_records, level_defines, statistics. smartListType is only for resource=tasks and excludes categoryId.",
+    inputSchema: listDataInputSchema,
   }, async (args) => queryList(session, args as ListArgs))
 
   server.registerTool("list_task_categories", {
@@ -113,13 +130,8 @@ export function registerTools(server: McpServer, session: Session): void {
   }, async (args) => queryList(session, { resource: "task_categories", ...args }))
 
   server.registerTool("list_tasks", {
-    description: "List tasks. Prefer categoryId. Compact; detail=true for full objects.",
-    inputSchema: z.object({
-      categoryId: z.number().int().optional(),
-      offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
-      detail: z.boolean().optional(),
-    }),
+    description: "List tasks. Use categoryId or smartListType (daily, weekly, monthly), not both. Compact; detail=true for full objects.",
+    inputSchema: listTasksInputSchema,
   }, async (args) => queryList(session, { resource: "tasks", ...args }))
 
   server.registerTool("list_history", {

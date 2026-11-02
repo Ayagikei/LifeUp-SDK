@@ -213,6 +213,7 @@ class ExtractWikiQueriesTest(unittest.TestCase):
         self.assertIn("`task-fields`", files["query-index.md"])
         self.assertIn("countProgress", files["queries/task-history-models.md"])
         self.assertIn("repeatEndCondition", files["queries/task-history-models.md"])
+        self.assertIn("isFrozen", files["queries/task-history-models.md"])
         self.assertIn("GET /history", files["queries/task-queries.md"])
         self.assertIn(
             "https://github.com/Ayagikei/LifeUp-SDK/blob/main/http/src/main/java/net/lifeupapp/lifeup/http/service/KtorService.kt",

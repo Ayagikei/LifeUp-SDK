@@ -6,6 +6,7 @@ internal object ContentProviderUrl {
 
     const val TASK = "$PREFIX/tasks"
 
+    const val SMART_LISTS = "$PREFIX/smart_lists"
     const val HISTORY = "$PREFIX/history"
 
     const val ITEMS = "$PREFIX/items"
