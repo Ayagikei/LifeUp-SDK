@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android bloqueó el inicio del servicio en primer plano desde segundo plano. Abre la aplicación y vuelve a intentarlo.</string>
     <string name="server_error_unknown">Error de inicio desconocido</string>
     <string name="ipAddressUnknown">No hay dirección IP (¿conectado a Wi-Fi?)</string>
+    <string name="copy_ip_address">Copiar IP</string>
+    <string name="copy_ip_dialog_title">Copiar dirección de red</string>
+    <string name="copy_port">Puerto</string>
+    <string name="copy_ip_with_port">IP:Puerto</string>
     <string name="app_introduction"><![CDATA[Herramienta de extensión para <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> que convierte tu teléfono en un puente API. Controla LifeUp desde el PC u otros dispositivos, crea integraciones o úsalo con agentes IA vía MCP — consulta <b>Documentación</b> y <b>MCP &amp; Skills</b> abajo. Instala LifeUp primero.]]></string>
-    <string name="localIpAddressMessage">Conectado a las siguientes IP:\n%1$s\n\nSegún tu red, aquí pueden aparecer varias direcciones IP pertenecientes a distintos segmentos. En una LAN normal, normalmente deberías elegir una dirección con formato 192.168.x.x.\nCuando el servicio se haya iniciado, podrás abrirlo en tu ordenador conectado al mismo Wi-Fi.\n\nSi la dirección IP mostrada aquí no es correcta, también puedes comprobar tu IP local en los ajustes de Wi-Fi. El puerto del servidor es 13276.</string>
+    <string name="localIpAddressMessage">Conectado a las siguientes IP:\n%1$s</string>
+    <string name="local_ip_address_hint">Según tu red, aquí pueden aparecer varias direcciones IP pertenecientes a distintos segmentos. En una LAN normal, normalmente deberías elegir una dirección con formato 192.168.x.x.\nCuando el servicio se haya iniciado, podrás abrirlo en tu ordenador conectado al mismo Wi-Fi.\n\nSi la dirección IP mostrada aquí no es correcta, también puedes comprobar tu IP local en los ajustes de Wi-Fi. El puerto del servidor es 13276.</string>
     <string name="overlay_permission">Permiso de superposición</string>
     <string name="overlay_permission_desc">Concede permiso para mostrar páginas desde segundo plano y abrir páginas de la API de LifeUp (Android 10+)</string>
     <string name="title_introduction">Introducción</string>

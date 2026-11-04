@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android a bloqué le démarrage du service au premier plan depuis l\'arrière-plan. Ouvrez l\'application puis réessayez.</string>
     <string name="server_error_unknown">Erreur de démarrage inconnue</string>
     <string name="ipAddressUnknown">Aucune adresse IP (connecté au Wi-Fi ?)</string>
+    <string name="copy_ip_address">Copier l\'IP</string>
+    <string name="copy_ip_dialog_title">Copier l\'adresse réseau</string>
+    <string name="copy_port">Port</string>
+    <string name="copy_ip_with_port">IP:Port</string>
     <string name="app_introduction"><![CDATA[Outil d\'extension pour <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> qui transforme votre téléphone en passerelle API. Contrôlez LifeUp depuis un PC ou d\'autres appareils, créez des intégrations ou utilisez des agents IA via MCP — voir <b>Documentation</b> et <b>MCP &amp; Skills</b> ci-dessous. Installez LifeUp d\'abord.]]></string>
-    <string name="localIpAddressMessage">Connecté aux adresses IP suivantes :\n%1$s\n\nSelon votre environnement réseau, plusieurs adresses IP appartenant à différents segments peuvent apparaître ici. Pour un réseau local classique, choisissez en général une adresse au format 192.168.x.x.\nUne fois le service démarré, vous pouvez l\'ouvrir depuis votre ordinateur connecté au même Wi-Fi.\n\nSi l\'adresse IP affichée ici n\'est pas correcte, vous pouvez aussi vérifier votre IP locale dans les réglages Wi-Fi. Le port du serveur est 13276.</string>
+    <string name="localIpAddressMessage">Connecté aux adresses IP suivantes :\n%1$s</string>
+    <string name="local_ip_address_hint">Selon votre environnement réseau, plusieurs adresses IP appartenant à différents segments peuvent apparaître ici. Pour un réseau local classique, choisissez en général une adresse au format 192.168.x.x.\nUne fois le service démarré, vous pouvez l\'ouvrir depuis votre ordinateur connecté au même Wi-Fi.\n\nSi l\'adresse IP affichée ici n\'est pas correcte, vous pouvez aussi vérifier votre IP locale dans les réglages Wi-Fi. Le port du serveur est 13276.</string>
     <string name="overlay_permission">Autorisation de superposition</string>
     <string name="overlay_permission_desc">Accordez l\'autorisation pour afficher des pages depuis l\'arrière-plan et ouvrir les pages API de LifeUp (Android 10+)</string>
     <string name="title_introduction">Présentation</string>

@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">منع Android تشغيل خدمة المقدمة من الخلفية. افتح التطبيق ثم حاول مرة أخرى.</string>
     <string name="server_error_unknown">خطأ بدء غير معروف</string>
     <string name="ipAddressUnknown">لا يوجد عنوان IP (هل أنت متصل بشبكة WiFi؟)</string>
+    <string name="copy_ip_address">نسخ IP</string>
+    <string name="copy_ip_dialog_title">نسخ عنوان الشبكة</string>
+    <string name="copy_port">المنفذ</string>
+    <string name="copy_ip_with_port">IP:المنفذ</string>
     <string name="app_introduction"><![CDATA[أداة امتداد لـ <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> تحوّل هاتفك إلى جسر API. تحكم في LifeUp من الكمبيوتر أو أجهزة أخرى، أنشئ تكاملات مخصصة، أو استخدم وكلاء AI عبر MCP — راجع <b>الوثائق</b> و<b>MCP &amp; Skills</b> أدناه. ثبّت LifeUp أولاً.]]></string>
-    <string name="localIpAddressMessage">متصل بعناوين IP التالية:\n%1$s\n\nوفقًا لحالة الشبكة لديك، قد تظهر هنا عدة عناوين IP من مقاطع شبكية مختلفة. في الشبكة المحلية العادية اختر عادةً عنوانًا بالشكل 192.168.x.x.\nبعد تشغيل الخدمة يمكنك فتحها على جهاز كمبيوتر متصل بنفس شبكة WiFi.\n\nإذا لم يكن عنوان IP المعروض هنا دقيقًا، يمكنك أيضًا التحقق من إعدادات WiFi لمعرفة عنوان IP المحلي ومنفذ الخادم 13276.</string>
+    <string name="localIpAddressMessage">متصل بعناوين IP التالية:\n%1$s</string>
+    <string name="local_ip_address_hint">وفقًا لحالة الشبكة لديك، قد تظهر هنا عدة عناوين IP من مقاطع شبكية مختلفة. في الشبكة المحلية العادية اختر عادةً عنوانًا بالشكل 192.168.x.x.\nبعد تشغيل الخدمة يمكنك فتحها على جهاز كمبيوتر متصل بنفس شبكة WiFi.\n\nإذا لم يكن عنوان IP المعروض هنا دقيقًا، يمكنك أيضًا التحقق من إعدادات WiFi لمعرفة عنوان IP المحلي ومنفذ الخادم 13276.</string>
     <string name="overlay_permission">إذن الظهور فوق التطبيقات</string>
     <string name="overlay_permission_desc">امنح الإذن لعرض الصفحات من الخلفية وفتح صفحات API الخاصة بـ LifeUp (Android 10+)</string>
     <string name="title_introduction">مقدمة</string>

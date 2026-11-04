@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android ha bloccato l\'avvio del servizio in primo piano dal background. Apri l\'app e riprova.</string>
     <string name="server_error_unknown">Errore di avvio sconosciuto</string>
     <string name="ipAddressUnknown">Nessun indirizzo IP (connesso al Wi-Fi?)</string>
+    <string name="copy_ip_address">Copia IP</string>
+    <string name="copy_ip_dialog_title">Copia indirizzo di rete</string>
+    <string name="copy_port">Porta</string>
+    <string name="copy_ip_with_port">IP:Porta</string>
     <string name="app_introduction"><![CDATA[Strumento di estensione per <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> che trasforma il telefono in un ponte API. Controlla LifeUp da PC o altri dispositivi, crea integrazioni o usa agenti IA via MCP — vedi <b>Documentazione</b> e <b>MCP &amp; Skills</b> sotto. Installa prima LifeUp.]]></string>
-    <string name="localIpAddressMessage">Connesso ai seguenti IP:\n%1$s\n\nIn base alla tua rete, qui potrebbero comparire più indirizzi IP appartenenti a segmenti diversi. In una normale LAN, in genere dovresti scegliere un indirizzo nel formato 192.168.x.x.\nQuando il servizio è stato avviato, puoi aprirlo sul computer connesso allo stesso Wi-Fi.\n\nSe l\'indirizzo IP mostrato qui non è corretto, puoi anche controllare il tuo IP locale nelle impostazioni Wi-Fi. La porta del server è 13276.</string>
+    <string name="localIpAddressMessage">Connesso ai seguenti IP:\n%1$s</string>
+    <string name="local_ip_address_hint">In base alla tua rete, qui potrebbero comparire più indirizzi IP appartenenti a segmenti diversi. In una normale LAN, in genere dovresti scegliere un indirizzo nel formato 192.168.x.x.\nQuando il servizio è stato avviato, puoi aprirlo sul computer connesso allo stesso Wi-Fi.\n\nSe l\'indirizzo IP mostrato qui non è corretto, puoi anche controllare il tuo IP locale nelle impostazioni Wi-Fi. La porta del server è 13276.</string>
     <string name="overlay_permission">Autorizzazione overlay</string>
     <string name="overlay_permission_desc">Concedi l\'autorizzazione per mostrare pagine dal background e aprire le pagine API di LifeUp (Android 10+)</string>
     <string name="title_introduction">Introduzione</string>

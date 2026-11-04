@@ -57,6 +57,7 @@ import net.lifeupapp.lifeup.http.service.KtorService
 import net.lifeupapp.lifeup.http.service.LifeUpService
 import net.lifeupapp.lifeup.http.utils.CloudControl
 import net.lifeupapp.lifeup.http.utils.getIpAddressListInLocalNetwork
+import net.lifeupapp.lifeup.http.ui.showIpAddressCopyDialog
 import net.lifeupapp.lifeup.http.utils.setHtmlText
 
 class MainActivity : AppCompatActivity() {
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private var latestRunningState = LifeUpService.RunningState.NOT_RUNNING
     private var latestServiceError: Throwable? = null
 
+    private var localIpAddresses: List<String> = emptyList()
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -270,6 +272,13 @@ class MainActivity : AppCompatActivity() {
             updateLocalIpAddress()
         }
 
+        binding.btnCopyIp.setOnClickListener {
+            updateLocalIpAddress()
+            if (binding.btnCopyIp.isVisible) {
+                showIpAddressCopyDialog(localIpAddresses, KtorService.port.value)
+            }
+        }
+
         binding.tvCloudSchemeStart.text = CloudControl.URL_START
         binding.tvCloudSchemeStop.text = CloudControl.URL_STOP
         binding.tvCloudSchemeStart.setOnClickListener { copyCloudScheme(CloudControl.URL_START) }
@@ -387,7 +396,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.tvStatusServer.text = statusText
-        binding.tvStatusServerIp.isVisible = isRunning
+        binding.serverIpDetails.isVisible = isRunning
+        binding.btnCopyIp.isVisible = isRunning && localIpAddresses.isNotEmpty()
         binding.switchStartService.isEnabled = !isStarting
         if (binding.switchStartService.isChecked != (isRunning || isStarting)) {
             binding.switchStartService.isChecked = isRunning || isStarting
@@ -417,16 +427,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateLocalIpAddress() {
-        val localIpAddress =
-            getIpAddressListInLocalNetwork().joinToString("\n") {
-                "$it:${KtorService.port.value}"
-            }
+        localIpAddresses = getIpAddressListInLocalNetwork().distinct()
+        val localIpAddress = localIpAddresses.joinToString("\n") {
+            "$it:${KtorService.port.value}"
+        }
         if (localIpAddress.isNotBlank()) {
             binding.tvStatusServerIp.text =
                 getString(R.string.localIpAddressMessage, localIpAddress)
         } else {
             binding.tvStatusServerIp.text = getString(R.string.ipAddressUnknown)
         }
+        binding.tvStatusServerIpHint.isVisible = localIpAddresses.isNotEmpty()
+        binding.btnCopyIp.isVisible =
+            latestRunningState == LifeUpService.RunningState.RUNNING && localIpAddresses.isNotEmpty()
     }
 
     private fun updatePermissionStatus() {

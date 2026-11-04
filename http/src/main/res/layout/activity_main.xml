@@ -225,13 +225,46 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/server_status" />
 
-                <TextView
-                    android:id="@+id/tv_status_server_ip"
-                    style="@style/Item_Desc"
+                <LinearLayout
+                    android:id="@+id/server_ip_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/ipAddressUnknown" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_status_server_ip"
+                        style="@style/Item_Desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ipAddressUnknown" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_copy_ip"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:insetLeft="0dp"
+                        android:insetRight="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="48dp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="12dp"
+                        android:text="@string/copy_ip_address"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_status_server_ip_hint"
+                        style="@style/Item_Desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/local_ip_address_hint"
+                        android:visibility="gone" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_cloud_scheme_hint"
