@@ -1,14 +1,17 @@
 #!/usr/bin/env node
+import { readFileSync } from "node:fs"
 import { McpServer } from "@modelcontextprotocol/server"
 import { serveStdio } from "@modelcontextprotocol/server/stdio"
 import { SERVER_INSTRUCTIONS, skillsDir } from "./help.js"
 import { Session } from "./session.js"
 import { registerTools } from "./tools.js"
 
+const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"))
+
 function createServer(): McpServer {
   const server = new McpServer({
     name: "lifeup",
-    version: "0.1.0",
+    version,
     title: "LifeUp Cloud",
     description: SERVER_INSTRUCTIONS,
   })
