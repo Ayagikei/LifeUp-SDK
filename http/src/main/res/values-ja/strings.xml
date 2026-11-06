@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android によりバックグラウンドからのフォアグラウンドサービス起動がブロックされました。アプリを開いてから再試行してください。</string>
     <string name="server_error_unknown">不明な起動エラー</string>
     <string name="ipAddressUnknown">IP アドレスがありません（WiFi に接続されていますか？）</string>
+    <string name="copy_ip_address">IP をコピー</string>
+    <string name="copy_ip_dialog_title">ネットワークアドレスをコピー</string>
+    <string name="copy_port">ポート</string>
+    <string name="copy_ip_with_port">IP:ポート</string>
     <string name="app_introduction"><![CDATA[これは <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> の拡張ツールで、スマホを API ブリッジにします。PC や他デバイスから LifeUp を操作したり、カスタム連携や AI Agent（MCP）と組み合わせられます。詳細は下の「ドキュメント」「MCP &amp; Skills」を参照してください。先に LifeUp をインストールしてください。]]></string>
-    <string name="localIpAddressMessage">以下の IP アドレスに接続しています:\n%1$s\n\nネットワーク構成によっては、ここに異なるネットワークセグメントの IP アドレスが複数表示される場合があります。通常の LAN では 192.168.x.x 形式のアドレスを選んでください。\nサービスを起動したら、同じ WiFi に接続したパソコンから開くことができます。\n\nここに表示される IP アドレスが正確でない場合は、WiFi 設定で端末のローカル IP とサーバーポート 13276 を確認してください。</string>
+    <string name="localIpAddressMessage">以下の IP アドレスに接続しています:\n%1$s</string>
+    <string name="local_ip_address_hint">ネットワーク構成によっては、ここに異なるネットワークセグメントの IP アドレスが複数表示される場合があります。通常の LAN では 192.168.x.x 形式のアドレスを選んでください。\nサービスを起動したら、同じ WiFi に接続したパソコンから開くことができます。\n\nここに表示される IP アドレスが正確でない場合は、WiFi 設定で端末のローカル IP とサーバーポート 13276 を確認してください。</string>
     <string name="overlay_permission">オーバーレイ権限</string>
     <string name="overlay_permission_desc">バックグラウンドからページを表示し、LifeUp API ページを起動するための権限を付与してください（Android 10+）</string>
     <string name="title_introduction">紹介</string>

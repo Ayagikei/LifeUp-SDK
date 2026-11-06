@@ -363,6 +363,99 @@ class TasksApiParsingTest {
         assertNull(task.difficulty)
     }
 
+    @Test
+    fun cursorToTask_shouldParseFrozenIndependentlyOfStatusOnTasksAndHistory() {
+        val stringTrue = taskCursor(
+            mapOf(
+                "name" to "string-true",
+                "status" to 0,
+                "isFrozen" to "true",
+                "endTime" to 99L,
+                "repeatEndMode" to "COUNT",
+                "repeatEndBehavior" to "TERMINATE",
+                "repeatEndTargetCycleCount" to 3,
+                "repeatEndInclusive" to false
+            )
+        ).toTask(includeEndTime = false, includeRepeatEndCondition = true)
+
+        assertEquals(java.lang.Boolean.TRUE, stringTrue.isFrozen)
+        assertEquals(0, stringTrue.status)
+        assertEquals(0L, stringTrue.endTime)
+        assertEquals("COUNT", stringTrue.repeatEndCondition?.mode)
+
+        val numericFalse = taskCursor(
+            mapOf(
+                "name" to "numeric-false",
+                "status" to 0,
+                "isFrozen" to 0
+            )
+        ).toTask(includeEndTime = false, includeRepeatEndCondition = true)
+
+        assertEquals(java.lang.Boolean.FALSE, numericFalse.isFrozen)
+        assertEquals(0, numericFalse.status)
+        assertNull(numericFalse.repeatEndCondition)
+
+        val numericTrueHistory = taskCursor(
+            mapOf(
+                "name" to "history-numeric-true",
+                "status" to 0,
+                "isFrozen" to 1,
+                "endTime" to 1741425600123L,
+                "repeatEndMode" to "COUNT",
+                "repeatEndBehavior" to "TERMINATE",
+                "repeatEndTargetCycleCount" to 7
+            )
+        ).toTask(includeEndTime = true, includeRepeatEndCondition = false)
+
+        assertEquals(java.lang.Boolean.TRUE, numericTrueHistory.isFrozen)
+        assertEquals(0, numericTrueHistory.status)
+        assertEquals(1741425600123L, numericTrueHistory.endTime)
+        assertNull(numericTrueHistory.repeatEndCondition)
+
+        val stringFalseHistory = taskCursor(
+            mapOf(
+                "name" to "history-string-false",
+                "status" to 0,
+                "isFrozen" to "false",
+                "endTime" to 8L
+            )
+        ).toTask(includeEndTime = true, includeRepeatEndCondition = false)
+
+        assertEquals(java.lang.Boolean.FALSE, stringFalseHistory.isFrozen)
+        assertEquals(0, stringFalseHistory.status)
+        assertEquals(8L, stringFalseHistory.endTime)
+    }
+
+    @Test
+    fun cursorToTask_shouldTreatMissingOrSqlNullFrozenAsUnknown() {
+        val missingOnTasks = taskCursor(
+            mapOf(
+                "name" to "missing-frozen",
+                "status" to 0
+            )
+        ).toTask(includeEndTime = false, includeRepeatEndCondition = true)
+
+        assertNull(missingOnTasks.isFrozen)
+        assertEquals(0, missingOnTasks.status)
+        assertEquals("missing-frozen", missingOnTasks.name)
+
+        val sqlNullOnHistory = taskCursor(
+            mapOf(
+                "name" to "sql-null-frozen",
+                "status" to 0,
+                "isFrozen" to null,
+                "endTime" to 11L,
+                "repeatEndMode" to "DATE",
+                "repeatEndBehavior" to "FREEZE",
+                "repeatEndDateMillis" to 1741564800000L
+            )
+        ).toTask(includeEndTime = true, includeRepeatEndCondition = false)
+
+        assertNull(sqlNullOnHistory.isFrozen)
+        assertEquals(0, sqlNullOnHistory.status)
+        assertEquals(11L, sqlNullOnHistory.endTime)
+        assertNull(sqlNullOnHistory.repeatEndCondition)
+    }
     private fun taskCursor(values: Map<String, Any?>): Cursor {
         val names = values.keys.toList()
         return Proxy.newProxyInstance(

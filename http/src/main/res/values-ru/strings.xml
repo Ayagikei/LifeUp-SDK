@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android заблокировал запуск foreground-сервиса из фона. Откройте приложение и попробуйте снова.</string>
     <string name="server_error_unknown">Неизвестная ошибка запуска</string>
     <string name="ipAddressUnknown">Нет IP-адреса (подключены к WiFi?)</string>
+    <string name="copy_ip_address">Копировать IP</string>
+    <string name="copy_ip_dialog_title">Копировать сетевой адрес</string>
+    <string name="copy_port">Порт</string>
+    <string name="copy_ip_with_port">IP:Порт</string>
     <string name="app_introduction"><![CDATA[Расширение для <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a>, превращающее телефон в API-мост. Управляйте LifeUp с ПК или других устройств, создавайте интеграции или подключайте AI-агентов через MCP — см. <b>Документацию</b> и <b>MCP &amp; Skills</b> ниже. Сначала установите LifeUp.]]></string>
-    <string name="localIpAddressMessage">Подключено к следующим IP-адресам:\n%1$s\n\nВ зависимости от вашей сети здесь может отображаться несколько IP-адресов из разных сегментов сети. Для обычной локальной сети обычно следует выбирать адрес формата 192.168.x.x.\nПосле запуска сервиса вы сможете открыть его на компьютере, подключенном к той же сети WiFi.\n\nЕсли отображаемый здесь IP-адрес неточен, проверьте в настройках WiFi локальный IP устройства и порт сервера 13276.</string>
+    <string name="localIpAddressMessage">Подключено к следующим IP-адресам:\n%1$s</string>
+    <string name="local_ip_address_hint">В зависимости от вашей сети здесь может отображаться несколько IP-адресов из разных сегментов сети. Для обычной локальной сети обычно следует выбирать адрес формата 192.168.x.x.\nПосле запуска сервиса вы сможете открыть его на компьютере, подключенном к той же сети WiFi.\n\nЕсли отображаемый здесь IP-адрес неточен, проверьте в настройках WiFi локальный IP устройства и порт сервера 13276.</string>
     <string name="overlay_permission">Разрешение на отображение поверх окон</string>
     <string name="overlay_permission_desc">Выдайте разрешение на показ страниц из фона и запуск страниц API LifeUp (Android 10+)</string>
     <string name="title_introduction">Введение</string>

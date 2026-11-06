@@ -29,8 +29,8 @@ const SERVER_PAGED = new Set<ListResource>(["history", "feelings", "pomodoro_rec
 const SINGULAR = new Set<ListResource>(["coin", "info", "level_defines", "statistics"])
 
 const COMPACT: Record<string, string[]> = {
-  tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "weekdays", "coin", "exp", "deadline", "countProgress", "repeatEndCondition"],
-  history: ["id", "gid", "name", "status", "endTime", "coin", "exp", "countProgress"],
+  tasks: ["id", "gid", "name", "status", "categoryId", "frequency", "weekdays", "coin", "exp", "deadline", "countProgress", "repeatEndCondition", "isFrozen"],
+  history: ["id", "gid", "name", "status", "endTime", "coin", "exp", "countProgress", "isFrozen"],
   items: ["id", "name", "categoryId", "price", "ownNumber", "stockNumber", "disablePurchase", "maxPurchaseNumber", "titleColorString", "actionText", "unlist", "disableUse", "purchaseLimit", "limitScope"],
   skills: ["id", "name", "level", "exp", "untilNextLevelExp"],
   achievements: ["id", "name", "categoryId", "status", "progress", "exp", "coin", "color"],
@@ -50,9 +50,15 @@ const COMPACT: Record<string, string[]> = {
   step_records: ["id", "date", "dailyStepCount", "totalStepCount", "isGotReward"],
 }
 
+export const SMART_LIST_TYPES = ["daily", "weekly", "monthly"] as const
+export type SmartListTypeName = (typeof SMART_LIST_TYPES)[number]
+
+const SMART_LIST_TYPE_SET: ReadonlySet<string> = new Set(SMART_LIST_TYPES)
+
 export type ListArgs = {
   resource: ListResource
   categoryId?: number
+  smartListType?: SmartListTypeName
   ids?: number[]
   gid?: number
   offset?: number
@@ -63,12 +69,32 @@ export type ListArgs = {
   includeHidden?: boolean
 }
 
+export function taskQueryConflict(args: {
+  resource?: string
+  categoryId?: number
+  smartListType?: string
+}): string | undefined {
+  if (args.smartListType == null) return undefined
+  if (!SMART_LIST_TYPE_SET.has(args.smartListType)) {
+    return "smartListType must be daily, weekly, or monthly"
+  }
+  if (args.resource != null && args.resource !== "tasks") {
+    return "smartListType is only valid for tasks"
+  }
+  if (args.categoryId != null) {
+    return "smartListType and categoryId are mutually exclusive"
+  }
+  return undefined
+}
+
 export function listRequest(args: ListArgs): {
   path: string
   query: Record<string, string | number | number[] | undefined>
   serverPaged: boolean
   singular: boolean
 } {
+  const conflict = taskQueryConflict(args)
+  if (conflict) throw new Error(conflict)
   const offset = Math.max(args.offset ?? 0, 0)
   const limit = Math.min(Math.max(args.limit ?? 20, 1), 100)
   const serverPaged = SERVER_PAGED.has(args.resource)
@@ -78,7 +104,11 @@ export function listRequest(args: ListArgs): {
   switch (args.resource) {
     case "tasks":
       return {
-        path: args.categoryId == null ? "/tasks" : `/tasks/${args.categoryId}`,
+        path: args.smartListType
+          ? `/smart_lists/${args.smartListType}/tasks`
+          : args.categoryId == null
+            ? "/tasks"
+            : `/tasks/${args.categoryId}`,
         query: {},
         serverPaged,
         singular,

@@ -3,7 +3,10 @@ package net.lifeupapp.lifeup.api.content
 import android.database.MatrixCursor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import net.lifeupapp.lifeup.api.utils.getBooleanOrNull
+import net.lifeupapp.lifeup.api.exception.ContentProviderException
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -37,5 +40,20 @@ class ContentProviderApiCompatibilityTest {
         assertEquals(false, cursor.getBooleanOrNull("intFalse"))
         assertEquals(true, cursor.getBooleanOrNull("stringTrue"))
         assertEquals(false, cursor.getBooleanOrNull("stringFalse"))
+    }
+
+    @Test
+    fun forEachRow_unknownUriError_preservesProviderFailureWithoutParsingTasks() {
+        MatrixCursor(arrayOf("error_code", "error_message")).use { cursor ->
+            cursor.addRow(arrayOf("404", "Not Found: smart_lists/daily/tasks"))
+            try {
+                cursor.forEachRow { fail("an old provider error must not be parsed as a task") }
+                fail("expected ContentProviderException")
+            } catch (error: ContentProviderException) {
+                assertEquals(10002, error.errorCode)
+                assertTrue(error.message.orEmpty().contains("404"))
+                assertTrue(error.message.orEmpty().contains("smart_lists/daily/tasks"))
+            }
+        }
     }
 }

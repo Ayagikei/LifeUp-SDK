@@ -88,3 +88,26 @@ There is no separate npm skill package. Fork the folder if you want a custom wor
 - **`help` `query`** — compact MCP list/read usage (`list_data`, paging, compact vs `detail=true`).
 - **`help` `query-index`** → **`help` `query/<anchor>`** — generated HTTP query reference (wiki `api-reference.md` via `mcp/scripts/extract-wiki-queries.py`).
 - **`help` `api-index`** → **`help` `<method>`** — URL Scheme / action parameters (unchanged).
+
+## Releases
+
+npm publishing for `@lifeup/mcp` is automated by [`.github/workflows/publish.yml`](../.github/workflows/publish.yml). LifeUp Cloud versioning and release cadence stay independent of this package.
+
+**When it runs**
+
+- **Push to `main`** that touches `mcp/**` triggers a publish job. Publishing runs serially.
+- **Manual:** GitHub → **Actions** → **Publish @lifeup/mcp** → **Run workflow**, branch **`main`**. There is no version input; the workflow computes the target version.
+
+**Version rule**
+
+The job reads **`@lifeup/mcp@latest` from the npm registry**, rather than using the repo version as its baseline, and increments the patch number. After publishing, it commits `mcp/package.json` and `mcp/package-lock.json` back to **`main`** if they changed, with `[skip ci]` in the commit message. It does **not** watch, create, or push git tags.
+
+**Gates and auth**
+
+- Checkout is pinned to the triggering commit, and its SHA is verified before publishing so npm provenance matches the source.
+- Steps: `npm ci`, `npm run typecheck`, then `npm publish`, whose **`prepublishOnly`** hook runs tests and build before upload.
+- Publishing uses **npm trusted publishing (OIDC)** and `npm publish --provenance`.
+
+**After merge**
+
+Once MCP changes land on `main`, CI publishes the next patch if checks pass. A follow-up version-sync commit is only needed when the manifests changed; the bot's `GITHUB_TOKEN` push and `[skip ci]` prevent a recursive publish.

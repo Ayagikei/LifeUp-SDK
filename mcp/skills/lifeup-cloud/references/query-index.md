@@ -24,7 +24,7 @@ Use this reference for LifeUp Cloud request parameters and complete HTTP respons
 | `query/mcp-differences` | MCP differences | - |
 | `query/api-common-sources` | Sources and version scope | - |
 | `query/task-history-models` | Task and history data models | `task-fields`, `task-times`, `reward-item`, `subtask`, `count-progress`, `repeat-end-condition`, `reward-amounts`, `api-task-model-sources` |
-| `query/task-queries` | Task and history queries | `get-tasks`, `get-history`, `daily-report`, `api-task-queries-sources` |
+| `query/task-queries` | Task and history queries | `get-tasks`, `get-smart-list-tasks`, `get-history`, `daily-report`, `api-task-queries-sources` |
 | `query/reward-journals` | EXP and coin journal queries | `journal-parameters`, `get-exp-records`, `get-coin-records`, `journal-totals`, `api-ledgers-sources` |
 | `query/get-items` | Items and categories | `model-shop-item`, `get-items-categories`, `model-shop-category`, `get-tasks-categories`, `model-task-category` |
 | `query/get-skills` | Skills and skill groups | `model-skill`, `get-skill-groups`, `model-skill-group` |

@@ -29,7 +29,7 @@ Do not dump `/tasks` with `detail=true`.
 
 | resource | HTTP | Filter | Paging |
 |---|---|---|---|
-| `tasks` | `GET /tasks` or `/tasks/{categoryId}` | `categoryId` | client slice |
+| `tasks` | `GET /tasks`, `/tasks/{categoryId}`, or `/smart_lists/{type}/tasks` | `categoryId` or `smartListType` (`daily`/`weekly`/`monthly`; not both) | client slice |
 | `task_categories` | `GET /tasks_categories` | | client |
 | `history` | `GET /history` | `gid` | **server** `offset`/`limit` |
 | `items` | `GET /items`, `/items/{categoryId}`, `?id=` | `categoryId` or `ids` | client |
@@ -72,13 +72,14 @@ From LifeUp ContentProvider (not wiki). Compact rows keep these.
 | resource | field | values |
 |---|---|---|
 | `tasks` / `history` | `status` | `0` unfinished · `1` done · `2` overdue · `3` given up |
+| `tasks` / `history` | `isFrozen` | bool or `null`; independent of `status` (`0` can still be frozen). Provider + Cloud must expose the column; `null`/omitted on old Apps is unknown, not `false`. Compact rows keep `isFrozen` when present; list endpoints do not filter by it — filter in the client. Full semantics: `help` `query/task-history-models`. |
 | `tasks` | `frequency` | `0` once · `1` daily · `N>1` every N days · `-1` unlimited · `-3` Ebbinghaus · `-4` monthly · `-5` yearly |
 | `tasks` | `weekdays` | `1,3,5` (Mon=1 … Sun=7). Empty when not weekday mode. v1.106.0+ |
 | `tasks` | `importance` / `difficulty` | Integer `1`–`4` ascending on `GET /tasks` when the task-list Provider exposes the `importance` / `difficulty` columns, backed by the App model's `taskUrgencyDegree` / `taskDifficultyDegree` properties respectively; `null` on older providers. `/history` JSON uses `null` because that Provider omits the columns (not because the App lacks stored values). **Not** included in MCP compact rows — use `detail=true` or read HTTP/`help` `query/task-history-models`. |
 | `tasks` | `repeatEndCondition.mode` | `COUNT` / `DATE` (writes use 0/1) |
 | `tasks` | `repeatEndCondition.behavior` | `TERMINATE` / `FREEZE` (writes use 0/1) |
 | `task_categories` | `status` | `0` normal · `1` archived |
-| `task_categories` | `type` | `<10` normal list · `10` daily · `11` weekly · `12` monthly · `20` doing |
+| `task_categories` | `type` | `<10` normal list · `10` daily · `11` weekly · `12` monthly |
 | `achievements` | `status` | `0` locked · `1` unlocked, reward unclaimed · `2` unlocked, claimed |
 | `achievements` | `type` | `0` normal · `1` subcategory |
 | `achievement_categories` | `type` | `0` user · `1` system |

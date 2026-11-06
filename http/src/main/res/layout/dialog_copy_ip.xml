@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="8dp">
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/copy_format"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:checkedButton="@id/format_ip"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/format_ip"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            android:paddingHorizontal="8dp"
+            android:text="@string/copy_ip_only" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/format_port"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            android:paddingHorizontal="8dp"
+            android:text="@string/copy_port" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/format_ip_port"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="48dp"
+            android:paddingHorizontal="8dp"
+            android:text="@string/copy_ip_with_port" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <ListView
+        android:id="@+id/ip_addresses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:divider="@null" />
+</LinearLayout>

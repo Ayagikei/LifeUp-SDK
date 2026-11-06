@@ -31,7 +31,7 @@ GET http://{host:port}/tasks/1
   "message": "success",
   "data": [{
     "id": 101, "gid": 10, "name": "Read a chapter", "notes": "",
-    "status": 0, "startTime": 1792108800000, "deadline": 1792195199999,
+    "status": 0, "isFrozen": false, "startTime": 1792108800000, "deadline": 1792195199999,
     "remindTime": 0, "frequency": 1, "weekdays": "", "importance": 3, "difficulty": 2,
     "exp": 5, "skillIds": [2], "coin": 10, "coinVariable": 0,
     "itemId": 0, "itemAmount": 0, "words": "", "categoryId": 1,
@@ -43,6 +43,36 @@ GET http://{host:port}/tasks/1
 ```
 
 **Behavior and errors:** list selection/order follows LifeUp's task-list logic; this endpoint does not promise ordering by completion time. A successful `data: []` means the selected task list returned no records. Permission/provider failures use the [common error wrapper](https://docs.lifeupapp.fun/en/#/guide/api-reference?id=response-errors "help topic query/response-errors"); they are not empty arrays. For completion reporting, use `/history` below rather than this route's `endTime`.
+
+> [!NOTE]
+> Default `/tasks`, `/tasks/-1` (All), and smart lists queried by a known smart-list category ID apply the same archived/deleted/missing-source filtering as the App smart-list views. Direct `/tasks/{categoryId}` for a specific normal list—including an archived one—still returns that list's unfinished tasks. Prefer [GET /smart_lists/{type}/tasks](https://docs.lifeupapp.fun/en/#/guide/api-reference?id=get-smart-list-tasks "help topic query/task-queries") when you need daily/weekly/monthly members without enabling smart lists or resolving IDs.
+
+### GET /smart_lists/{type}/tasks :id=get-smart-list-tasks
+
+Query **unfinished** tasks for the daily, weekly, or monthly smart list using App date/week/month rules. Smart lists do not need to be enabled in the App, and callers do not need a smart-list category ID. The response is the same flat `Task[]` as [GET /tasks](https://docs.lifeupapp.fun/en/#/guide/api-reference?id=get-tasks "help topic query/task-queries"); each record keeps its original normal-list `categoryId`. This route is read-only: it does not create, enable, or restore smart-list categories or change list preferences; App week-start, date, and frozen-task rules are unchanged.
+
+| Parameter | Location | Type | Required | Default / behavior |
+| --- | --- | --- | --- | --- |
+| `type` | Path | string | Yes | Lowercase `daily`, `weekly`, or `monthly` only. |
+
+No query parameters, pagination, or `categoryId` on this route.
+
+```text
+GET http://{host:port}/smart_lists/daily/tasks
+GET http://{host:port}/smart_lists/weekly/tasks
+GET http://{host:port}/smart_lists/monthly/tasks
+content://net.sarasarasa.lifeup.provider.api/smart_lists/daily/tasks
+```
+
+SDK: `TasksApi.listSmartListTasks(SmartListType.DAILY)` (also `WEEKLY`, `MONTHLY`).
+
+**Sorting:** When a category row exists for that smart type—even if disabled—saved sort preferences apply. When no row was ever created, ordering follows the All list (`-1`) configuration, not whichever list is open in the App UI.
+
+**Legacy ID path:** `/tasks_categories` may return enabled smart lists with `type` `10`/`11`/`12` and a real `id` (for example `{"id":37,"type":10,...}` → `GET /tasks/37`). Type is not an ID; use the returned `id` rather than substituting `10`/`11`/`12` for `categoryId` (a normal or smart list can legitimately have `id` `10`, `11`, or `12`).
+
+**Errors:** Invalid `type` returns HTTP `200` with body `code=500` and a message containing `invalid parameter`; the backend query is not run. Paths missing the `type` segment or omitting the `/tasks` segment return HTTP `404`. Provider permission failures use the [common error wrapper](https://docs.lifeupapp.fun/en/#/guide/api-reference?id=response-errors "help topic query/response-errors") (for example body `code=10001` when the Cursor is null). App versions without this URI surface an unknown-path error; do not fall back to All tasks.
+
+**MCP:** `list_tasks({ smartListType: "daily" })` or `list_data({ resource: "tasks", smartListType: "daily" })`. `smartListType` excludes `categoryId` (including `0`) and is rejected on non-task resources. Compact/detail output and client-side paging match other task list calls.
 
 ### GET /history :id=get-history
 
@@ -69,7 +99,7 @@ GET http://{host:port}/history?offset=0&limit=100&gid=10
   "message": "success",
   "data": [{
     "id": 100, "gid": 10, "name": "Read a chapter", "notes": "",
-    "status": 1, "startTime": 1792022400000, "deadline": 1792108799999,
+    "status": 1, "isFrozen": true, "startTime": 1792022400000, "deadline": 1792108799999,
     "remindTime": 0, "frequency": 1, "weekdays": "", "importance": null, "difficulty": null,
     "exp": 5, "skillIds": [2], "coin": 10, "coinVariable": 0,
     "itemId": 0, "itemAmount": 0, "words": "", "categoryId": 1,

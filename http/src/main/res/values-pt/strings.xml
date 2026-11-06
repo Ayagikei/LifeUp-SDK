@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">O Android bloqueou a inicialização do serviço em primeiro plano a partir do segundo plano. Abra o app e tente novamente.</string>
     <string name="server_error_unknown">Erro de inicialização desconhecido</string>
     <string name="ipAddressUnknown">Nenhum endereço IP (conectado ao Wi-Fi?)</string>
+    <string name="copy_ip_address">Copiar IP</string>
+    <string name="copy_ip_dialog_title">Copiar endereço de rede</string>
+    <string name="copy_port">Porta</string>
+    <string name="copy_ip_with_port">IP:Porta</string>
     <string name="app_introduction"><![CDATA[Ferramenta de extensão para <a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> que transforma o telefone em uma ponte API. Controle o LifeUp pelo PC ou outros dispositivos, crie integrações ou use agentes IA via MCP — veja <b>Documentação</b> e <b>MCP &amp; Skills</b> abaixo. Instale o LifeUp primeiro.]]></string>
-    <string name="localIpAddressMessage">Conectado ao(s) seguinte(s) IP(s):\n%1$s\n\nDependendo da sua rede, pode haver vários endereços IP pertencentes a segmentos diferentes. Em uma LAN comum, normalmente você deve escolher o endereço no formato 192.168.x.x.\nQuando o serviço for iniciado, você poderá abri-lo no seu computador conectado ao mesmo Wi-Fi.\n\nSe o endereço IP exibido aqui não estiver correto, você também pode verificar o seu IP local nas configurações de Wi-Fi. A porta do servidor é 13276.</string>
+    <string name="localIpAddressMessage">Conectado ao(s) seguinte(s) IP(s):\n%1$s</string>
+    <string name="local_ip_address_hint">Dependendo da sua rede, pode haver vários endereços IP pertencentes a segmentos diferentes. Em uma LAN comum, normalmente você deve escolher o endereço no formato 192.168.x.x.\nQuando o serviço for iniciado, você poderá abri-lo no seu computador conectado ao mesmo Wi-Fi.\n\nSe o endereço IP exibido aqui não estiver correto, você também pode verificar o seu IP local nas configurações de Wi-Fi. A porta do servidor é 13276.</string>
     <string name="overlay_permission">Permissão de sobreposição</string>
     <string name="overlay_permission_desc">Conceda permissão para mostrar páginas em segundo plano e abrir páginas da API do LifeUp (Android 10+)</string>
     <string name="title_introduction">Introdução</string>

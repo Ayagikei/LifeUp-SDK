@@ -58,7 +58,7 @@ Returns `ShopCategory[]`. Optional `include_hidden` defaults to `false`; only th
 
 ### GET /tasks_categories :id=get-tasks-categories
 
-Returns `TaskCategory[]`, including the all category and archived categories. No query parameters or pagination. The HTTP server does not expose `/tasks_categories/{id}`. Category sort/filter values are stored app preferences; this endpoint does not apply them as request filters.
+Returns `TaskCategory[]`, including the all category and archived categories. Enabled daily/weekly/monthly smart lists appear with `type` `10`/`11`/`12` and their stored category `id`; disabled smart lists are omitted. No query parameters or pagination. The HTTP server does not expose `/tasks_categories/{id}`. Category sort/filter values are stored app preferences; this endpoint does not apply them as request filters.
 
 ```json
 {"code":200,"message":"success","data":[{"id":1,"name":"Daily","isAsc":true,"sort":"order","filter":"","order":0,"status":0,"type":0}]}
@@ -75,4 +75,4 @@ Returns `TaskCategory[]`, including the all category and archived categories. No
 | `filter` | string | Stored grouping/filter preference. |
 | `order` | integer | Category order. |
 | `status` | integer | 0 normal; 1 archived. |
-| `type` | integer | 0 normal; smart lists use 10 daily, 11 weekly, 12 monthly, 20 doing. |
+| `type` | integer | 0 normal; smart lists use 10 daily, 11 weekly, 12 monthly. |

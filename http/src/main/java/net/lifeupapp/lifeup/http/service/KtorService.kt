@@ -27,6 +27,7 @@ import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -77,6 +78,8 @@ import net.lifeupapp.lifeup.api.content.records.StepRecordsApi
 import net.lifeupapp.lifeup.api.content.shop.ItemsApi
 import net.lifeupapp.lifeup.api.content.skills.SkillsApi
 import net.lifeupapp.lifeup.api.content.syntheis.SynthesisApi
+import net.lifeupapp.lifeup.api.content.tasks.SmartListType
+import net.lifeupapp.lifeup.api.content.tasks.Task
 import net.lifeupapp.lifeup.api.content.tasks.TasksApi
 import net.lifeupapp.lifeup.http.base.AppScope
 import net.lifeupapp.lifeup.http.BuildConfig
@@ -112,6 +115,34 @@ internal fun buildServerBaseUrl(host: String, port: Int): String {
     return "http://$host:$port"
 }
 
+internal fun parseSmartListType(raw: String?): SmartListType {
+    return SmartListType.fromPathSegment(raw)
+        ?: throw IllegalArgumentException("invalid parameter")
+}
+
+internal fun Route.registerSmartListTasksRoute(
+    queryTasks: (SmartListType) -> Result<List<Task>>,
+) {
+    route("/smart_lists") {
+        route("/{type}") {
+            route("/tasks") {
+                get {
+                    val type = try {
+                        parseSmartListType(call.parameters["type"])
+                    } catch (_: IllegalArgumentException) {
+                        call.respond(HttpResponse.error<String>("invalid parameter"))
+                        return@get
+                    }
+                    queryTasks(type).onSuccess {
+                        call.respondResource(it.wrapAsResponse())
+                    }.onFailure {
+                        call.respond(HttpResponse.error<String>(it))
+                    }
+                }
+            }
+        }
+    }
+}
 object KtorService : LifeUpService {
 
     private val _port = MutableStateFlow(Settings.DEFAULT_PORT)
@@ -487,6 +518,9 @@ object KtorService : LifeUpService {
                 }
             }
 
+            registerSmartListTasksRoute { type ->
+                LifeUpApi.getContentProviderApi<TasksApi>().listSmartListTasks(type)
+            }
             route("/history") {
                 get {
                     val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0

@@ -31,7 +31,8 @@ data class Task(
     val repeatEndCondition: TaskRepeatEndCondition? = null,
     val weekdays: String = "",
     val importance: Int? = null,
-    val difficulty: Int? = null
+    val difficulty: Int? = null,
+    val isFrozen: Boolean? = null
 ) {
     class Builder {
         private var id: Long? = null
@@ -61,6 +62,7 @@ data class Task(
         private var repeatEndCondition: TaskRepeatEndCondition? = null
         private var importance: Int? = null
         private var difficulty: Int? = null
+        private var isFrozen: Boolean? = null
 
         fun setId(id: Long?) = apply { this.id = id }
 
@@ -118,6 +120,7 @@ data class Task(
 
         fun setDifficulty(difficulty: Int?) = apply { this.difficulty = difficulty }
 
+        fun setIsFrozen(isFrozen: Boolean?) = apply { this.isFrozen = isFrozen }
         fun build(): Task {
             return Task(
                 id = id,
@@ -146,7 +149,8 @@ data class Task(
                 repeatEndCondition = repeatEndCondition,
                 weekdays = weekdays,
                 importance = importance,
-                difficulty = difficulty
+                difficulty = difficulty,
+                isFrozen = isFrozen
             )
         }
     }

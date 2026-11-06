@@ -7,8 +7,13 @@
     <string name="server_error_background_restricted">Android arka planda ön plan hizmeti başlatmayı engelledi. Uygulamayı açıp tekrar deneyin.</string>
     <string name="server_error_unknown">Bilinmeyen başlatma hatası</string>
     <string name="ipAddressUnknown">IP adresi yok (Wi-Fi bağlantısı var mı?)</string>
+    <string name="copy_ip_address">IP kopyala</string>
+    <string name="copy_ip_dialog_title">Ağ adresini kopyala</string>
+    <string name="copy_port">Port</string>
+    <string name="copy_ip_with_port">IP:Port</string>
     <string name="app_introduction"><![CDATA[<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">LifeUp</a> için telefonunuzu bir API köprüsüne dönüştüren bir eklenti. LifeUp\'ı bilgisayardan veya diğer cihazlardan yönetin, özel entegrasyonlar kurun veya MCP ile AI ajanları kullanın — aşağıdaki <b>Dokümantasyon</b> ve <b>MCP &amp; Skills</b> bölümlerine bakın. Önce LifeUp\'ı yükleyin.]]></string>
-    <string name="localIpAddressMessage">Aşağıdaki IP adres(ler)ine bağlanıldı:\n%1$s\n\nAğ yapınıza bağlı olarak burada farklı ağ segmentlerine ait birden fazla IP adresi görünebilir. Genel yerel ağ kullanımında genellikle 192.168.x.x biçimindeki adresi seçmelisiniz.\nHizmet başladığında, aynı Wi-Fi ağına bağlı bilgisayarınızdan bunu açabilirsiniz.\n\nBurada görünen IP adresi doğru değilse yerel IP adresinizi Wi-Fi ayarlarından doğrulayabilirsiniz. Sunucu portu 13276 olarak ayarlanmıştır.</string>
+    <string name="localIpAddressMessage">Aşağıdaki IP adres(ler)ine bağlanıldı:\n%1$s</string>
+    <string name="local_ip_address_hint">Ağ yapınıza bağlı olarak burada farklı ağ segmentlerine ait birden fazla IP adresi görünebilir. Genel yerel ağ kullanımında genellikle 192.168.x.x biçimindeki adresi seçmelisiniz.\nHizmet başladığında, aynı Wi-Fi ağına bağlı bilgisayarınızdan bunu açabilirsiniz.\n\nBurada görünen IP adresi doğru değilse yerel IP adresinizi Wi-Fi ayarlarından doğrulayabilirsiniz. Sunucu portu 13276 olarak ayarlanmıştır.</string>
     <string name="overlay_permission">Üstte gösterme izni</string>
     <string name="overlay_permission_desc">Arka plandan sayfa göstermek ve LifeUp API sayfalarını açmak için izin verin (Android 10+)</string>
     <string name="title_introduction">Giriş</string>

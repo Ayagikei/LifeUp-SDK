@@ -70,6 +70,11 @@ class TasksApi(private val context: Context) : ContentProviderApi {
         return Result.success(tasks)
     }
 
+    fun listSmartListTasks(type: SmartListType): Result<List<Task>> {
+        return querySmartListTasks(type) { uri, onEach ->
+            context.forEachContent(uri, onEach)
+        }
+    }
     fun listHistory(
         offset: Int = 0,
         limit: Int = 100,
@@ -96,6 +101,25 @@ class TasksApi(private val context: Context) : ContentProviderApi {
 
         return Result.success(tasks)
     }
+}
+
+internal fun smartListTasksContentUri(type: SmartListType): String {
+    return "${ContentProviderUrl.SMART_LISTS}/${type.pathSegment}/tasks"
+}
+
+internal fun querySmartListTasks(
+    type: SmartListType,
+    query: (uri: String, onEach: (Cursor) -> Unit) -> Unit,
+): Result<List<Task>> {
+    val tasks = mutableListOf<Task>()
+    try {
+        query(smartListTasksContentUri(type)) { cursor ->
+            tasks.add(cursor.toTask(includeEndTime = false, includeRepeatEndCondition = true))
+        }
+    } catch (e: Exception) {
+        return Result.failure(e)
+    }
+    return Result.success(tasks)
 }
 
 internal fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Boolean): Task {
@@ -140,6 +164,7 @@ internal fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: B
 
     val importance = getIntOrNull("importance")
     val difficulty = getIntOrNull("difficulty")
+    val isFrozen = getBooleanOrNull("isFrozen")
     return Task.builder {
         setId(id)
         setGid(gid)
@@ -168,6 +193,7 @@ internal fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: B
         setRepeatEndCondition(repeatEndCondition)
         setImportance(importance)
         setDifficulty(difficulty)
+        setIsFrozen(isFrozen)
     }
 }
 
