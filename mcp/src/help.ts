@@ -17,6 +17,7 @@ export const HELP_TOPICS = [
   "gaps",
   "broadcasts",
   "query-index",
+  "diagnostics",
 ] as const
 
 export type HelpTopic = (typeof HELP_TOPICS)[number] | KnownMethod
@@ -35,16 +36,21 @@ const FILES: Record<(typeof HELP_TOPICS)[number], string> = {
   gaps: "references/gaps.md",
   broadcasts: "references/broadcasts.md",
   "query-index": "references/query-index.md",
+  diagnostics: "references/diagnostics.md",
 }
 
 // Keep aligned with ANCHOR_RE in scripts/extract-wiki-queries.py.
 const QUERY_SECTION_TOPIC = /^query\/([a-z0-9]+(?:-[a-z0-9]+)*)$/
 
+export const DIAGNOSTICS_GUIDANCE =
+  "When a Cloud call fails, call get_diagnostics once and do not retry writes blindly. get_diagnostics is read-only and does not connect, save credentials, replace the session, or upload a report. Record the tool name, the original error, the time, and whether the phone was locked or in the background; at most one safe read-only recheck. The user reviews the sanitized result and may send it voluntarily through an existing feedback channel. Never upload, email, or open an issue automatically. Do not ask for the token, a full database, or unreviewed logcat."
+
 export const HELP_TOOL_DESCRIPTION =
-  "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. HTTP query parameters and response models: query-index, then query/<section> (e.g. query/task-history-models, query/task-queries). Also basics|discovery|query|tasks|economy|sample_icons|item_structures|qr_scanning|gaps|broadcasts."
+  "Read bundled LifeUp docs. Omit topic for the workflow. api-index then a method name for params. HTTP query parameters and response models: query-index, then query/<section> (e.g. query/task-history-models, query/task-queries). Also basics|discovery|query|tasks|economy|sample_icons|item_structures|qr_scanning|gaps|broadcasts|diagnostics. " +
+  DIAGNOSTICS_GUIDANCE
 
 export const HELP_TOPIC_DESCRIPTION =
-  "overview (default), discovery, basics, query, tasks, economy, api-index, a method name from api-index, sample_icons, item_structures, qr_scanning, gaps, broadcasts, query-index, or query/<section> such as query/task-history-models or query/task-queries."
+  "overview (default), discovery, basics, query, tasks, economy, api-index, a method name from api-index, sample_icons, item_structures, qr_scanning, gaps, broadcasts, query-index, diagnostics, or query/<section> such as query/task-history-models or query/task-queries."
 
 export function skillsDir(): string {
   return join(dirname(fileURLToPath(import.meta.url)), "..", "skills", "lifeup-cloud")
@@ -102,6 +108,7 @@ Workflow:
 2. Query with list_data / list_* (GET ContentProvider). Compact, prefer categoryId, page with hasMore. detail=true only when needed. Response fields: help query-index, then query/<section>. Feelings/achievements/synthesis/pomodoro: list_data resource=...
 3. Mutate with complete_task / add_task / reward / purchase_item. Read calls[].ok and calls[].data.
 4. Long-tail: call_api or call_api_batch. Default via=contentprovider (has results). via=launch is UI-only. Destructive methods need confirm=true.
-5. Docs: help (no topic) then help api-index / method name / basics / sample_icons / item_structures / qr_scanning. HTTP parameters and response models: help query-index, then query/<section> (e.g. query/task-history-models, query/task-queries). Pass raw param values — MCP encodes.
+5. Docs: help (no topic) then help api-index / method name / basics / sample_icons / item_structures / qr_scanning / diagnostics. HTTP parameters and response models: help query-index, then query/<section> (e.g. query/task-history-models, query/task-queries). Pass raw param values — MCP encodes.
+6. ${DIAGNOSTICS_GUIDANCE}
 
 Do not dump every task into context. id changes for repeating tasks; gid stays. Wiki may lag; Cloud HTTP is source of truth.`

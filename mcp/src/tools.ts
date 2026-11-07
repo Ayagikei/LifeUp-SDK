@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server"
 import { z } from "zod"
 import { assertCallableMethod } from "./methods.js"
-import { HELP_TOOL_DESCRIPTION, HELP_TOPIC_DESCRIPTION, readHelp } from "./help.js"
+import { DIAGNOSTICS_GUIDANCE, HELP_TOOL_DESCRIPTION, HELP_TOPIC_DESCRIPTION, readHelp } from "./help.js"
 
 import type { Session } from "./session.js"
 import type { LifeUpParamValue } from "./lifeup-url.js"
@@ -106,6 +106,14 @@ export function registerTools(server: McpServer, session: Session): void {
     const endpoint = await session.connect({ host, token })
     return text({ endpoint, ...session.status() })
   })
+
+  server.registerTool("get_diagnostics", {
+    description: `${DIAGNOSTICS_GUIDANCE} Optional host and token select a target for this read only; they are not saved, not written to the phone, and not echoed. local.connected, local.eventsSubscribed, and local.tokenSet describe the current session. Returns {local, cloud?, cloudError?}. cloudError.category is timeout, unauthorized, unsupported for an older Cloud without this route, or unavailable.`,
+    inputSchema: z.object({
+      host: z.string().optional().describe("Optional Cloud host like 192.168.1.8:13276. Not saved and not included in the result."),
+      token: z.string().optional().describe("Optional raw Authorization token for this read only. Not saved and not included in the result."),
+    }),
+  }, async ({ host, token }) => text(await session.getDiagnostics({ host, token })))
 
   server.registerTool("help", {
     description: HELP_TOOL_DESCRIPTION,

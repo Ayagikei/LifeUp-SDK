@@ -14,7 +14,7 @@ Phone: LifeUp **1.106.0+** and LifeUp Cloud **3.0.1+**, running, with "Read Life
 1. `discover` — mDNS `_lifeup._tcp`; auto-connects when exactly one Cloud is found. TXT `port` is HTTP.
 2. `connect` `{ host }` only if 0 or >1 instances. Token only if Cloud set one — raw `Authorization`, not Bearer.
 
-Details: `help` `discovery`. Errors / encoding / JSON: `help` `basics`. Built-in icons: `help` `sample_icons`. Shop effects / purchase limits: `help` `item_structures`. QR scan (phone app, not MCP): `help` `qr_scanning`.
+Details: `help` `discovery`. Errors / encoding / JSON: `help` `basics`. Built-in icons: `help` `sample_icons`. Shop effects / purchase limits: `help` `item_structures`. QR scan (phone app, not MCP): `help` `qr_scanning`. Ambiguous timeouts or failed `connect` / `/info`: `get_diagnostics`, `references/diagnostics.md`, and `help` `{ "topic": "diagnostics" }`.
 
 ## Common ops
 
