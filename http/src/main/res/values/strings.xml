@@ -70,6 +70,14 @@
     <string name="title_advanced">Advanced Settings</string>
     <string name="title_document">Documentation</string>
     <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="title_permissions">Permissions</string>
+    <string name="toggle_permissions">Show or hide permissions</string>
+    <string name="mcp_quick_start_title">Use with an AI agent</string>
+    <string name="mcp_quick_start_message">Copy this sentence and send it to an AI agent that supports MCP, such as Claude Code, WorkBuddy, or ChatGPT. The agent will follow the guide and finish the first connection.\n\n%1$s</string>
+    <string name="mcp_quick_start_prompt">Follow this guide to install LifeUp MCP and finish the first connection: %1$s</string>
+    <string name="mcp_quick_start_copy">Copy</string>
+    <string name="mcp_quick_start_guide">Detailed guide</string>
+    <string name="mcp_quick_start_copied">Copied. Send it to your AI agent.</string>
     <string name="wake_lock_duration">Wake Lock Duration</string>
     <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
     <string name="wake_lock_duration_error">Please enter a number between 1-60</string>

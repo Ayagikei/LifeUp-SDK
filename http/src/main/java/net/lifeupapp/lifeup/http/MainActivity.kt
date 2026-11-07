@@ -17,7 +17,6 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.RotateAnimation
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -199,12 +198,12 @@ class MainActivity : AppCompatActivity() {
             setupExpandablePanel(
                 binding.advancedHeader,
                 binding.btnToggleAdvanced,
-                binding.cardAdvanced
+                listOf(binding.cardAdvanced),
             )
             setupExpandablePanel(
                 binding.aboutHeader,
                 binding.btnToggleAbout,
-                binding.cardAbout
+                listOf(binding.cardAbout),
             )
 
             // Route both documentation entry points to the same action.
@@ -214,12 +213,18 @@ class MainActivity : AppCompatActivity() {
             binding.btnDocument.setOnClickListener {
                 openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
             }
-            binding.mcpHeader.setOnClickListener {
-                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
-            }
-            binding.btnMcp.setOnClickListener {
-                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
-            }
+            binding.mcpHeader.setOnClickListener { showMcpQuickStartDialog() }
+            binding.btnMcp.setOnClickListener { showMcpQuickStartDialog() }
+            setupExpandablePanel(
+                binding.permissionHeader,
+                binding.btnTogglePermissions,
+                listOf(
+                    binding.includeOverlayConfig.root,
+                    binding.includeBatteryConfig.root,
+                    binding.includeContentProviderPermission.root,
+                ),
+                expanded = !permissionsReady(),
+            )
 
             lifecycleScope.launchWhenResumed {
                 withContext(Dispatchers.IO) {
@@ -501,34 +506,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupExpandablePanel(
         headerView: View,
         toggleButton: AppCompatImageButton,
-        contentCard: MaterialCardView
+        contentViews: List<View>,
+        expanded: Boolean = false,
     ) {
-        val rotateUp = RotateAnimation(
-            0f, -180f,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        ).apply {
-            duration = 200
-            fillAfter = true
-        }
-
-        val rotateDown = RotateAnimation(
-            -180f, 0f,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        ).apply {
-            duration = 200
-            fillAfter = true
-        }
+        contentViews.forEach { it.isVisible = expanded }
+        if (expanded) toggleButton.rotation = 180f
 
         fun togglePanel() {
-            if (contentCard.visibility == View.VISIBLE) {
-                contentCard.visibility = View.GONE
-                toggleButton.startAnimation(rotateDown)
-            } else {
-                contentCard.visibility = View.VISIBLE 
-                toggleButton.startAnimation(rotateUp)
-            }
+            val show = contentViews.first().visibility != View.VISIBLE
+            contentViews.forEach { it.isVisible = show }
+            toggleButton.animate().rotation(if (show) 180f else 0f).setDuration(200).start()
         }
 
         headerView.setOnClickListener { togglePanel() }
@@ -585,6 +572,51 @@ class MainActivity : AppCompatActivity() {
             .show()
         dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
             setLineSpacing(0f, 1.3f)
+        }
+    }
+    private fun permissionsReady(): Boolean {
+        val overlayReady = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+            android.provider.Settings.canDrawOverlays(this)
+        val batteryReady = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+            powerManager.isIgnoringBatteryOptimizations(packageName)
+        return overlayReady && batteryReady && checkContentProviderAvailable()
+    }
+
+    private fun showMcpQuickStartDialog() {
+        val prompt = getString(
+            R.string.mcp_quick_start_prompt,
+            if (isSimplifiedChinese()) Val.MCP_QUICK_START_URL_CN else Val.MCP_QUICK_START_URL,
+        )
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.mcp_quick_start_title)
+            .setMessage(getString(R.string.mcp_quick_start_message, prompt))
+            .setPositiveButton(R.string.mcp_quick_start_copy) { _, _ ->
+                copyPlainText(prompt)
+            }
+            .setNeutralButton(R.string.mcp_quick_start_guide) { _, _ ->
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+        dialog.findViewById<TextView>(android.R.id.message)?.setLineSpacing(0f, 1.3f)
+    }
+
+    private fun isSimplifiedChinese(): Boolean {
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales.get(0)
+        } else {
+            @Suppress("DEPRECATION")
+            resources.configuration.locale
+        }
+        return locale.language == "zh" &&
+            locale.country.toLowerCasePreservingASCIIRules() == "cn"
+    }
+
+    private fun copyPlainText(value: String) {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("lifeup-mcp", value))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(this, R.string.mcp_quick_start_copied, Toast.LENGTH_SHORT).show()
         }
     }
 

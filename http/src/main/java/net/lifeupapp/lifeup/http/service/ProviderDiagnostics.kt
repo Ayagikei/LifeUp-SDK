@@ -160,6 +160,7 @@ internal class ProviderDiagnosticTrace internal constructor(
         return ProviderDiagnosticRecord(
             id = id,
             operation = operation,
+            api = diagnosticApi(route),
             route = route,
             batchSize = batchSize,
             phase = phase,
@@ -195,6 +196,7 @@ internal data class ProviderDiagnosticsSnapshot(
 internal data class ProviderDiagnosticRecord(
     val id: Long,
     val operation: String,
+    val api: String,
     val route: String,
     val batchSize: Int? = null,
     val phase: String,
@@ -209,6 +211,45 @@ private fun diagnosticOperation(operation: String): String = when (operation) {
     PROVIDER_OPERATION_READ, PROVIDER_OPERATION_COMMAND -> operation
     else -> "redacted"
 }
+
+internal fun diagnosticApi(route: String): String {
+    val safeRoute = sanitizeProviderRoute(route)
+    return DIAGNOSTIC_APIS[safeRoute] ?: "redacted"
+}
+
+private val DIAGNOSTIC_APIS = mapOf(
+    "GET /info" to "info.get",
+    "GET /tasks" to "tasks.list",
+    "GET /tasks/{id}" to "tasks.list_category",
+    "GET /smart_lists/{type}/tasks" to "tasks.list_smart",
+    "GET /tasks_categories" to "tasks.list_categories",
+    "GET /history" to "tasks.list_history",
+    "GET /items" to "items.list",
+    "GET /items/{listId}" to "items.list_category",
+    "GET /items_categories" to "items.list_categories",
+    "GET /skills" to "skills.list",
+    "GET /skill_groups" to "skills.list_groups",
+    "GET /achievements" to "achievements.list",
+    "GET /achievements/{id}" to "achievements.list_category",
+    "GET /achievement_categories" to "achievements.list_categories",
+    "GET /achievement_conditions/{id}" to "achievements.list_conditions",
+    "GET /feelings" to "feelings.list",
+    "GET /synthesis" to "synthesis.list",
+    "GET /synthesis/{id}" to "synthesis.get",
+    "GET /synthesis_categories" to "synthesis.list_categories",
+    "GET /synthesis_categories/{id}" to "synthesis.list_category",
+    "GET /pomodoro_records" to "pomodoro.list_records",
+    "GET /coin" to "coin.get",
+    "GET /coin_records" to "coin.list_records",
+    "GET /inventory_records" to "inventory.list_records",
+    "GET /exp_records" to "exp.list_records",
+    "GET /step_records" to "steps.list_records",
+    "GET /level_defines" to "levels.get",
+    "GET /statistics" to "statistics.get",
+    "GET /data/export" to "data.export",
+    "GET /api/contentprovider" to "api.command",
+    "POST /api/contentprovider" to "api.command",
+)
 
 private fun elapsedMillis(startNanos: Long, endNanos: Long): Long {
     val delta = endNanos - startNanos
