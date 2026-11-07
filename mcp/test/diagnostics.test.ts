@@ -37,6 +37,7 @@ const cloudPayload = {
   active: [{
     id: 1,
     operation: "read",
+    api: "tasks.list",
     route: "GET /tasks",
     batchSize: 1,
     phase: "executing",
@@ -49,6 +50,7 @@ const cloudPayload = {
   recent: [{
     id: 2,
     operation: "command",
+    api: "api.command",
     route: "POST /api/contentprovider",
     batchSize: 2,
     phase: "failed",
@@ -580,6 +582,7 @@ describe("get_diagnostics", { concurrency: false }, () => {
       const fillers = Array.from({ length: 63 }, (_, index) => ({
         id: index + 3,
         operation: "read" as const,
+        api: "tasks.list_category",
         route: "GET /tasks/{id}",
         phase: "completed" as const,
         elapsedMs: 0,
@@ -588,6 +591,7 @@ describe("get_diagnostics", { concurrency: false }, () => {
       const omitted = {
         id: 8,
         operation: "command" as const,
+        api: "api.command",
         route: "GET /history",
         phase: "dispatching" as const,
         elapsedMs: 2,
@@ -596,6 +600,7 @@ describe("get_diagnostics", { concurrency: false }, () => {
       const nullable = {
         id: 7,
         operation: "redacted" as const,
+        api: "redacted",
         route: "redacted",
         batchSize: null,
         phase: "cancelled_before_start" as const,
@@ -647,6 +652,7 @@ describe("get_diagnostics", { concurrency: false }, () => {
             ...cloudPayload,
             active: [{
               ...cloudPayload.active[0],
+              api: "CANARY_API",
               route: "GET /tasks?token=CANARY_ROUTE",
               errorType: "java.lang.IllegalStateException: CANARY_ERR",
             }],
@@ -704,6 +710,7 @@ describe("get_diagnostics", { concurrency: false }, () => {
 
         mode = "unsafe"
         const sanitized = await session.getDiagnostics({ host: cloud.host })
+        assert.equal(sanitized.cloud?.active[0]?.api, "redacted")
         assert.equal(sanitized.cloud?.active[0]?.route, "redacted")
         assert.equal(sanitized.cloud?.active[0]?.errorType, null)
         assert.equal(sanitized.cloudError, undefined)

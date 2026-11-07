@@ -59,6 +59,7 @@ Diagnostics history is kept only in process memory and is cleared on Cloud proce
 | `id` | Opaque id for this record |
 | `operation` | High-level operation label (`read`, `command`, or redacted) |
 | `route` | Route template (no raw query values) |
+| `api` | Stable API id such as `tasks.list` or `info.get`. A command batch is `api.command` and does not list its URLs. Unknown or unsafe routes use `redacted`. |
 | `batchSize` | Batch size when applicable |
 | `phase` | One of: `dispatching`, `executing`, `completed`, `failed`, `cancelled_before_start` |
 | `elapsedMs`, `dispatchMs`, `executionMs` | Timing buckets (observational) |
@@ -82,6 +83,15 @@ Recording diagnostics does not add a new business concurrency cap; it observes w
 3. Ask the user to review and optionally send a short report through their existing developer feedback channel (see template below). They redact whatever they choose; you do not upload, email, file issues, or export files on their behalf.
 4. Read phases and timings as observation windows, not guaranteed explanations.
 5. Only if needed to verify an uncertain write outcome, perform one focused read. Do not add catalog or list probes merely to test connectivity, or loop them when `/info` already hangs.
+### Connection layers
+
+Treat the three hops separately. Do not ask the user to send a developer report for an ordinary network or setup issue.
+
+1. **Computer to phone:** `discover` finds nothing and the shown IP cannot be reached. This is outside LifeUp and LifeUp Cloud. Ask the user to check the same Wi-Fi, IP, and port. Do not file it as an app bug.
+2. **Phone to LifeUp Cloud:** the phone is reachable, but the port or HTTP service is not. Ask the user to confirm Cloud is running. If it works in the foreground but not in the background, ask them to allow auto-start, remove battery restrictions, and lock Cloud in recents.
+3. **LifeUp Cloud to LifeUp:** HTTP responds, but data access fails or says LifeUp is unavailable. Ask the user to open LifeUp, grant **Read LifeUp Data**, and apply the same background permissions to LifeUp. Use `api` on a diagnostic row to name the stuck call, such as `tasks.list` or `info.get`.
+
+Only collect diagnostics when the service is reachable but the failing API, phase, or timing is still unclear. The user reviews the result before sending it.
 6. If diagnostics are unavailable, empty, or the service is unreachable, rely on local MCP context from `get_diagnostics` and label unknowns explicitly.
 
 ### Copyable report template (for the user)

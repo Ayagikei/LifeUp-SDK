@@ -37,8 +37,8 @@ const DIAGNOSTIC_OPERATIONS = ["read", "command", "redacted"] as const
 export type CloudDiagnosticRecord = {
   id: number
   operation: (typeof DIAGNOSTIC_OPERATIONS)[number]
+  api: string
   route: string
-  batchSize?: number | null
   phase: (typeof DIAGNOSTIC_PHASES)[number]
   elapsedMs: number
   dispatchMs?: number | null
@@ -147,6 +147,7 @@ const nullableInt = safeInt.nullable().optional()
 const recordSchema = z.object({
   id: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
   operation: z.enum(DIAGNOSTIC_OPERATIONS),
+  api: z.string().transform((value) => (/^(?:redacted|[a-z]+(?:\.[a-z_]+){1,3})$/.test(value) ? value : "redacted")),
   route: z.string().transform((value) => (SAFE_ROUTE.test(value) ? value : REDACTED_ROUTE)),
   batchSize: nullableInt,
   phase: z.enum(DIAGNOSTIC_PHASES),
