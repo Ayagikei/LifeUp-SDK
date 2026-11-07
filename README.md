@@ -68,10 +68,16 @@ From a local clone: `./scripts/install-mcp.sh` (builds MCP and upserts detected 
 
 **Flow:** `discover` → `list_tasks` / `list_data` → `complete_task` / `add_task` / `reward` / `call_api`.
 
+When `connect` or `/info` is failing or writes time out ambiguously, use MCP **`get_diagnostics`** (optional `{ host, token }`, does not persist session), HTTP **`GET /diagnostics`**, and MCP **`help`** topic **`diagnostics`** — workflow and schema: [`mcp/skills/lifeup-cloud/references/diagnostics.md`](mcp/skills/lifeup-cloud/references/diagnostics.md).
+
 - **Cursor / Claude Desktop:** MCP only — `help` reads bundled skills; do not install a second copy.
 - **Claude Code / Pi / custom agents:** copy [`mcp/skills/lifeup-cloud/`](mcp/skills/lifeup-cloud/) or point your skill path at it.
 
 Details: [`mcp/README.md`](mcp/README.md) · [Wiki: MCP & Skills (EN)](https://docs.lifeupapp.fun/en/#/guide/api_mcp) · [Wiki (ZH)](https://docs.lifeupapp.fun/zh-cn/guide/api_mcp.md)
+
+### MCP client and Cloud
+
+`@lifeup/mcp` uses one timeout budget per HTTP request to **LifeUp Cloud** (headers and body share that budget). Optional env `LIFEUP_TIMEOUT_MS` is a **1**–**120000** ms inclusive integer; invalid values make the MCP process exit at startup without altering saved connection details — see [`mcp/README.md`](mcp/README.md). Cloud runs blocking ContentProvider query/call work on **`Dispatchers.IO`**. There is **no** separate Cloud-wide read/command permit pair, admission queue, or documented busy **`503`** lane for that; Kotlin coroutine dispatch limits, Binder, and LifeUp in-process locks/transactions still cap how much business I/O can run in parallel, so parallelism is **not** unbounded. URLs inside one `call_api_batch` execute **sequentially**; the same app locks/transactions still apply. A client timeout or disconnect is **not** proof that a write was cancelled or that LifeUp stopped processing. HTTP **503** responses may still appear for **other** reasons. Agents can read the condensed table in [`mcp/skills/lifeup-cloud/references/basics.md`](mcp/skills/lifeup-cloud/references/basics.md).
 
 ### Data & events
 

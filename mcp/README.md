@@ -67,8 +67,18 @@ Optional env:
 - `LIFEUP_HOST=192.168.1.8:13276`
 - `LIFEUP_TOKEN=...` (raw Authorization value, never persisted)
 - `LIFEUP_MCP_CONFIG=/path/to/config.json`
+- `LIFEUP_TIMEOUT_MS` — override the default **30000** ms HTTP timeout for each Cloud request (headers and body share one budget; it does not reset partway through). Must be a **positive integer** milliseconds value from **1** through **120000** inclusive. Any other value makes the MCP process exit at startup. Saved `connect` host, port, and token are **not** cleared or altered by this setting.
 
 If Cloud set an API token, pass it to `connect` or `LIFEUP_TOKEN`. Header is the raw token, not `Bearer`.
+
+## Troubleshooting (client ↔ Cloud)
+
+These notes describe the **documented MCP↔Cloud contract** in this repository (implementation may roll out in a later `@lifeup/mcp` release).
+
+- **Timeouts:** Errors name the HTTP method, path and configured waiting budget. Headers and the body share that budget; query strings are omitted.
+- **Command or launch timeouts:** The result is unknown: Cloud or LifeUp may still be working. Check state before repeating a mutation. MCP does not automatically retry, reconnect or resend commands.
+- **Concurrency (ContentProvider I/O):** Cloud runs blocking Provider query/call work on **`Dispatchers.IO`**. There is no separate documented Cloud-wide read/command permit pair, admission queue, or busy **`503`** for that — Kotlin coroutine dispatch limits, Binder, and LifeUp in-process locks/transactions still bound how much business I/O can run in parallel, so it is not unlimited. URLs within one `call_api_batch` still execute **sequentially**; the same app locks/transactions still apply. A client timeout or disconnect is not proof that a write was cancelled or that LifeUp stopped processing. HTTP **503** responses may still occur for other reasons; do not read every **503** as “provider busy before invoke” without matching codes/messages.
+- **`/info` vs open port:** The root page or an open TCP port does not prove Provider access works. A fresh `GET /info` reads versions without taking the Scheme mutex, but can still wait on LifeUp startup or Binder and does not make later business calls immune to those delays. MCP `status` only reports last-known connection information.
 
 ## Skills (in this repo)
 
@@ -88,6 +98,7 @@ There is no separate npm skill package. Fork the folder if you want a custom wor
 - **`help` `query`** — compact MCP list/read usage (`list_data`, paging, compact vs `detail=true`).
 - **`help` `query-index`** → **`help` `query/<anchor>`** — generated HTTP query reference (wiki `api-reference.md` via `mcp/scripts/extract-wiki-queries.py`).
 - **`help` `api-index`** → **`help` `<method>`** — URL Scheme / action parameters (unchanged).
+- **`get_diagnostics`** / **`GET /diagnostics`** — safe Cloud process snapshot without a successful `connect` or `/info`; optional `{ host, token }` only for this call. See bundled skill [`skills/lifeup-cloud/references/diagnostics.md`](skills/lifeup-cloud/references/diagnostics.md). Use **`help`** topic **`diagnostics`** (`{ "topic": "diagnostics" }`) alongside that file.
 
 ## Releases
 

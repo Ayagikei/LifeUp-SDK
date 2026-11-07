@@ -1,13 +1,21 @@
 import { LifeUpClient } from "./client.js"
 import {
+  DEFAULT_REQUEST_TIMEOUT_MS,
   envHost,
   loadConfig,
   saveConfig,
   parseHostInput,
+  resolveRequestTimeoutMs,
   resolveToken,
   tokenToPersist,
 } from "./config.js"
 import { discoverCloud, type CloudEndpoint } from "./discover.js"
+import {
+  acceptCloudDiagnostics,
+  classifyCloudError,
+  localDiagnostics,
+  type DiagnosticsReport,
+} from "./diagnostics.js"
 import { versionAdvice } from "./versions.js"
 
 export type CloudInfo = {
@@ -115,6 +123,57 @@ export class Session {
       if (this.pushed.length > 200) this.pushed.shift()
     })
     return { subscribed: true, eventWs: true, after, latestId: page.latestId, broadcasts: page.broadcasts }
+  }
+
+  async getDiagnostics(input: { host?: string; token?: string } = {}): Promise<DiagnosticsReport> {
+    const local = this.localReport()
+    try {
+      const client = await this.diagnosticsClient(input, local.requestTimeoutMs)
+      if (!client) return { local, cloudError: { category: "unavailable" } }
+      const accepted = acceptCloudDiagnostics(await client.get("/diagnostics"))
+      if (!accepted.ok) return { local, cloudError: accepted.cloudError }
+      return { local, cloud: accepted.cloud }
+    } catch (error) {
+      return { local, cloudError: classifyCloudError(error) }
+    }
+  }
+
+  private localReport() {
+    return localDiagnostics({
+      requestTimeoutMs: this.configuredTimeout(),
+      connected: this.client != null,
+      eventsSubscribed: this.eventSub != null,
+      tokenSet: Boolean(this.client?.token),
+      info: this.info,
+    })
+  }
+
+  private configuredTimeout(): number {
+    if (this.client) return this.client.requestTimeoutMs
+    try {
+      return resolveRequestTimeoutMs()
+    } catch {
+      return DEFAULT_REQUEST_TIMEOUT_MS
+    }
+  }
+
+  private async diagnosticsClient(
+    input: { host?: string; token?: string },
+    timeoutMs: number,
+  ): Promise<LifeUpClient | undefined> {
+    const hostText = input.host?.trim()
+    const tokenOverride = input.token !== undefined
+    if (!hostText && !tokenOverride && this.client) return this.client
+
+    const saved = await loadConfig()
+    let endpoint: CloudEndpoint | undefined
+    if (hostText) endpoint = parseHostInput(hostText)
+    else if (this.client) endpoint = { host: this.client.host, port: this.client.port, name: this.endpoint?.name ?? "direct" }
+    else endpoint = envHost() ?? (saved.host && saved.port ? { host: saved.host, port: saved.port, name: "saved" } : undefined)
+    if (!endpoint) return undefined
+    // Saved tokens stay bound to their host. Never copy the live session token onto another target.
+    const token = resolveToken(tokenOverride ? { token: input.token } : {}, saved, endpoint)
+    return new LifeUpClient(endpoint.host, endpoint.port, token, fetch, timeoutMs)
   }
 
   private async resolveEndpoint(
