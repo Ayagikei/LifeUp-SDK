@@ -41,3 +41,10 @@ commit-prompt.txt
 # npx github:Ayagikei/LifeUp-SDK wrapper (see package.json)
 /node_modules/
 /package-lock.json
+
+# Local MCP, agent, and planning state
+.mcp.local.json
+.unipi/
+/plans/
+__pycache__/
+*.pyc
