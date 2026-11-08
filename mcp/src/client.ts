@@ -5,7 +5,17 @@ import type { CallVia } from "./results.js"
 export const SUCCESS = 200
 export const LIFEUP_NOT_RUNNING = 10001
 export const CONTENT_PROVIDER_ERROR = 10002
+export const CLOUD_BUSY = 10003
 
+/** Opt-in Cloud admission header. One value, attached to every Cloud HTTP request. */
+export const LIFEUP_CONCURRENCY_LIMITED = {
+  name: "X-LifeUp-Concurrency",
+  value: "limited",
+} as const
+
+const CLOUD_BUSY_LEAD = "LifeUp Cloud is busy; request not started. Retry later"
+const CLOUD_BUSY_MESSAGE = `${CLOUD_BUSY_LEAD}.`
+const CLOUD_BUSY_COMMAND_MESSAGE = `${CLOUD_BUSY_LEAD}; the command was not executed.`
 
 export type Envelope<T> = {
   code: number
@@ -41,9 +51,17 @@ export class LifeUpHttpError extends Error {
   }
 }
 
-export function decodeEnvelope<T>(status: number, body: string): Envelope<T> {
+export function decodeEnvelope<T>(
+  status: number,
+  body: string,
+  method: "GET" | "POST" = "GET",
+): Envelope<T> {
   if (status === 401) {
     throw new LifeUpHttpError("token required or invalid", 401)
+  }
+  if (status === 503) {
+    const busy = cloudBusyError(body, method)
+    if (busy) throw busy
   }
   if (status < 200 || status >= 300) {
     throw new LifeUpHttpError(`HTTP ${status}`, status)
@@ -68,6 +86,19 @@ export function decodeEnvelope<T>(status: number, body: string): Envelope<T> {
     throw new LifeUpHttpError(parsed.message || `LifeUp error ${parsed.code}`, status, parsed.code)
   }
   return parsed
+}
+
+function cloudBusyError(body: string, method: "GET" | "POST"): LifeUpHttpError | undefined {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(body)
+  } catch {
+    return undefined
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return undefined
+  if ((parsed as { code?: unknown }).code !== CLOUD_BUSY) return undefined
+  const message = method === "POST" ? CLOUD_BUSY_COMMAND_MESSAGE : CLOUD_BUSY_MESSAGE
+  return new LifeUpHttpError(message, 503, CLOUD_BUSY)
 }
 
 export type FetchLike = (
@@ -172,8 +203,12 @@ type CachedGet = { etag: string; data: unknown }
 
 export class LifeUpClient {
   private readonly resourceCache = new Map<string, CachedGet>()
+  // Key is this client's token plus the full href (path and query). Joiners share the
+  // first caller's promise, so they also share that caller's deadline and do not start
+  // a second timer or fetch. The entry is removed when the promise settles. ETag and
+  // 304 handling stay inside the shared call.
+  private readonly inflightGets = new Map<string, Promise<unknown>>()
   private readonly timeoutMs: number
-
   constructor(
     readonly host: string,
     readonly port: number,
@@ -202,9 +237,13 @@ export class LifeUpClient {
     url: string,
     init: { method?: string; headers?: Record<string, string>; body?: string },
   ): Promise<GuardedResponse> {
+    const headers = {
+      ...(init.headers ?? {}),
+      [LIFEUP_CONCURRENCY_LIMITED.name]: LIFEUP_CONCURRENCY_LIMITED.value,
+    }
     const deadline = startDeadline(init.method ?? "GET", url, this.timeoutMs)
     try {
-      const response = await deadline.guard(this.fetchImpl(url, { ...init, signal: deadline.signal }))
+      const response = await deadline.guard(this.fetchImpl(url, { ...init, headers, signal: deadline.signal }))
       return {
         status: response.status,
         headers: response.headers,
@@ -227,7 +266,7 @@ export class LifeUpClient {
 
   private async readGet<T>(url: string, response: GuardedResponse): Promise<T> {
     const body = await response.text()
-    const envelope = decodeEnvelope<T>(response.status, body)
+    const envelope = decodeEnvelope<T>(response.status, body, "GET")
     const data = envelope.data as T
     const etag = response.headers?.get("etag")
     if (etag) this.remember(url, etag, data)
@@ -235,7 +274,7 @@ export class LifeUpClient {
     return data
   }
 
-  async get<T>(path: string, query: Record<string, string | number | number[] | undefined> = {}): Promise<T> {
+  private hrefFor(path: string, query: Record<string, string | number | number[] | undefined>): string {
     const url = new URL(path, this.baseUrl)
     for (const [key, value] of Object.entries(query)) {
       if (value === undefined) continue
@@ -245,8 +284,29 @@ export class LifeUpClient {
         url.searchParams.append(key, String(value))
       }
     }
+    return url.toString()
+  }
 
-    const href = url.toString()
+  private inflightGetKey(href: string): string {
+    return `${this.token ?? ""}\0${href}`
+  }
+
+  async get<T>(path: string, query: Record<string, string | number | number[] | undefined> = {}): Promise<T> {
+    const href = this.hrefFor(path, query)
+    const key = this.inflightGetKey(href)
+    const existing = this.inflightGets.get(key)
+    if (existing) return existing as Promise<T>
+
+    const pending = this.fetchGet<T>(href)
+    this.inflightGets.set(key, pending)
+    const forget = () => {
+      if (this.inflightGets.get(key) === pending) this.inflightGets.delete(key)
+    }
+    pending.then(forget, forget)
+    return pending
+  }
+
+  private async fetchGet<T>(href: string): Promise<T> {
     const cached = this.resourceCache.get(href)
     const headers = this.headers()
     if (cached) headers["If-None-Match"] = cached.etag
@@ -286,10 +346,10 @@ export class LifeUpClient {
     try {
       const body = await response.text()
       if (via === "launch") {
-        decodeEnvelope(response.status, body)
+        decodeEnvelope(response.status, body, "POST")
         return urls.map((url) => ({ url, result: null }))
       }
-      const envelope = decodeEnvelope<CallUrlResult[]>(response.status, body)
+      const envelope = decodeEnvelope<CallUrlResult[]>(response.status, body, "POST")
       return envelope.data ?? []
     } finally {
       response.finish()

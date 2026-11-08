@@ -7,7 +7,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { mock, test } from "node:test"
 import { fileURLToPath } from "node:url"
-import { LifeUpClient, LifeUpHttpError } from "../src/client.ts"
+import { LIFEUP_CONCURRENCY_LIMITED, LifeUpClient, LifeUpHttpError } from "../src/client.ts"
 
 const mcpRoot = fileURLToPath(new URL("..", import.meta.url))
 
@@ -453,3 +453,193 @@ async function closeServer(server: Server): Promise<void> {
   server.closeAllConnections()
   await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())))
 }
+
+test("GET and POST Cloud requests send X-LifeUp-Concurrency: limited once", async () => {
+  const seen: string[] = []
+  const client = new LifeUpClient("127.0.0.1", 13276, "secret", async (_url, init) => {
+    seen.push(`${init?.method ?? "GET"} ${init?.headers?.[LIFEUP_CONCURRENCY_LIMITED.name] ?? ""}`)
+    if (init?.method === "POST") return { status: 200, text: async () => envelope([]) }
+    return { status: 200, text: async () => envelope({ ok: true }) }
+  })
+  await client.get("/info")
+  await client.get("/diagnostics")
+  await client.callApi("complete", { id: 1 })
+  await client.callApi("goto", { page: "task" }, "launch")
+  assert.deepEqual(seen, ["GET limited", "GET limited", "POST limited", "POST limited"])
+  assert.equal(LIFEUP_CONCURRENCY_LIMITED.name, "X-LifeUp-Concurrency")
+  assert.equal(LIFEUP_CONCURRENCY_LIMITED.value, "limited")
+})
+
+test("HTTP 503 code 10003 is busy for GET and POST and is not retried", async () => {
+  const body = JSON.stringify({
+    code: 10003,
+    message: "LifeUp Cloud is busy; the request was not started. Retry later.",
+    data: null,
+  })
+  let calls = 0
+  const client = new LifeUpClient("127.0.0.1", 13276, undefined, async () => {
+    calls += 1
+    return { status: 503, text: async () => body }
+  }, 200)
+  const getError = await rejection(client.get("/tasks/3"))
+  assert.ok(getError instanceof LifeUpHttpError)
+  assert.equal(getError.status, 503)
+  assert.equal(getError.code, 10003)
+  assert.equal(getError.message, "LifeUp Cloud is busy; request not started. Retry later.")
+  const postError = await rejection(client.callApi("complete", { id: 1 }))
+  assert.ok(postError instanceof LifeUpHttpError)
+  assert.equal(postError.status, 503)
+  assert.equal(postError.code, 10003)
+  assert.equal(postError.message, "LifeUp Cloud is busy; request not started. Retry later; the command was not executed.")
+  assert.equal(calls, 2)
+})
+
+test("HTTP 503 without code 10003 stays HTTP 503", async () => {
+  const bodies = [
+    "busy",
+    "",
+    "<html>",
+    "10003",
+    JSON.stringify({ code: 10002, message: "cp down", data: null }),
+    JSON.stringify({ code: "10003", message: "nope", data: null }),
+  ]
+  for (const body of bodies) {
+    let calls = 0
+    const client = new LifeUpClient("127.0.0.1", 13276, undefined, async () => {
+      calls += 1
+      return { status: 503, text: async () => body }
+    }, 200)
+    for (const run of [() => client.get("/info"), () => client.callApi("complete", { id: 1 })]) {
+      const error = await rejection(run())
+      assert.ok(error instanceof LifeUpHttpError)
+      assert.equal(error.status, 503)
+      assert.equal(error.code, undefined)
+      assert.equal(error.message, "HTTP 503")
+    }
+    assert.equal(calls, 2)
+  }
+})
+
+test("identical in-flight GETs share one fetch and a settled call refetches", async () => {
+  let calls = 0
+  let release: () => void = () => {}
+  const gate = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  const conditional: Array<string | undefined> = []
+  const client = new LifeUpClient("127.0.0.1", 13276, "tok-a", async (url, init) => {
+    calls += 1
+    conditional.push(init?.headers?.["If-None-Match"])
+    await gate
+    return {
+      status: 200,
+      headers: { get: (name: string) => (name.toLowerCase() === "etag" ? "\"e1\"" : null) },
+      text: async () => envelope({ url }),
+    }
+  })
+  const sameA = client.get<{ url: string }>("/tasks", { category: 1 })
+  const sameB = client.get<{ url: string }>("/tasks", { category: 1 })
+  const different = client.get<{ url: string }>("/tasks", { category: 2 })
+  assert.equal(calls, 2)
+  release()
+  const [a, b, c] = await Promise.all([sameA, sameB, different])
+  assert.equal(a, b)
+  assert.notEqual(a.url, c.url)
+  assert.equal(calls, 2)
+  assert.deepEqual(conditional, [undefined, undefined])
+  const again = await client.get<{ url: string }>("/tasks", { category: 1 })
+  assert.equal(calls, 3)
+  assert.equal(conditional[2], "\"e1\"")
+  assert.equal(again.url, a.url)
+})
+
+test("a shared GET failure is delivered once and the next call refetches", async () => {
+  let calls = 0
+  let fail = true
+  let release: () => void = () => {}
+  let gate = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  const client = new LifeUpClient("127.0.0.1", 13276, "tok-a", async () => {
+    calls += 1
+    await gate
+    if (fail) return { status: 500, text: async () => "nope" }
+    return { status: 200, text: async () => envelope({ ok: true }) }
+  })
+  const first = client.get("/info")
+  const second = client.get("/info")
+  assert.equal(calls, 1)
+  release()
+  const errors = await Promise.all([rejection(first), rejection(second)])
+  assert.equal(errors[0], errors[1])
+  assert.ok(errors[0] instanceof LifeUpHttpError)
+  assert.equal((errors[0] as LifeUpHttpError).message, "HTTP 500")
+  fail = false
+  gate = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  const next = client.get("/info")
+  assert.equal(calls, 2)
+  release()
+  assert.deepEqual(await next, { ok: true })
+})
+
+test("coalesced conditional GETs send one If-None-Match request", async () => {
+  let calls = 0
+  let release: () => void = () => {}
+  const gate = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  let primed = false
+  const client = new LifeUpClient("127.0.0.1", 13276, "tok-a", async (_url, init) => {
+    calls += 1
+    if (!primed) {
+      primed = true
+      return { status: 200, headers: { get: () => "\"e\"" }, text: async () => envelope({ n: 1 }) }
+    }
+    assert.equal(init?.headers?.["If-None-Match"], "\"e\"")
+    await gate
+    return { status: 304, headers: { get: () => "\"e\"" }, text: async () => { throw new Error("304 body") } }
+  })
+  assert.deepEqual(await client.get("/tasks"), { n: 1 })
+  const left = client.get("/tasks")
+  const right = client.get("/tasks")
+  assert.equal(calls, 2)
+  release()
+  assert.deepEqual(await left, { n: 1 })
+  assert.deepEqual(await right, { n: 1 })
+  assert.equal(calls, 2)
+})
+
+test("coalesced GETs share the first caller deadline", async () => {
+  mock.timers.enable({ apis: ["setTimeout"] })
+  try {
+    let fetches = 0
+    let aborted = 0
+    const client = new LifeUpClient("127.0.0.1", 13276, undefined, (_url, init) => {
+      fetches += 1
+      init?.signal?.addEventListener("abort", () => {
+        aborted += 1
+      })
+      return hang(_url, init)
+    }, 1000)
+    const pending = Promise.all([rejection(client.get("/info")), rejection(client.get("/info"))])
+    mock.timers.tick(999)
+    assert.equal(aborted, 0)
+    mock.timers.tick(1)
+    const errors = await pending
+    assert.equal(fetches, 1)
+    assert.equal(aborted, 1)
+    assert.equal(errors[0], errors[1])
+    assert.ok(errors[0] instanceof LifeUpHttpError)
+    assert.match((errors[0] as LifeUpHttpError).message, /^GET \/info timed out after 1s$/)
+    const again = rejection(client.get("/info"))
+    assert.equal(fetches, 2)
+    mock.timers.tick(1000)
+    const retried = await again
+    assert.ok(retried instanceof LifeUpHttpError)
+    assert.equal(aborted, 2)
+  } finally {
+    mock.timers.reset()
+  }
+})

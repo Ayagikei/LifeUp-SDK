@@ -4,7 +4,7 @@ Reference for Cloud HTTP `GET /diagnostics` and MCP `get_diagnostics`. Agent wor
 
 ## Execution context
 
-Cloud runs blocking ContentProvider query and call work on `Dispatchers.IO` (Kotlin coroutine I/O pool). App-level locks and sequential URLs inside `call_api_batch` still apply. MCP uses one HTTP deadline per request (default 30000 ms); set `LIFEUP_TIMEOUT_MS` to 1–120000 ms. Invalid values fail MCP startup. There is no automatic retry on timeout; after a command timeout the write outcome is unknown—verify state before repeating.
+Cloud runs blocking ContentProvider query and call work on `Dispatchers.IO` (Kotlin coroutine I/O pool). App-level locks and sequential URLs inside `call_api_batch` still apply. MCP sends `X-LifeUp-Concurrency: limited` on every Cloud HTTP request, including `GET /diagnostics`. A Cloud that understands it queues heavy reads (max 4) and commands (max 2) for at most 20s and leaves light reads unqueued. HTTP 503 with body code 10003 means that request was not started. Back off and retry later; do not hammer, and do not loop `get_diagnostics`. MCP does not retry automatically. MCP uses one HTTP deadline per request (default 30000 ms); set `LIFEUP_TIMEOUT_MS` to 1–120000 ms. Invalid values fail MCP startup. After a command timeout the write outcome is unknown—verify state before repeating.
 
 ## HTTP: `GET /diagnostics`
 
@@ -65,7 +65,9 @@ Diagnostics history is kept only in process memory and is cleared on Cloud proce
 | `elapsedMs`, `dispatchMs`, `executionMs` | Timing buckets (observational) |
 | `slow` | `true` when `elapsedMs >= 10000` (includes dispatch wait); observational only, not an SLA |
 | `errorType` | Exception class name only when present — no message text |
-
+| `limited` | Optional boolean. Present when Cloud reports the limited admission queue for this attempt. Omitted on older snapshots. |
+| `queueMs` | Optional non-negative integer or `null`. Queue wait before the attempt started, when Cloud reports it. |
+| `shared` | Optional boolean. Present when Cloud reports this attempt shared an in-flight read. Omitted on older snapshots. |
 Phase meanings:
 
 - `dispatching` — queued on the IO path before the synchronous Cloud callback region.

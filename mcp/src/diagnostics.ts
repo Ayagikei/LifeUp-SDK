@@ -45,6 +45,9 @@ export type CloudDiagnosticRecord = {
   executionMs?: number | null
   slow: boolean
   errorType?: string | null
+  limited?: boolean
+  queueMs?: number | null
+  shared?: boolean
 }
 
 export type CloudDiagnostics = {
@@ -159,6 +162,9 @@ const recordSchema = z.object({
     if (value == null) return value
     return CLASS_NAME.test(value) ? value : null
   }),
+  limited: z.boolean().optional(),
+  queueMs: nullableInt,
+  shared: z.boolean().optional(),
 })
 
 const recordsSchema = z.preprocess(

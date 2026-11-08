@@ -6,7 +6,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { describe, test } from "node:test"
 import { InMemoryTransport, McpServer, type JSONRPCMessage } from "@modelcontextprotocol/server"
-import type { DiagnosticsReport, LocalDiagnostics } from "../src/diagnostics.ts"
+import { acceptCloudDiagnostics, type DiagnosticsReport, type LocalDiagnostics } from "../src/diagnostics.ts"
 import {
   DIAGNOSTICS_GUIDANCE,
   HELP_TOOL_DESCRIPTION,
@@ -791,4 +791,46 @@ describe("get_diagnostics", { concurrency: false }, () => {
       await client.close()
     }
   })
+})
+
+test("diagnostics records accept limited, queueMs, and shared; old snapshots still pass", () => {
+  const old = acceptCloudDiagnostics(cloudPayload)
+  assert.equal(old.ok, true)
+  if (!old.ok) return
+  assert.equal(old.cloud.schemaVersion, 1)
+  assert.equal(old.cloud.executionMode, "dispatchers_io")
+  assert.equal("limited" in old.cloud.active[0], false)
+  assert.equal("queueMs" in old.cloud.active[0], false)
+  assert.equal("shared" in old.cloud.active[0], false)
+
+  const next = acceptCloudDiagnostics({
+    ...cloudPayload,
+    active: [{ ...cloudPayload.active[0], limited: true, queueMs: 20, shared: false }],
+    recent: [{ ...cloudPayload.recent[0], limited: false, queueMs: null, shared: true }],
+  })
+  assert.equal(next.ok, true)
+  if (!next.ok) return
+  assert.equal(next.cloud.schemaVersion, 1)
+  assert.equal(next.cloud.executionMode, "dispatchers_io")
+  assert.equal(next.cloud.active[0]?.limited, true)
+  assert.equal(next.cloud.active[0]?.queueMs, 20)
+  assert.equal(next.cloud.active[0]?.shared, false)
+  assert.equal(next.cloud.recent[0]?.limited, false)
+  assert.equal(next.cloud.recent[0]?.queueMs, null)
+  assert.equal(next.cloud.recent[0]?.shared, true)
+
+  const negative = acceptCloudDiagnostics({
+    ...cloudPayload,
+    active: [{ ...cloudPayload.active[0], queueMs: -1 }],
+  })
+  assert.deepEqual(negative, { ok: false, cloudError: { category: "unavailable" } })
+  const fractional = acceptCloudDiagnostics({
+    ...cloudPayload,
+    recent: [{ ...cloudPayload.recent[0], queueMs: 1.5 }],
+  })
+  assert.deepEqual(fractional, { ok: false, cloudError: { category: "unavailable" } })
+  const wrongMode = acceptCloudDiagnostics({ ...cloudPayload, executionMode: "binder" })
+  assert.deepEqual(wrongMode, { ok: false, cloudError: { category: "unavailable" } })
+  const wrongVersion = acceptCloudDiagnostics({ ...cloudPayload, schemaVersion: 2 })
+  assert.deepEqual(wrongVersion, { ok: false, cloudError: { category: "unsupported" } })
 })

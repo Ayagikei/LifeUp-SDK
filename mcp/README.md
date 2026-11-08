@@ -73,12 +73,13 @@ If Cloud set an API token, pass it to `connect` or `LIFEUP_TOKEN`. Header is the
 
 ## Troubleshooting (client ↔ Cloud)
 
-These notes describe the **documented MCP↔Cloud contract** in this repository (implementation may roll out in a later `@lifeup/mcp` release).
+These notes describe the MCP client contract in this repository. Cloud support for `X-LifeUp-Concurrency: limited` and `withSubTasks=false` arrives with the Cloud app; older Clouds ignore both.
 
 - **Timeouts:** Errors name the HTTP method, path and configured waiting budget. Headers and the body share that budget; query strings are omitted.
 - **Command or launch timeouts:** The result is unknown: Cloud or LifeUp may still be working. Check state before repeating a mutation. MCP does not automatically retry, reconnect or resend commands.
-- **Concurrency (ContentProvider I/O):** Cloud runs blocking Provider query/call work on **`Dispatchers.IO`**. There is no separate documented Cloud-wide read/command permit pair, admission queue, or busy **`503`** for that — Kotlin coroutine dispatch limits, Binder, and LifeUp in-process locks/transactions still bound how much business I/O can run in parallel, so it is not unlimited. URLs within one `call_api_batch` still execute **sequentially**; the same app locks/transactions still apply. A client timeout or disconnect is not proof that a write was cancelled or that LifeUp stopped processing. HTTP **503** responses may still occur for other reasons; do not read every **503** as “provider busy before invoke” without matching codes/messages.
 - **`/info` vs open port:** The root page or an open TCP port does not prove Provider access works. A fresh `GET /info` reads versions without taking the Scheme mutex, but can still wait on LifeUp startup or Binder and does not make later business calls immune to those delays. MCP `status` only reports last-known connection information.
+- **Concurrency:** Every Cloud HTTP request sends `X-LifeUp-Concurrency: limited`. Clouds that understand it leave light reads unqueued, queue heavy reads (max 4) and commands (max 2), and stop waiting after 20s. A queue timeout is HTTP **503** with body `code` **10003**: the request was **not** started. Back off and retry later; do not hammer. MCP does not retry. Older Clouds ignore the header. Provider work still runs on **`Dispatchers.IO`**, and URLs inside one `call_api_batch` still run **sequentially**. A client timeout or disconnect does not prove a write was cancelled. Any other **503** is not this busy signal.
+- **List limits:** List tools use `limit` 1–100, default 20. A request outside that range is clamped, and the envelope then adds `limitCapped: true` and `requestedLimit`. Compact task lists send `withSubTasks=false` (`/tasks`, `/tasks/{id}`, `/smart_lists/{type}/tasks`) so Cloud can skip subtask lookups. `detail=true` omits that parameter and returns full objects.
 
 ## Skills (in this repo)
 

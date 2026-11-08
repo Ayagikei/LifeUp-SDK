@@ -51,7 +51,7 @@ After writes, read `calls[].ok` and `calls[].data` (full return: ids, codes, que
 2. `help` `query/<anchor>` — full field tables and examples for that section, e.g. `query/task-history-models` (Task fields including `isFrozen`, `importance` / `difficulty`), `query/task-queries`, `query/response-errors`, `query/pagination`.
 3. `help` `query` — compact MCP `list_data` usage on this page; not a substitute for the generated HTTP reference.
 
-Query docs describe **Cloud HTTP JSON** (`{code, message, data}`), not raw Android Cursor columns or the MCP list envelope. Use `detail=true` on list tools when you need the full HTTP task object; compact rows omit fields such as `importance` and `difficulty`, but include `isFrozen` when the provider exposes it.
+Query docs describe **Cloud HTTP JSON** (`{code, message, data}`), not raw Android Cursor columns or the MCP list envelope. Use `detail=true` on list tools when you need the full HTTP task object; compact rows omit fields such as `importance` and `difficulty`, but include `isFrozen` when the provider exposes it. Compact rows also omit `subTasks`. Compact task lists send `withSubTasks=false` so Cloud can skip that lookup. List `limit` is 1–100, default 20; an out-of-range limit is clamped and the envelope adds `limitCapped` and `requestedLimit`. HTTP 503 with body code 10003 means the call was not started — wait and retry later, do not hammer.
 
 
 Destructive: `delete_task`, `edit_coin`, `export_backup`, `history_operation` need `confirm: true`.

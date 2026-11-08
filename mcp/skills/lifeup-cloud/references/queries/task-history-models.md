@@ -84,7 +84,7 @@ Saved times can be edited. If an ended record has no saved end date, the app fal
 | --- | --- | --- |
 | `id` | integer | Subtask ID. |
 | `gid` | integer | Subtask-group ID. |
-| `todo` | string | Subtask text. |
+| `todo` | string | Subtask text. There is no `name` field on a subtask. |
 | `status` | integer | `0` unfinished, `1` completed. |
 | `remindTime` | integer or `null` | Reminder timestamp in milliseconds; `null` if unavailable. |
 | `endTime` | integer or `null` | Subtask completion timestamp in milliseconds; `null` if unavailable. |

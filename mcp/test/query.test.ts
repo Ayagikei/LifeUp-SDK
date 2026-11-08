@@ -1,4 +1,5 @@
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import { test } from "node:test"
 import { listRequest, presentList } from "../src/query.ts"
 import { listDataInputSchema, listTasksInputSchema } from "../src/tools.ts"
@@ -68,7 +69,9 @@ test("smartListType routes only task lists and keeps client paging", () => {
   assert.equal(listRequest({ resource: "tasks", smartListType: "daily" }).path, "/smart_lists/daily/tasks")
   assert.equal(listRequest({ resource: "tasks", smartListType: "weekly" }).path, "/smart_lists/weekly/tasks")
   assert.equal(listRequest({ resource: "tasks", smartListType: "monthly" }).path, "/smart_lists/monthly/tasks")
-  assert.deepEqual(listRequest({ resource: "tasks", smartListType: "daily", offset: 1, limit: 1 }).query, {})
+  assert.deepEqual(listRequest({ resource: "tasks", smartListType: "daily", offset: 1, limit: 1 }).query, {
+    withSubTasks: "false",
+  })
   assert.equal(listRequest({ resource: "tasks", smartListType: "daily" }).serverPaged, false)
   assert.equal(listRequest({ resource: "tasks" }).path, "/tasks")
   assert.equal(listRequest({ resource: "tasks", categoryId: 0 }).path, "/tasks/0")
@@ -210,4 +213,70 @@ test("compact tasks and history keep isFrozen false, true, and null", () => {
   assert.equal(historyDetail.count, 3)
   assert.equal(historyDetail.hasMore, false)
   assert.deepEqual(historyDetail.items, history)
+})
+
+test("compact task reads request withSubTasks=false and detail does not", () => {
+  assert.deepEqual(listRequest({ resource: "tasks" }).query, { withSubTasks: "false" })
+  assert.deepEqual(listRequest({ resource: "tasks", categoryId: 3 }).query, { withSubTasks: "false" })
+  assert.deepEqual(listRequest({ resource: "tasks", detail: false }).query, { withSubTasks: "false" })
+  assert.deepEqual(listRequest({ resource: "tasks", smartListType: "weekly" }).query, { withSubTasks: "false" })
+  assert.deepEqual(listRequest({ resource: "tasks", detail: true }).query, {})
+  assert.deepEqual(listRequest({ resource: "tasks", categoryId: 3, detail: true }).query, {})
+  assert.deepEqual(listRequest({ resource: "tasks", smartListType: "monthly", detail: true }).query, {})
+  assert.equal(listRequest({ resource: "history", limit: 5 }).query.withSubTasks, undefined)
+  assert.equal(listRequest({ resource: "items" }).query.withSubTasks, undefined)
+  assert.equal(listRequest({ resource: "info" }).query.withSubTasks, undefined)
+})
+
+test("compact task rows stay free of subTasks", () => {
+  const raw = [{ id: 1, name: "a", status: 0, subTasks: [{ todo: "x" }], notes: "hide" }]
+  const page = presentList("tasks", raw, {})
+  assert.deepEqual(page.items, [{ id: 1, name: "a", status: 0 }])
+  assert.equal("limitCapped" in page, false)
+  assert.equal("requestedLimit" in page, false)
+  const full = presentList("tasks", raw, { detail: true })
+  assert.deepEqual(full.items, raw)
+})
+
+test("limits outside 1-100 are clamped and reported only then", () => {
+  const raw = [1, 2, 3].map((id) => ({ id, name: "t", status: 0 }))
+  const high = presentList("tasks", raw, { limit: 101 })
+  assert.equal(high.limit, 100)
+  assert.equal(high.limitCapped, true)
+  assert.equal(high.requestedLimit, 101)
+  assert.equal(high.count, 3)
+  assert.equal(high.total, 3)
+  const low = presentList("history", raw, { limit: 0 })
+  assert.equal(low.limit, 1)
+  assert.equal(low.limitCapped, true)
+  assert.equal(low.requestedLimit, 0)
+  const negative = presentList("items", raw, { limit: -4 })
+  assert.equal(negative.limit, 1)
+  assert.equal(negative.limitCapped, true)
+  assert.equal(negative.requestedLimit, -4)
+  for (const args of [{ limit: 20 }, { limit: 1 }, { limit: 100 }, {}] as const) {
+    const page = presentList("tasks", raw, args)
+    assert.equal("limitCapped" in page, false)
+    assert.equal("requestedLimit" in page, false)
+  }
+  assert.equal(presentList("tasks", raw, {}).limit, 20)
+  const info = presentList("info", { appVersion: 1 }, { limit: 1000 })
+  assert.equal(info.limitCapped, true)
+  assert.equal(info.requestedLimit, 1000)
+  assert.deepEqual(info.data, { appVersion: 1 })
+  const plainInfo = presentList("info", { appVersion: 1 }, {})
+  assert.equal("limitCapped" in plainInfo, false)
+  assert.equal("requestedLimit" in plainInfo, false)
+  assert.equal(listRequest({ resource: "history", limit: 250 }).query.limit, 100)
+  assert.equal(listRequest({ resource: "history", limit: 0 }).query.limit, 1)
+  assert.equal(listRequest({ resource: "coin_records", limit: 5 }).query.limit, 5)
+})
+
+test("list tool schemas describe limit 1-100, default 20", () => {
+  for (const schema of [listTasksInputSchema, listDataInputSchema]) {
+    assert.match(JSON.stringify(z.toJSONSchema(schema)), /limit 1-100, default 20/)
+  }
+  const tools = readFileSync(new URL("../src/tools.ts", import.meta.url), "utf8")
+  const mentions = tools.match(/limit 1-100, default 20/g) ?? []
+  assert.ok(mentions.length >= 8, `expected list tool copy, saw ${mentions.length}`)
 })

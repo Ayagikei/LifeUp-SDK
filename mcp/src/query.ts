@@ -96,7 +96,7 @@ export function listRequest(args: ListArgs): {
   const conflict = taskQueryConflict(args)
   if (conflict) throw new Error(conflict)
   const offset = Math.max(args.offset ?? 0, 0)
-  const limit = Math.min(Math.max(args.limit ?? 20, 1), 100)
+  const limit = resolveListLimit(args.limit).limit
   const serverPaged = SERVER_PAGED.has(args.resource)
   const singular = SINGULAR.has(args.resource)
   const page = serverPaged ? { offset, limit } : {}
@@ -109,7 +109,7 @@ export function listRequest(args: ListArgs): {
           : args.categoryId == null
             ? "/tasks"
             : `/tasks/${args.categoryId}`,
-        query: {},
+        query: taskListQuery(args.detail),
         serverPaged,
         singular,
       }
@@ -213,17 +213,34 @@ export function listRequest(args: ListArgs): {
   }
 }
 
+function resolveListLimit(requested: number | undefined): {
+  limit: number
+  limitCapped?: true
+  requestedLimit?: number
+} {
+  const specified = typeof requested === "number" ? requested : undefined
+  const limit = Math.min(Math.max(specified ?? 20, 1), 100)
+  if (specified !== undefined && (specified > 100 || specified < 1)) {
+    return { limit, limitCapped: true, requestedLimit: specified }
+  }
+  return { limit }
+}
+
+function taskListQuery(detail: boolean | undefined): Record<string, string | number | number[] | undefined> {
+  return detail === true ? {} : { withSubTasks: "false" }
+}
+
 export function presentList(
   resource: ListResource,
   raw: unknown,
   args: Pick<ListArgs, "offset" | "limit" | "detail">,
 ) {
   const offset = Math.max(args.offset ?? 0, 0)
-  const limit = Math.min(Math.max(args.limit ?? 20, 1), 100)
+  const { limit, ...limitCap } = resolveListLimit(args.limit)
   const detail = args.detail === true
 
   if (SINGULAR.has(resource)) {
-    return { ok: true, code: 200, source: "contentprovider", resource, data: raw }
+    return { ok: true, code: 200, source: "contentprovider", resource, data: raw, ...limitCap }
   }
 
   const all = Array.isArray(raw) ? raw : []
@@ -248,6 +265,7 @@ export function presentList(
     note: detail
       ? "Full objects. Prefer detail=false and a categoryId."
       : "Compact rows. Pass detail=true only for the rows you need.",
+    ...limitCap,
   }
 }
 
