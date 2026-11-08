@@ -2,6 +2,7 @@ package net.lifeupapp.lifeup.http.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.lifeupapp.lifeup.api.exception.CloudBusyException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -473,6 +474,85 @@ class ProviderDiagnosticsTest {
             },
         )
         assertFalse(done.toString().contains("SUPERSECRET"))
+    }
+
+    @Test
+    fun admissionFields_keepSchemaAndDoNotMarkSharedRowsAsProviderExecution() {
+        var nanos = 0L
+        val diagnostics = ProviderDiagnostics { nanos }
+        val leader = diagnostics.dispatch(
+            PROVIDER_OPERATION_READ,
+            "GET /tasks",
+            limited = true,
+            queueMs = 25L,
+            shared = false,
+        )
+        nanos = millis(25)
+        diagnostics.begin(leader)
+        nanos = millis(100)
+        diagnostics.complete(leader)
+
+        val follower = diagnostics.dispatch(
+            PROVIDER_OPERATION_READ,
+            "GET /tasks",
+            limited = true,
+            shared = true,
+        )
+        nanos = millis(120)
+        diagnostics.complete(follower)
+
+        val busy = diagnostics.dispatch(
+            PROVIDER_OPERATION_READ,
+            "GET /tasks/{id}",
+            limited = true,
+            queueMs = 20_000L,
+        )
+        diagnostics.complete(busy, CloudBusyException())
+
+        val plain = diagnostics.dispatch(PROVIDER_OPERATION_READ, "GET /info")
+        diagnostics.begin(plain)
+        diagnostics.complete(plain)
+
+        val snapshot = diagnostics.snapshot(1, "1", 34)
+        assertEquals(1, snapshot.schemaVersion)
+        assertEquals("dispatchers_io", snapshot.executionMode)
+        val recent = snapshot.recent
+        assertEquals(listOf(leader.id, follower.id, busy.id, plain.id), recent.map { it.id })
+
+        assertEquals(true, recent[0].limited)
+        assertEquals(25L, recent[0].queueMs)
+        assertEquals(false, recent[0].shared)
+        assertEquals("completed", recent[0].phase)
+        assertEquals(75L, recent[0].executionMs)
+        assertEquals("tasks.list", recent[0].api)
+
+        assertEquals(true, recent[1].limited)
+        assertNull(recent[1].queueMs)
+        assertEquals(true, recent[1].shared)
+        assertEquals("completed", recent[1].phase)
+        assertNull(recent[1].dispatchMs)
+        assertNull(recent[1].executionMs)
+
+        assertEquals("cancelled_before_start", recent[2].phase)
+        assertEquals(CloudBusyException::class.java.name, recent[2].errorType)
+        assertEquals(20_000L, recent[2].queueMs)
+        assertEquals(false, recent[2].shared)
+        assertNull(recent[2].executionMs)
+        assertEquals("tasks.list_category", recent[2].api)
+
+        assertEquals(false, recent[3].limited)
+        assertNull(recent[3].queueMs)
+        assertEquals(false, recent[3].shared)
+        assertEquals("completed", recent[3].phase)
+        assertEquals("info.get", recent[3].api)
+
+        val strict = Json { encodeDefaults = false }
+        val encoded = strict.encodeToString(snapshot)
+        assertTrue(encoded.contains("\"schemaVersion\":1"))
+        assertTrue(encoded.contains("\"executionMode\":\"dispatchers_io\""))
+        assertTrue(encoded.contains("\"limited\":true"))
+        assertTrue(encoded.contains("\"shared\":true"))
+        assertFalse(encoded.contains("\"phase\":\"queued\""))
     }
 
     private fun assertConsistent(snapshot: ProviderDiagnosticsSnapshot) {

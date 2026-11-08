@@ -1,5 +1,6 @@
 package net.lifeupapp.lifeup.http.service
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import kotlinx.coroutines.CoroutineDispatcher
@@ -7,6 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
+import net.lifeupapp.lifeup.api.exception.CloudBusyException
+import net.lifeupapp.lifeup.api.exception.CloudException
 import net.lifeupapp.lifeup.http.vo.CallUrlResult
 import net.lifeupapp.lifeup.http.vo.HttpResponse
 import net.lifeupapp.lifeup.http.vo.RawQueryVo
@@ -30,10 +33,11 @@ private const val REDACTED_ROUTE = "redacted"
 /**
  * Moves one synchronous ContentProvider call onto [ioDispatcher].
  *
- * [operation] is only a sanitized log label. This does not limit concurrency,
- * queue work, or turn caller cancellation into a thread interrupt. Cancellation
- * before [block] starts skips the callback. An in-flight blocking callback runs
- * to completion; cancellation and [Error] still propagate after it returns.
+ * [operation] is only a sanitized log label. [run] itself does not limit
+ * concurrency. Opt-in permits live in [ProviderAdmission]. Cancellation before
+ * [block] starts skips the callback. An in-flight blocking callback runs to
+ * completion; cancellation and [Error] still propagate after it returns.
+ * [limited] and [queueMs] are diagnostic fields only.
  */
 internal class ProviderExecution(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -47,10 +51,19 @@ internal class ProviderExecution(
         operation: String,
         route: String,
         batchSize: Int? = null,
+        limited: Boolean = false,
+        queueMs: Long? = null,
         block: () -> T,
     ): T {
         coroutineContext.ensureActive()
-        val trace = diagnostics.dispatch(operation, route, batchSize)
+        val trace = diagnostics.dispatch(
+            operation,
+            route,
+            batchSize,
+            limited = limited,
+            queueMs = queueMs,
+            shared = false,
+        )
         var entered = false
         try {
             return withContext(ioDispatcher) {
@@ -76,6 +89,54 @@ internal class ProviderExecution(
             }
         } catch (error: Throwable) {
             if (!entered) diagnostics.complete(trace, error)
+            throw error
+        }
+    }
+
+    /**
+     * One attempt that never entered the synchronous SDK region.
+     * Busy timeouts and queue cancellation land here so [run] is not called.
+     */
+    internal fun recordUnstarted(
+        operation: String,
+        route: String,
+        batchSize: Int?,
+        queueMs: Long,
+        error: Throwable,
+    ) {
+        val trace = diagnostics.dispatch(
+            operation,
+            route,
+            batchSize,
+            limited = true,
+            queueMs = queueMs,
+            shared = false,
+        )
+        diagnostics.complete(trace, error)
+    }
+
+    /**
+     * Waits for a shared read without dispatching a second provider execution.
+     * The resulting row has [ProviderDiagnosticRecord.shared] set and no execution time.
+     */
+    internal suspend fun <T> awaitShared(
+        route: String,
+        awaitResult: suspend () -> T,
+    ): T {
+        val trace = diagnostics.dispatch(
+            PROVIDER_OPERATION_READ,
+            route,
+            batchSize = null,
+            limited = true,
+            queueMs = null,
+            shared = true,
+        )
+        try {
+            val value = awaitResult()
+            diagnostics.complete(trace, (value as? Result<*>)?.exceptionOrNull())
+            return value
+        } catch (error: Throwable) {
+            diagnostics.complete(trace, error)
             throw error
         }
     }
@@ -122,15 +183,35 @@ internal suspend fun <T> ApplicationCall.respondProviderResult(
     route: String,
     block: () -> Result<T>,
     execution: ProviderExecution = sharedProviderExecution,
+    admission: ProviderAdmission = sharedProviderAdmission,
     onFailure: (suspend (Throwable) -> Unit)? = null,
     onSuccess: suspend (T) -> Unit,
 ) {
-    val result = execution.run(PROVIDER_OPERATION_READ, route, block = block)
+    val result = try {
+        if (requestsLimitedConcurrency()) {
+            admission.read(providerCoalesceKey(), route, execution, block)
+        } else {
+            execution.run(PROVIDER_OPERATION_READ, route, block = block)
+        }
+    } catch (busy: CloudBusyException) {
+        respondCloudBusy()
+        return
+    }
     result.onSuccess { value -> onSuccess(value) }
         .onFailure { error ->
             onFailure?.invoke(error)
             respond(HttpResponse.error<String>(error))
         }
+}
+
+internal suspend fun ApplicationCall.respondCloudBusy() {
+    respond(
+        HttpStatusCode.ServiceUnavailable,
+        HttpResponse.error<String>(
+            CloudBusyException.MESSAGE,
+            CloudException.ERROR_CLOUD_BUSY,
+        ),
+    )
 }
 
 /**
@@ -183,6 +264,7 @@ internal fun contentProviderPostResults(
 internal suspend fun ApplicationCall.respondContentProviderGet(
     urls: List<String>?,
     execution: ProviderExecution = sharedProviderExecution,
+    admission: ProviderAdmission = sharedProviderAdmission,
     call: (String) -> JsonObject?,
 ) {
     if (urls == null) {
@@ -193,14 +275,20 @@ internal suspend fun ApplicationCall.respondContentProviderGet(
         respond(emptyList<CallUrlResult>().wrapAsResponse())
         return
     }
-    respondProviderCommand(PROVIDER_OPERATION_COMMAND, "GET /api/contentprovider", urls.size, execution) {
-        contentProviderGetResults(urls, call)
-    }
+    respondProviderCommand(
+        PROVIDER_OPERATION_COMMAND,
+        "GET /api/contentprovider",
+        urls.size,
+        execution,
+        admission,
+        block = { contentProviderGetResults(urls, call) },
+    )
 }
 
 internal suspend fun ApplicationCall.respondContentProviderPost(
     body: RawQueryVo,
     execution: ProviderExecution = sharedProviderExecution,
+    admission: ProviderAdmission = sharedProviderAdmission,
     call: (String) -> JsonObject?,
 ) {
     val batchSize = providerCommandBatchSize(body.urls, body.url)
@@ -213,9 +301,9 @@ internal suspend fun ApplicationCall.respondContentProviderPost(
         "POST /api/contentprovider",
         batchSize,
         execution,
-    ) {
-        contentProviderPostResults(body.urls, body.url, call)
-    }
+        admission,
+        block = { contentProviderPostResults(body.urls, body.url, call) },
+    )
 }
 
 private suspend fun ApplicationCall.respondProviderCommand(
@@ -223,9 +311,20 @@ private suspend fun ApplicationCall.respondProviderCommand(
     route: String,
     batchSize: Int,
     execution: ProviderExecution,
+    admission: ProviderAdmission,
     block: () -> HttpResponse<List<CallUrlResult>?>,
 ) {
-    val result = execution.run(operation, route, batchSize) { catchProviderFailure(block) }
+    val invoke = { catchProviderFailure(block) }
+    val result = try {
+        if (requestsLimitedConcurrency()) {
+            admission.command(route, batchSize, execution, invoke)
+        } else {
+            execution.run(operation, route, batchSize, block = invoke)
+        }
+    } catch (busy: CloudBusyException) {
+        respondCloudBusy()
+        return
+    }
     result.onSuccess { body -> respond(body) }
         .onFailure { error -> respond(HttpResponse.error<String>(error)) }
 }

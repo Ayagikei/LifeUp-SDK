@@ -313,7 +313,7 @@ class ProviderNettyAbortTest {
                 }
                 post<RawQueryVo>("/api/contentprovider") { body ->
                     try {
-                        call.respondContentProviderPost(body, execution, onCommand)
+                        call.respondContentProviderPost(body, execution, call = onCommand)
                     } finally {
                         onCommandExit(body)
                     }

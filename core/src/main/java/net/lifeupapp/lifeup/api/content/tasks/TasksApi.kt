@@ -52,15 +52,17 @@ class TasksApi(private val context: Context) : ContentProviderApi {
     }
 
     fun listTasks(categoryId: Long?): Result<List<Task>> {
+        return listTasks(categoryId, withSubTasks = true)
+    }
+
+    /**
+     * [withSubTasks] defaults to the provider's historical behavior.
+     * The query is appended only when it is false.
+     */
+    fun listTasks(categoryId: Long?, withSubTasks: Boolean): Result<List<Task>> {
         val tasks = mutableListOf<Task>()
         try {
-            val uri = buildString {
-                append(ContentProviderUrl.TASK)
-                if (categoryId != null) {
-                    append("/$categoryId")
-                }
-            }
-            context.forEachContent(uri) {
+            context.forEachContent(tasksContentUri(categoryId, withSubTasks)) {
                 tasks.add(it.toTask(includeEndTime = false, includeRepeatEndCondition = true))
             }
         } catch (e: Exception) {
@@ -71,7 +73,12 @@ class TasksApi(private val context: Context) : ContentProviderApi {
     }
 
     fun listSmartListTasks(type: SmartListType): Result<List<Task>> {
-        return querySmartListTasks(type) { uri, onEach ->
+        return listSmartListTasks(type, withSubTasks = true)
+    }
+
+    /** See [listTasks]. The one-argument method stays for binary compatibility. */
+    fun listSmartListTasks(type: SmartListType, withSubTasks: Boolean): Result<List<Task>> {
+        return querySmartListTasks(type, withSubTasks) { uri, onEach ->
             context.forEachContent(uri, onEach)
         }
     }
@@ -103,23 +110,44 @@ class TasksApi(private val context: Context) : ContentProviderApi {
     }
 }
 
+internal fun tasksContentUri(categoryId: Long?, withSubTasks: Boolean): String {
+    val base = buildString {
+        append(ContentProviderUrl.TASK)
+        if (categoryId != null) {
+            append('/')
+            append(categoryId)
+        }
+    }
+    return appendWithSubTasks(base, withSubTasks)
+}
+
 internal fun smartListTasksContentUri(type: SmartListType): String {
     return "${ContentProviderUrl.SMART_LISTS}/${type.pathSegment}/tasks"
 }
 
+internal fun smartListTasksContentUri(type: SmartListType, withSubTasks: Boolean): String {
+    return appendWithSubTasks(smartListTasksContentUri(type), withSubTasks)
+}
+
 internal fun querySmartListTasks(
     type: SmartListType,
+    withSubTasks: Boolean = true,
     query: (uri: String, onEach: (Cursor) -> Unit) -> Unit,
 ): Result<List<Task>> {
     val tasks = mutableListOf<Task>()
     try {
-        query(smartListTasksContentUri(type)) { cursor ->
+        query(smartListTasksContentUri(type, withSubTasks)) { cursor ->
             tasks.add(cursor.toTask(includeEndTime = false, includeRepeatEndCondition = true))
         }
     } catch (e: Exception) {
         return Result.failure(e)
     }
     return Result.success(tasks)
+}
+
+private fun appendWithSubTasks(base: String, withSubTasks: Boolean): String {
+    if (withSubTasks) return base
+    return "$base?withSubTasks=false"
 }
 
 internal fun Cursor.toTask(includeEndTime: Boolean, includeRepeatEndCondition: Boolean): Task {

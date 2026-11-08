@@ -5,6 +5,7 @@ package net.lifeupapp.lifeup.http.service
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import net.lifeupapp.lifeup.api.exception.CloudBusyException
 import java.util.concurrent.CancellationException
 
 internal const val DIAGNOSTICS_SCHEMA_VERSION = 1
@@ -44,6 +45,12 @@ private const val NANOS_PER_MILLISECOND = 1_000_000L
  * `executing` means this process entered the synchronous SDK region,
  * including Binder or provider acquire. It does not mean the LifeUp app
  * started handling the call, and it does not identify a lock.
+ *
+ * Optional admission fields do not change [DIAGNOSTICS_SCHEMA_VERSION]:
+ * [ProviderDiagnosticRecord.limited], [ProviderDiagnosticRecord.queueMs],
+ * and [ProviderDiagnosticRecord.shared]. A shared row never enters
+ * `executing` and keeps `executionMs` null, so provider execution is
+ * counted once per in-flight read (`shared == false` and `executionMs != null`).
  */
 internal class ProviderDiagnostics(
     private val nanoTime: () -> Long = System::nanoTime,
@@ -58,6 +65,9 @@ internal class ProviderDiagnostics(
         operation: String,
         route: String,
         batchSize: Int? = null,
+        limited: Boolean = false,
+        queueMs: Long? = null,
+        shared: Boolean = false,
     ): ProviderDiagnosticTrace = synchronized(lock) {
         val trace = ProviderDiagnosticTrace(
             id = nextId++,
@@ -65,6 +75,9 @@ internal class ProviderDiagnostics(
             route = sanitizeProviderRoute(route),
             batchSize = batchSize,
             dispatchNanos = nanoTime(),
+            limited = limited,
+            queueMs = queueMs,
+            shared = shared,
         )
         activeCount += 1
         active.addLast(trace)
@@ -125,12 +138,18 @@ internal class ProviderDiagnosticTrace internal constructor(
     private val route: String,
     private val batchSize: Int?,
     private val dispatchNanos: Long,
+    limited: Boolean = false,
+    queueMs: Long? = null,
+    shared: Boolean = false,
 ) {
     private var phase: String = DIAGNOSTICS_PHASE_DISPATCHING
     private var beginNanos: Long? = null
     private var endNanos: Long? = null
     private var errorType: String? = null
     private var finished: Boolean = false
+    private val storedLimited: Boolean = limited
+    private val storedQueueMs: Long? = queueMs
+    private val storedShared: Boolean = shared
 
     internal fun begin(now: Long) {
         if (finished || beginNanos != null) return
@@ -145,7 +164,13 @@ internal class ProviderDiagnosticTrace internal constructor(
         endNanos = now
         errorType = error?.javaClass?.name
         phase = when {
-            beginNanos == null && (error == null || error is CancellationException) ->
+            // Joined an in-flight read. There is no second provider execution.
+            beginNanos == null && storedShared && error == null ->
+                DIAGNOSTICS_PHASE_COMPLETED
+            beginNanos == null && storedShared && error != null &&
+                error !is CancellationException && error !is CloudBusyException ->
+                DIAGNOSTICS_PHASE_FAILED
+            beginNanos == null && (error == null || error is CancellationException || error is CloudBusyException) ->
                 DIAGNOSTICS_PHASE_CANCELLED_BEFORE_START
             error != null -> DIAGNOSTICS_PHASE_FAILED
             else -> DIAGNOSTICS_PHASE_COMPLETED
@@ -169,6 +194,9 @@ internal class ProviderDiagnosticTrace internal constructor(
             executionMs = started?.let { elapsedMillis(it, end) },
             slow = elapsedMs >= DIAGNOSTICS_SLOW_THRESHOLD_MS,
             errorType = errorType,
+            limited = storedLimited,
+            queueMs = storedQueueMs,
+            shared = storedShared,
         )
     }
 
@@ -205,6 +233,9 @@ internal data class ProviderDiagnosticRecord(
     val executionMs: Long? = null,
     val slow: Boolean,
     val errorType: String? = null,
+    val limited: Boolean = false,
+    val queueMs: Long? = null,
+    val shared: Boolean = false,
 )
 
 private fun diagnosticOperation(operation: String): String = when (operation) {

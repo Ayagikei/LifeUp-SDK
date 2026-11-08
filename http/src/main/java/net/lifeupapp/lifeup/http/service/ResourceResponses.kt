@@ -46,6 +46,7 @@ internal fun CORSConfig.configureCloudCors() {
     allowHeader(HttpHeaders.Authorization)
     allowHeader(HttpHeaders.AccessControlAllowOrigin)
     allowHeader(HttpHeaders.IfNoneMatch)
+    allowHeader(CONCURRENCY_LIMIT_HEADER)
     exposeHeader(HttpHeaders.ETag)
     anyHost()
 }

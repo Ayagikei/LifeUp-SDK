@@ -119,9 +119,45 @@ internal fun parseSmartListType(raw: String?): SmartListType {
         ?: throw IllegalArgumentException("invalid parameter")
 }
 
-internal fun Route.registerSmartListTasksRoute(
-    queryTasks: (SmartListType) -> Result<List<Task>>,
+/** Provider default includes sub-tasks. Only an exact false, ignoring case, turns that off. */
+internal fun includeSubTasks(raw: String?): Boolean {
+    return !raw.equals("false", ignoreCase = true)
+}
+
+internal fun Route.registerTaskListRoutes(
     execution: ProviderExecution = sharedProviderExecution,
+    queryTasks: (categoryId: Long?, withSubTasks: Boolean) -> Result<List<Task>>,
+) {
+    route("/tasks") {
+        get {
+            val withSubTasks = includeSubTasks(call.request.queryParameters["withSubTasks"])
+            call.respondProviderResult(
+                "GET /tasks",
+                block = { queryTasks(null, withSubTasks) },
+                execution = execution,
+            ) {
+                call.respondResource(it.wrapAsResponse())
+            }
+        }
+        route("/{id}") {
+            get {
+                val categoryId = call.parameters["id"]?.toLongOrNull()
+                val withSubTasks = includeSubTasks(call.request.queryParameters["withSubTasks"])
+                call.respondProviderResult(
+                    "GET /tasks/{id}",
+                    block = { queryTasks(categoryId, withSubTasks) },
+                    execution = execution,
+                ) {
+                    call.respondResource(it.wrapAsResponse())
+                }
+            }
+        }
+    }
+}
+
+internal fun Route.registerSmartListTasksRoute(
+    execution: ProviderExecution = sharedProviderExecution,
+    queryTasks: (SmartListType, Boolean) -> Result<List<Task>>,
 ) {
     route("/smart_lists") {
         route("/{type}") {
@@ -133,9 +169,10 @@ internal fun Route.registerSmartListTasksRoute(
                         call.respond(HttpResponse.error<String>("invalid parameter"))
                         return@get
                     }
+                    val withSubTasks = includeSubTasks(call.request.queryParameters["withSubTasks"])
                     call.respondProviderResult(
                         "GET /smart_lists/{type}/tasks",
-                        block = { queryTasks(type) },
+                        block = { queryTasks(type, withSubTasks) },
                         execution = execution,
                     ) {
                         call.respondResource(it.wrapAsResponse())
@@ -475,31 +512,13 @@ object KtorService : LifeUpService {
                 }
             }
 
-            route("/tasks") {
-                // get all tasks
-                get {
-                    call.respondProviderResult("GET /tasks", {
-                        LifeUpApi.getContentProviderApi<TasksApi>().listTasks(null)
-                    }) {
-                        call.respondResource(it.wrapAsResponse())
-                    }
-                }
-                route("/{id}") {
-                    // get tasks in a specific category
-                    get {
-                        val categoryId = call.parameters["id"]?.toLongOrNull()
-                        call.respondProviderResult("GET /tasks/{id}", {
-                            LifeUpApi.getContentProviderApi<TasksApi>().listTasks(categoryId)
-                        }) {
-                            call.respondResource(it.wrapAsResponse())
-                        }
-                    }
-                }
+            registerTaskListRoutes { categoryId, withSubTasks ->
+                LifeUpApi.getContentProviderApi<TasksApi>().listTasks(categoryId, withSubTasks)
             }
 
-            registerSmartListTasksRoute(queryTasks = { type ->
-                LifeUpApi.getContentProviderApi<TasksApi>().listSmartListTasks(type)
-            })
+            registerSmartListTasksRoute { type, withSubTasks ->
+                LifeUpApi.getContentProviderApi<TasksApi>().listSmartListTasks(type, withSubTasks)
+            }
             route("/history") {
                 get {
                     val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
