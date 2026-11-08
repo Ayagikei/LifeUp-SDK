@@ -17,23 +17,13 @@
     <string name="overlay_permission">オーバーレイ権限</string>
     <string name="overlay_permission_desc">バックグラウンドからページを表示し、LifeUp API ページを起動するための権限を付与してください（Android 10+）</string>
     <string name="title_introduction">紹介</string>
-    <string name="title_config">設定</string>
-    <string name="btn_config">設定</string>
+<string name="btn_config">設定</string>
     <string name="ignore_battery_optimizations">バッテリー最適化を無視</string>
-    <string name="ignore_battery_optimizations_desc">サービスを安定してバックグラウンドで実行し続けるには、バッテリー最適化を無効にする必要があります。
-        \n\nまた、この設定に加えて、各メーカー独自の追加制限（「自動起動」を許可する、マルチタスク画面でアプリを固定する等）も確認してください。</string>
+    <string name="ignore_battery_optimizations_desc">サービスをバックグラウンドで動かし続けます。この状態は目安です。停止する場合は「自動起動」の許可とマルチタスク画面でのロックも確認してください。</string>
     <string name="notification_channel_server">サーバー実行中</string>
     <string name="title_server">サーバー</string>
     <string name="title_status">状態</string>
-    <string name="status_permission">必要な権限</string>
-    <string name="status_permission_overlay">オーバーレイ権限</string>
-    <string name="status_permission_overlay_granted">オーバーレイ権限は許可されています</string>
-    <string name="status_permission_overlay_missing">オーバーレイ権限がありません</string>
-    <string name="status_permission_battery">バッテリー最適化</string>
-    <string name="status_permission_battery_ignored">バッテリー最適化は無視されています</string>
-    <string name="status_permission_battery_unknown">バッテリー最適化の状態は不明です（メーカーにより異なります）</string>
-    <string name="status_permission_content_provider">LifeUp データアクセス</string>
-    <string name="status_lifeup">LifeUp の状態</string>
+<string name="status_lifeup">LifeUp の状態</string>
     <string name="status_server">サーバー状態</string>
     <string name="switch_start_service">サービスを開始</string>
     <string name="title_about">このアプリについて</string>
@@ -54,9 +44,7 @@
     <string name="content_provider_permission">Content Provider 権限</string>
     <string name="content_provider_permission_desc">LifeUp のデータを読み取る権限を付与してください</string>
     <string name="qrcode_scanning">スキャン中...</string>
-    <string name="lifeup_status_unknown">LifeUp の状態を確認できません。LifeUp データの読み取り権限が許可され、LifeUp が起動していることを確認してください</string>
-    <string name="lifeup_status_normal">LifeUp は実行中で、データ権限も付与されています...</string>
-    <string name="lifeup_permission_granted">権限の取得に成功しました。</string>
+<string name="lifeup_permission_granted">権限の取得に成功しました。</string>
     <string name="lifeup_status"><i>LifeUp</i> の状態</string>
     <string name="cloud_version">バージョン: %1$s</string>
     <string name="switch_cors">クロスオリジンアクセスを許可 (CORS)</string>
@@ -87,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_granted">許可済み</string>
+
+    <string name="status_badge_missing">未許可</string>
+
+    <string name="status_badge_battery_ignored">除外済み（目安）</string>
+
+    <string name="status_badge_battery_missing">未除外</string>
+
+    <string name="permission_summary">%1$d/%2$d 完了</string>
+
+    <string name="lifeup_status_ready">LifeUp は実行中で、データ権限も許可されています</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp は実行中ですが、LifeUp Cloud へのデータ権限が未許可です。上のデータ権限の「設定」をタップしてください。</string>
+
+    <string name="lifeup_status_not_running">LifeUp が実行されておらず、システムが起動を許可しませんでした。LifeUp を一度開き、自動起動とバックグラウンド実行を許可してください。</string>
+
+    <string name="lifeup_status_not_installed">LifeUp がインストールされていません。先に LifeUp をインストールしてください。</string>
+
+    <string name="status_badge_unknown">不明（LifeUp 未実行）</string>
 </resources>

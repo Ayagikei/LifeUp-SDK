@@ -17,22 +17,13 @@
     <string name="overlay_permission">Üstte gösterme izni</string>
     <string name="overlay_permission_desc">Arka plandan sayfa göstermek ve LifeUp API sayfalarını açmak için izin verin (Android 10+)</string>
     <string name="title_introduction">Giriş</string>
-    <string name="title_config">Yapılandırma</string>
-    <string name="btn_config">AYARLA</string>
+<string name="btn_config">AYARLA</string>
     <string name="ignore_battery_optimizations">Pil optimizasyonlarını yok say</string>
-    <string name="ignore_battery_optimizations_desc">Hizmetin arka planda kararlı şekilde çalışması için pil optimizasyonunu kapatmanız gerekir.\n\nBuna ek olarak, çeşitli üreticilerin sunduğu ek pil optimizasyonu yöntemlerini de kontrol etmelisiniz (örneğin \"otomatik başlatma\" izni vermek ve uygulamayı çoklu görev ekranında kilitlemek).</string>
+    <string name="ignore_battery_optimizations_desc">Hizmetin arka planda çalışmasını sağlar. Bu durum yalnızca bilgi amaçlıdır; hizmet yine durursa otomatik başlatmaya izin verin ve uygulamayı son uygulamalarda kilitleyin.</string>
     <string name="notification_channel_server">Sunucu çalışıyor</string>
     <string name="title_server">Sunucu</string>
     <string name="title_status">Durum</string>
-    <string name="status_permission">Gerekli izinler</string>
-    <string name="status_permission_overlay">Üstte gösterme izni</string>
-    <string name="status_permission_overlay_granted">Üstte gösterme izni verildi</string>
-    <string name="status_permission_overlay_missing">Üstte gösterme izni eksik</string>
-    <string name="status_permission_battery">Pil optimizasyonu</string>
-    <string name="status_permission_battery_ignored">Pil optimizasyonu yok sayıldı</string>
-    <string name="status_permission_battery_unknown">Pil optimizasyonu durumu bilinmiyor (üreticiye göre değişir)</string>
-    <string name="status_permission_content_provider">LifeUp veri erişimi</string>
-    <string name="status_lifeup">LifeUp durumu</string>
+<string name="status_lifeup">LifeUp durumu</string>
     <string name="status_server">Sunucu durumu</string>
     <string name="switch_start_service">Hizmeti başlat</string>
     <string name="title_about">Hakkında</string>
@@ -53,9 +44,7 @@
     <string name="content_provider_permission">Content Provider izni</string>
     <string name="content_provider_permission_desc">LifeUp verilerini okumak için izin verin</string>
     <string name="qrcode_scanning">Taranıyor...</string>
-    <string name="lifeup_status_unknown">LifeUp durumu bilinmiyor. LifeUp verilerini okuma iznini verdiğinizden ve LifeUp uygulamasının çalıştığından emin olun</string>
-    <string name="lifeup_status_normal">LifeUp çalışıyor, veri izni verildi...</string>
-    <string name="lifeup_permission_granted">İzni başarıyla aldınız.</string>
+<string name="lifeup_permission_granted">İzni başarıyla aldınız.</string>
     <string name="lifeup_status"><i>LifeUp</i> durumu</string>
     <string name="cloud_version">Sürüm: %1$s</string>
     <string name="switch_cors">Çoklu kaynak erişimine izin ver (CORS)</string>
@@ -86,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_missing">Yok</string>
+
+    <string name="status_badge_battery_ignored">Devre dışı (bilgi amaçlı)</string>
+
+    <string name="status_badge_battery_missing">Etkin</string>
+
+    <string name="permission_summary">%1$d/%2$d tamam</string>
+
+    <string name="status_badge_granted">Verildi</string>
+
+    <string name="lifeup_status_ready">LifeUp çalışıyor, veri erişimi verildi</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp çalışıyor ancak LifeUp Cloud için veri izni vermedi. Yukarıdaki veri izninde "Yapılandır"a dokunun.</string>
+
+    <string name="lifeup_status_not_running">LifeUp çalışmıyor ve sistem başlatılmasını engelledi. LifeUp uygulamasını bir kez açın, otomatik başlatmaya ve arka plan etkinliğine izin verin.</string>
+
+    <string name="lifeup_status_not_installed">LifeUp yüklü değil. Önce LifeUp uygulamasını yükleyin.</string>
+
+    <string name="status_badge_unknown">Bilinmiyor (LifeUp çalışmıyor)</string>
 </resources>

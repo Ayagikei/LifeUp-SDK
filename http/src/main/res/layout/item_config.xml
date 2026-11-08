@@ -17,19 +17,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_badge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <TextView
         android:id="@+id/tv_desc"
         style="@style/Item_Desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="8dp"
         android:text="@string/overlay_permission_desc"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@+id/btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_badge" />
 
 
     <com.google.android.material.button.MaterialButton

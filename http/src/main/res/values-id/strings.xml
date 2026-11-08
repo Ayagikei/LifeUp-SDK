@@ -17,23 +17,13 @@
     <string name="overlay_permission">Izin overlay</string>
     <string name="overlay_permission_desc">Berikan izin untuk menampilkan halaman dari latar belakang dan membuka halaman API LifeUp (Android 10+)</string>
     <string name="title_introduction">Pengantar</string>
-    <string name="title_config">Konfigurasi</string>
-    <string name="btn_config">KONFIG</string>
+<string name="btn_config">KONFIG</string>
     <string name="ignore_battery_optimizations">Abaikan optimisasi baterai</string>
-    <string name="ignore_battery_optimizations_desc">Agar layanan tetap berjalan stabil di latar belakang, Anda perlu mematikan optimisasi baterai.
-        \n\nSelain pengaturan ini, Anda juga perlu memeriksa pembatasan baterai tambahan dari masing-masing produsen (seperti mengizinkan “mulai otomatis” dan mengunci aplikasi di layar multitugas).</string>
+    <string name="ignore_battery_optimizations_desc">Menjaga layanan tetap berjalan di latar belakang. Status ini hanya acuan; jika layanan masih berhenti, izinkan juga mulai otomatis dan kunci aplikasi di multitugas.</string>
     <string name="notification_channel_server">Server berjalan</string>
     <string name="title_server">Server</string>
     <string name="title_status">Status</string>
-    <string name="status_permission">Izin yang diperlukan</string>
-    <string name="status_permission_overlay">Izin overlay</string>
-    <string name="status_permission_overlay_granted">Izin overlay diberikan</string>
-    <string name="status_permission_overlay_missing">Izin overlay tidak ada</string>
-    <string name="status_permission_battery">Optimisasi baterai</string>
-    <string name="status_permission_battery_ignored">Optimisasi baterai diabaikan</string>
-    <string name="status_permission_battery_unknown">Status optimisasi baterai tidak diketahui (berbeda tiap produsen)</string>
-    <string name="status_permission_content_provider">Akses Data LifeUp</string>
-    <string name="status_lifeup">Status LifeUp</string>
+<string name="status_lifeup">Status LifeUp</string>
     <string name="status_server">Status server</string>
     <string name="switch_start_service">Mulai layanan</string>
     <string name="title_about">Tentang</string>
@@ -54,9 +44,7 @@
     <string name="content_provider_permission">Izin Content Provider</string>
     <string name="content_provider_permission_desc">Berikan izin untuk membaca data LifeUp</string>
     <string name="qrcode_scanning">Memindai...</string>
-    <string name="lifeup_status_unknown">Status LifeUp tidak diketahui. Pastikan Anda sudah memberi izin untuk membaca data LifeUp dan LifeUp sedang berjalan</string>
-    <string name="lifeup_status_normal">LifeUp sedang berjalan, izin data diberikan...</string>
-    <string name="lifeup_permission_granted">Anda berhasil memperoleh izin.</string>
+<string name="lifeup_permission_granted">Anda berhasil memperoleh izin.</string>
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Versi: %1$s</string>
     <string name="switch_cors">Izinkan Akses Lintas Asal (CORS)</string>
@@ -87,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_missing">Tidak ada</string>
+
+    <string name="status_badge_battery_ignored">Dinonaktifkan (acuan)</string>
+
+    <string name="status_badge_battery_missing">Aktif</string>
+
+    <string name="permission_summary">%1$d/%2$d selesai</string>
+
+    <string name="status_badge_granted">Diberikan</string>
+
+    <string name="lifeup_status_ready">LifeUp berjalan, akses data diberikan</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp berjalan tetapi belum mengizinkan LifeUp Cloud. Ketuk "Konfigurasi" pada izin data di atas.</string>
+
+    <string name="lifeup_status_not_running">LifeUp tidak berjalan dan sistem memblokir peluncurannya. Buka LifeUp sekali, lalu izinkan mulai otomatis dan aktivitas latar belakang.</string>
+
+    <string name="lifeup_status_not_installed">LifeUp belum terpasang. Pasang LifeUp terlebih dahulu.</string>
+
+    <string name="status_badge_unknown">Tidak diketahui (LifeUp tidak berjalan)</string>
 </resources>
