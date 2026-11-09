@@ -112,6 +112,10 @@ MCP list tools then wrap `data` as:
 { ok, code: 200, source: "contentprovider", resource, offset, limit, total?, count, hasMore, items }
 ```
 
-`total` only when Cloud returned the full list (not server-paged). Compact drops notes/icons/subTasks and other HTTP-only fields (e.g. task `importance` / `difficulty`). Use `detail=true` for the full HTTP-shaped record.
+`limit` is 1–100 (default 20). When the requested limit is below 1 or above 100, the envelope also includes `limitCapped: true` and `requestedLimit`. Otherwise those fields are absent. `total` only when Cloud returned the full list (not server-paged). Compact rows drop notes/icons/subTasks and other HTTP-only fields (for example task `importance` / `difficulty`). Use `detail=true` for the full HTTP record.
+
+Compact task lists (`detail` not true) send `withSubTasks=false` on `/tasks`, `/tasks/{id}`, and `/smart_lists/{type}/tasks`, so Cloud can skip per-row subtask lookups. Compact rows are unchanged: they already omit `subTasks`. `detail=true` does not send the parameter and returns full objects, including `subTasks`. A subtask's text is `subTasks[].todo`; it has no `name` field. Reading `subTasks[].name` yields nothing even when the text is present. The parent task's text remains `name`.
+
+MCP sends `X-LifeUp-Concurrency: limited` on these GETs. HTTP 503 with body code 10003 means the read was not started. Back off and retry later; do not hammer.
 
 History query name is `gid` (not wiki `filterGid`). Files: `GET /files/{url}` — not a list tool.

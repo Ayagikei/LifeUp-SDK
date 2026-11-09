@@ -57,7 +57,22 @@ class SmartListTasksTest {
             assertFalse(uri.contains("?"))
             assertFalse(uri.contains("withSubTasks"))
             assertFalse(uri.contains(type.name))
+            assertEquals(uri, smartListTasksContentUri(type, withSubTasks = true))
+            assertEquals("$uri?withSubTasks=false", smartListTasksContentUri(type, withSubTasks = false))
         }
+    }
+
+    @Test
+    fun tasksContentUri_appendsWithSubTasksOnlyWhenFalse() {
+        val all = ContentProviderUrl.TASK
+        assertEquals(all, tasksContentUri(categoryId = null, withSubTasks = true))
+        assertEquals("$all?withSubTasks=false", tasksContentUri(categoryId = null, withSubTasks = false))
+        assertEquals("$all/12", tasksContentUri(categoryId = 12L, withSubTasks = true))
+        assertEquals(
+            "$all/12?withSubTasks=false",
+            tasksContentUri(categoryId = 12L, withSubTasks = false),
+        )
+        assertFalse(tasksContentUri(7L, true).contains("withSubTasks=true"))
     }
 
     @Test
@@ -66,10 +81,14 @@ class SmartListTasksTest {
         val smartList = methods.filter { it.name == "listSmartListTasks" || it.name.startsWith("listSmartListTasks-") }
         val categoryList = methods.filter { it.name == "listTasks" || it.name.startsWith("listTasks-") }
 
-        assertEquals(1, smartList.size)
-        assertEquals(SmartListType::class.java, smartList.single().parameterTypes.single())
-        assertEquals(1, categoryList.size)
-        assertEquals(java.lang.Long::class.java, categoryList.single().parameterTypes.single())
+        assertEquals(
+            setOf(listOf(SmartListType::class.java), listOf(SmartListType::class.java, java.lang.Boolean.TYPE)),
+            smartList.map { it.parameterTypes.toList() }.toSet(),
+        )
+        assertEquals(
+            setOf(listOf(java.lang.Long::class.java), listOf(java.lang.Long::class.java, java.lang.Boolean.TYPE)),
+            categoryList.map { it.parameterTypes.toList() }.toSet(),
+        )
     }
     @Test
     fun querySmartListTasks_parsesCurrentCycleTaskFields() {

@@ -30,7 +30,7 @@ class SmartListRouteTest {
     @Test
     fun validType_callsSdkAndReturnsResourceEnvelope() = testApplication {
         val seen = mutableListOf<SmartListType>()
-        installSmartLists { type ->
+        installSmartLists { type, _ ->
             seen += type
             Result.success(listOf(task(type.pathSegment)))
         }
@@ -52,7 +52,7 @@ class SmartListRouteTest {
     @Test
     fun invalidType_usesErrorEnvelopeAndDoesNotQuery() = testApplication {
         var calls = 0
-        installSmartLists {
+        installSmartLists { _, _ ->
             calls += 1
             Result.success(listOf(task("should-not-run")))
         }
@@ -74,7 +74,7 @@ class SmartListRouteTest {
     @Test
     fun sdkFailure_preservesProviderErrorWithoutFallback() = testApplication {
         val seen = mutableListOf<SmartListType>()
-        installSmartLists { type ->
+        installSmartLists { type, _ ->
             seen += type
             when (type) {
                 SmartListType.WEEKLY -> Result.failure(NullCursorException())
@@ -111,7 +111,7 @@ class SmartListRouteTest {
     @Test
     fun authGate_matchesOtherResources() = testApplication {
         var calls = 0
-        installSmartLists(token = "secret") {
+        installSmartLists(token = "secret") { _, _ ->
             calls += 1
             Result.success(listOf(task("daily")))
         }
@@ -129,9 +129,39 @@ class SmartListRouteTest {
         assertEquals(1, calls)
     }
 
+    @Test
+    fun withSubTasks_onlyExactFalseDisablesSubTasks() = testApplication {
+        val seen = mutableListOf<Pair<SmartListType, Boolean>>()
+        installSmartLists { type, withSubTasks ->
+            seen += type to withSubTasks
+            Result.success(emptyList())
+        }
+
+        val included = client.get("/smart_lists/daily/tasks")
+        val excluded = client.get("/smart_lists/daily/tasks?withSubTasks=false")
+        assertEquals(HttpStatusCode.OK, included.status)
+        assertEquals(HttpStatusCode.OK, excluded.status)
+        assertTrue(included.bodyAsText().contains("\"data\":[]"))
+        assertEquals("[]", CloudJson.parseToJsonElement(excluded.bodyAsText()).jsonObject.getValue("data").toString())
+        client.get("/smart_lists/weekly/tasks?withSubTasks=FALSE")
+        client.get("/smart_lists/monthly/tasks?withSubTasks=true")
+        client.get("/smart_lists/daily/tasks?withSubTasks=0")
+
+        assertEquals(
+            listOf(
+                SmartListType.DAILY to true,
+                SmartListType.DAILY to false,
+                SmartListType.WEEKLY to false,
+                SmartListType.MONTHLY to true,
+                SmartListType.DAILY to true,
+            ),
+            seen,
+        )
+    }
+
     private fun ApplicationTestBuilder.installSmartLists(
         token: String? = null,
-        queryTasks: (SmartListType) -> Result<List<Task>>,
+        queryTasks: (SmartListType, Boolean) -> Result<List<Task>>,
     ) {
         application {
             install(ContentNegotiation) { json(CloudJson) }
@@ -140,7 +170,7 @@ class SmartListRouteTest {
                 installApiTokenValidation(token)
             }
             routing {
-                registerSmartListTasksRoute(queryTasks)
+                registerSmartListTasksRoute(queryTasks = queryTasks)
             }
         }
     }

@@ -17,22 +17,13 @@
     <string name="overlay_permission">Permissão de sobreposição</string>
     <string name="overlay_permission_desc">Conceda permissão para mostrar páginas em segundo plano e abrir páginas da API do LifeUp (Android 10+)</string>
     <string name="title_introduction">Introdução</string>
-    <string name="title_config">Configuração</string>
-    <string name="btn_config">CONFIG.</string>
+<string name="btn_config">CONFIG.</string>
     <string name="ignore_battery_optimizations">Ignorar otimizações de bateria</string>
-    <string name="ignore_battery_optimizations_desc">Para manter o serviço funcionando de forma estável em segundo plano, você precisa desativar a otimização de bateria.\n\nAlém desta configuração, você também precisa verificar os métodos adicionais de otimização de bateria de vários fabricantes (como permitir \"início automático\" e bloquear o app na tela de multitarefa).</string>
+    <string name="ignore_battery_optimizations_desc">Mantém o serviço ativo em segundo plano. Este status é apenas indicativo; se o serviço parar, permita também a inicialização automática e bloqueie o app na multitarefa.</string>
     <string name="notification_channel_server">Servidor em execução</string>
     <string name="title_server">Servidor</string>
     <string name="title_status">Status</string>
-    <string name="status_permission">Permissões necessárias</string>
-    <string name="status_permission_overlay">Permissão de sobreposição</string>
-    <string name="status_permission_overlay_granted">Permissão de sobreposição concedida</string>
-    <string name="status_permission_overlay_missing">Permissão de sobreposição ausente</string>
-    <string name="status_permission_battery">Otimização de bateria</string>
-    <string name="status_permission_battery_ignored">Otimização de bateria ignorada</string>
-    <string name="status_permission_battery_unknown">Status da otimização de bateria desconhecido (varia conforme o fabricante)</string>
-    <string name="status_permission_content_provider">Acesso aos dados do LifeUp</string>
-    <string name="status_lifeup">Status do LifeUp</string>
+<string name="status_lifeup">Status do LifeUp</string>
     <string name="status_server">Status do servidor</string>
     <string name="switch_start_service">Iniciar serviço</string>
     <string name="title_about">Sobre</string>
@@ -53,9 +44,7 @@
     <string name="content_provider_permission">Permissão do Content Provider</string>
     <string name="content_provider_permission_desc">Conceda permissão para ler os dados do LifeUp</string>
     <string name="qrcode_scanning">Escaneando...</string>
-    <string name="lifeup_status_unknown">O status do LifeUp é desconhecido. Verifique se você autorizou a permissão para ler os dados do LifeUp e se o LifeUp está em execução</string>
-    <string name="lifeup_status_normal">O LifeUp está em execução, permissão de dados concedida...</string>
-    <string name="lifeup_permission_granted">Você obteve a permissão com sucesso.</string>
+<string name="lifeup_permission_granted">Você obteve a permissão com sucesso.</string>
     <string name="lifeup_status">Status do <i>LifeUp</i></string>
     <string name="cloud_version">Versão: %1$s</string>
     <string name="switch_cors">Permitir acesso entre origens (CORS)</string>
@@ -86,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_missing">Não concedido</string>
+
+    <string name="status_badge_battery_ignored">Desativada (indicativo)</string>
+
+    <string name="status_badge_battery_missing">Ativa</string>
+
+    <string name="permission_summary">%1$d/%2$d concluído</string>
+
+    <string name="status_badge_granted">Concedido</string>
+
+    <string name="lifeup_status_ready">O LifeUp está em execução, acesso aos dados concedido</string>
+
+    <string name="lifeup_status_not_authorized">O LifeUp está em execução, mas não autorizou o LifeUp Cloud. Toque em “Configurar” na permissão de dados acima.</string>
+
+    <string name="lifeup_status_not_running">O LifeUp não está em execução e o sistema bloqueou a inicialização. Abra o LifeUp uma vez e permita a inicialização automática e a atividade em segundo plano.</string>
+
+    <string name="lifeup_status_not_installed">O LifeUp não está instalado. Instale o LifeUp primeiro.</string>
+
+    <string name="status_badge_unknown">Desconhecido (LifeUp parado)</string>
 </resources>

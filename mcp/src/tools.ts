@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server"
 import { z } from "zod"
 import { assertCallableMethod } from "./methods.js"
-import { HELP_TOOL_DESCRIPTION, HELP_TOPIC_DESCRIPTION, readHelp } from "./help.js"
+import { DIAGNOSTICS_GUIDANCE, HELP_TOOL_DESCRIPTION, HELP_TOPIC_DESCRIPTION, readHelp } from "./help.js"
 
 import type { Session } from "./session.js"
 import type { LifeUpParamValue } from "./lifeup-url.js"
@@ -41,11 +41,15 @@ function oneOf<T extends Record<string, unknown>>(obj: T, keys: (keyof T)[]): ke
   return present[0]
 }
 
+const LIST_LIMIT_NOTE = "limit 1-100, default 20"
+
+const listLimitSchema = z.number().int().optional().describe(LIST_LIMIT_NOTE)
+
 export const listTasksInputSchema = z.object({
   categoryId: z.number().int().optional(),
   smartListType: z.enum(SMART_LIST_TYPES).optional(),
   offset: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  limit: listLimitSchema,
   detail: z.boolean().optional(),
 }).superRefine((value, ctx) => {
   const message = taskQueryConflict({ resource: "tasks", ...value })
@@ -59,7 +63,7 @@ export const listDataInputSchema = z.object({
   ids: z.array(z.number().int()).optional(),
   gid: z.number().int().optional(),
   offset: z.number().int().optional(),
-  limit: z.number().int().optional(),
+  limit: listLimitSchema,
   detail: z.boolean().optional(),
   timeRangeStart: z.number().int().optional(),
   timeRangeEnd: z.number().int().optional(),
@@ -107,6 +111,14 @@ export function registerTools(server: McpServer, session: Session): void {
     return text({ endpoint, ...session.status() })
   })
 
+  server.registerTool("get_diagnostics", {
+    description: `${DIAGNOSTICS_GUIDANCE} Optional host and token select a target for this read only; they are not saved, not written to the phone, and not echoed. local.connected, local.eventsSubscribed, and local.tokenSet describe the current session. Returns {local, cloud?, cloudError?}. cloudError.category is timeout, unauthorized, unsupported for an older Cloud without this route, or unavailable.`,
+    inputSchema: z.object({
+      host: z.string().optional().describe("Optional Cloud host like 192.168.1.8:13276. Not saved and not included in the result."),
+      token: z.string().optional().describe("Optional raw Authorization token for this read only. Not saved and not included in the result."),
+    }),
+  }, async ({ host, token }) => text(await session.getDiagnostics({ host, token })))
+
   server.registerTool("help", {
     description: HELP_TOOL_DESCRIPTION,
     inputSchema: z.object({
@@ -116,60 +128,60 @@ export function registerTools(server: McpServer, session: Session): void {
 
   server.registerTool("list_data", {
     description:
-      "Query LifeUp ContentProvider lists (GET). Compact by default. Also coin_records, inventory_records, exp_records, step_records, level_defines, statistics. smartListType is only for resource=tasks and excludes categoryId.",
+      "Query LifeUp ContentProvider lists (GET). Compact by default. Also coin_records, inventory_records, exp_records, step_records, level_defines, statistics. smartListType is only for resource=tasks and excludes categoryId. limit 1-100, default 20.",
     inputSchema: listDataInputSchema,
   }, async (args) => queryList(session, args as ListArgs))
 
   server.registerTool("list_task_categories", {
-    description: "List task categories (compact). Same as list_data resource=task_categories.",
+    description: "List task categories (compact). Same as list_data resource=task_categories. limit 1-100, default 20.",
     inputSchema: z.object({
       offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
+      limit: listLimitSchema,
       detail: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "task_categories", ...args }))
 
   server.registerTool("list_tasks", {
-    description: "List tasks. Use categoryId or smartListType (daily, weekly, monthly), not both. Compact; detail=true for full objects.",
+    description: "List tasks. Use categoryId or smartListType (daily, weekly, monthly), not both. Compact; detail=true for full objects. limit 1-100, default 20.",
     inputSchema: listTasksInputSchema,
   }, async (args) => queryList(session, { resource: "tasks", ...args }))
 
   server.registerTool("list_history", {
-    description: "Task history (server-paged). Query param is gid.",
+    description: "Task history (server-paged). Query param is gid. limit 1-100, default 20.",
     inputSchema: z.object({
       offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
+      limit: listLimitSchema,
       gid: z.number().int().optional(),
       detail: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "history", ...args }))
 
   server.registerTool("list_item_categories", {
-    description: "List shop categories (compact).",
+    description: "List shop categories (compact). limit 1-100, default 20.",
     inputSchema: z.object({
       offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
+      limit: listLimitSchema,
       detail: z.boolean().optional(),
       includeHidden: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "item_categories", ...args }))
 
   server.registerTool("list_items", {
-    description: "List shop items. Use categoryId or ids. Compact by default.",
+    description: "List shop items. Use categoryId or ids. Compact by default. limit 1-100, default 20.",
     inputSchema: z.object({
       categoryId: z.number().int().optional(),
       ids: z.array(z.number().int()).optional(),
       offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
+      limit: listLimitSchema,
       detail: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "items", ...args }))
 
   server.registerTool("list_skills", {
-    description: "List attributes/skills (compact).",
+    description: "List attributes/skills (compact). limit 1-100, default 20.",
     inputSchema: z.object({
       offset: z.number().int().optional(),
-      limit: z.number().int().optional(),
+      limit: listLimitSchema,
       detail: z.boolean().optional(),
     }),
   }, async (args) => queryList(session, { resource: "skills", ...args }))

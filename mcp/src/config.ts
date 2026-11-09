@@ -72,4 +72,20 @@ export function tokenToPersist(
   return boundToken(saved, endpoint)
 }
 
+export const DEFAULT_REQUEST_TIMEOUT_MS = 30_000
+export const MAX_REQUEST_TIMEOUT_MS = 120_000
 
+export function assertRequestTimeoutMs(value: number, label = "timeoutMs"): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1 || value > MAX_REQUEST_TIMEOUT_MS) {
+    throw new Error(`Invalid ${label}: ${String(value)}. Expected a positive integer from 1 to 120000.`)
+  }
+  return value
+}
+
+export function resolveRequestTimeoutMs(raw: string | undefined = process.env.LIFEUP_TIMEOUT_MS): number {
+  if (raw === undefined) return DEFAULT_REQUEST_TIMEOUT_MS
+  if (!/^[1-9]\d*$/.test(raw)) {
+    throw new Error(`Invalid LIFEUP_TIMEOUT_MS: ${JSON.stringify(raw)}. Expected a positive integer from 1 to 120000.`)
+  }
+  return assertRequestTimeoutMs(Number(raw), "LIFEUP_TIMEOUT_MS")
+}

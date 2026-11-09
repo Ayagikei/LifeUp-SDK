@@ -17,23 +17,17 @@
     <string name="overlay_permission">懸浮視窗權限</string>
     <string name="overlay_permission_desc">授予權限以便在背景顯示頁面並拉起《人升》API 頁面（Android 10+）</string>
     <string name="title_introduction">介紹</string>
-    <string name="title_config">設定</string>
-    <string name="btn_config">設定</string>
+<string name="btn_config">設定</string>
     <string name="ignore_battery_optimizations">忽略電池最佳化</string>
-    <string name="ignore_battery_optimizations_desc">為了服務能保持穩定背景運行，你需要關閉電池最佳化。
-        \n\n並且除了該設定外，你還需要檢查各個廠商的額外電池最佳化手段（例如允許「自啟動」，以及在多工處鎖定 app）。</string>
+    <string name="ignore_battery_optimizations_desc">讓服務在背景穩定運行。此狀態僅供參考，若服務仍被關閉，請再檢查廠商的「自啟動」與多工鎖定。</string>
     <string name="notification_channel_server">服務運行中</string>
     <string name="title_server">服務</string>
     <string name="title_status">狀態</string>
-    <string name="status_permission">必要權限</string>
-    <string name="status_permission_overlay">懸浮視窗權限</string>
-    <string name="status_permission_overlay_granted">已取得懸浮視窗權限</string>
-    <string name="status_permission_overlay_missing">缺少懸浮視窗權限</string>
-    <string name="status_permission_battery">電池最佳化</string>
-    <string name="status_permission_battery_ignored">已忽略電池最佳化</string>
-    <string name="status_permission_battery_unknown">電池最佳化狀態未知（因廠商而異）</string>
-    <string name="status_permission_content_provider">人升資料存取</string>
-    <string name="status_lifeup">人升狀態</string>
+<string name="status_badge_granted">已授權</string>
+    <string name="status_badge_missing">未授權</string>
+    <string name="status_badge_battery_ignored">已忽略（僅供參考）</string>
+    <string name="status_badge_battery_missing">未忽略</string>
+<string name="status_lifeup">人升狀態</string>
     <string name="status_server">服務狀態</string>
     <string name="switch_start_service">啟動服務</string>
     <string name="title_about">關於</string>
@@ -54,9 +48,7 @@
     <string name="content_provider_permission">讀取「人升」資料權限</string>
     <string name="content_provider_permission_desc">授權以便讀取「人升」中的內部資料，如任務列表、商品列表等</string>
     <string name="qrcode_scanning">正在掃描，請稍後...</string>
-    <string name="lifeup_status_unknown">《人升》的運行狀態未知...\n請確定你已經授權了"讀取「人升」資料權限"，並且《人升》正在背景運行。</string>
-    <string name="lifeup_status_normal">《人升》正在運行中, 已取得資料權限...</string>
-    <string name="lifeup_permission_granted">你已經成功取得了權限。</string>
+<string name="lifeup_permission_granted">你已經成功取得了權限。</string>
     <string name="lifeup_status">人升狀態</string>
     <string name="cloud_version">版本: %1$s</string>
     <string name="switch_cors">允許跨域存取 (CORS)</string>
@@ -87,4 +79,16 @@
     <string name="lifeup_broadcasts_open_lab">打開人升實驗頁</string>
     <string name="lifeup_broadcasts_enable_failed">無法開啟人升廣播</string>
 
+
+    <string name="permission_summary">%1$d/%2$d 已完成</string>
+
+    <string name="lifeup_status_ready">《人升》正在運行，已授權讀取資料</string>
+
+    <string name="lifeup_status_not_authorized">《人升》正在運行，但尚未授權雲人升讀取資料。請點擊上方讀取資料權限的「設定」。</string>
+
+    <string name="lifeup_status_not_running">《人升》沒有在運行，系統也不允許喚起它。請打開一次《人升》，並允許它的自啟動與背景運行。</string>
+
+    <string name="lifeup_status_not_installed">未偵測到《人升》，請先安裝《人升》。</string>
+
+    <string name="status_badge_unknown">未知（人升未運行）</string>
 </resources>

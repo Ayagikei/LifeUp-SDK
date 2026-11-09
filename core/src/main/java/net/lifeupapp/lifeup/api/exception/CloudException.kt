@@ -11,6 +11,9 @@ open class CloudException(
         const val ERROR_NULL_CURSOR = ERROR_CODE_BASE + 1
 
         const val ERROR_CONTENT_PROVIDER = ERROR_CODE_BASE + 2
+
+        /** HTTP 503. Provider work was not started because admission timed out. */
+        const val ERROR_CLOUD_BUSY = ERROR_CODE_BASE + 3
     }
 }
 

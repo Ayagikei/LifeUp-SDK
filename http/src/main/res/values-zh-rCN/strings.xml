@@ -15,24 +15,18 @@
     <string name="local_ip_address_hint">服务启动后，你可以尝试用处于相同 WIFI 下的电脑（浏览器）访问该链接了！\n\n如果这里显示的 IP 地址不准确，你也可以前往 WIFI 设置确认你的本机 IP。</string>
     <string name="overlay_permission">悬浮窗权限</string>
     <string name="overlay_permission_desc">授予权限以便在后台显示页面并拉起「人升」API 页面（Android 10+）</string>
-    <string name="title_config">配置</string>
-    <string name="btn_config">配置</string>
+<string name="btn_config">配置</string>
     <string name="title_introduction">介绍</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
-    <string name="ignore_battery_optimizations_desc">为了服务能保持稳定后台运行，你需要关闭电池优化。
-        \n\n并且除了该设置外，你还需要检查各个厂商的额外电池优化手段（比如允许“自启动”，以及在多任务处锁定 app）。</string>
+    <string name="ignore_battery_optimizations_desc">让服务在后台稳定运行。此状态仅供参考，若服务仍被关闭，请再检查厂商的“自启动”和多任务锁定。</string>
     <string name="notification_channel_server">服务运行中</string>
     <string name="title_server">服务</string>
     <string name="title_status">状态</string>
-    <string name="status_permission">必要权限</string>
-    <string name="status_permission_overlay">悬浮窗权限</string>
-    <string name="status_permission_overlay_granted">已获得悬浮窗权限</string>
-    <string name="status_permission_overlay_missing">缺少悬浮窗权限</string>
-    <string name="status_permission_battery">电池优化</string>
-    <string name="status_permission_battery_ignored">已忽略电池优化</string>
-    <string name="status_permission_battery_unknown">电池优化状态未知（因厂商而异）</string>
-    <string name="status_permission_content_provider">人升数据访问</string>
-    <string name="status_lifeup">人升状态</string>
+<string name="status_badge_granted">已授权</string>
+    <string name="status_badge_missing">未授权</string>
+    <string name="status_badge_battery_ignored">已忽略（仅供参考）</string>
+    <string name="status_badge_battery_missing">未忽略</string>
+<string name="status_lifeup">人升状态</string>
     <string name="status_server">服务状态</string>
     <string name="switch_start_service">启动服务</string>
     <string name="switch_cors">允许跨域访问 (CORS)</string>
@@ -55,9 +49,7 @@
     <string name="content_provider_permission">读取「人升」数据权限</string>
     <string name="content_provider_permission_desc">授权以便读取「人升」中的内部数据，如任务列表、商品列表等</string>
     <string name="qrcode_scanning">正在扫描，请稍后...</string>
-    <string name="lifeup_status_unknown">《人升》的运行状态未知...\n请确定你已经授权了“读取「人升」数据权限”，并且《人升》正在后台运行。</string>
-    <string name="lifeup_status_normal">《人升》正在运行中, 已取到数据权限...</string>
-    <string name="lifeup_permission_granted">你已经成功获得了权限。</string>
+<string name="lifeup_permission_granted">你已经成功获得了权限。</string>
     <string name="lifeup_status">人升状态</string>
     <string name="cloud_version">版本: %1$s</string>
     <string name="title_advanced">高级设置</string>
@@ -74,6 +66,14 @@
     <string name="api_token_desc">设置访问令牌以保护您的服务器。设置后，所有请求都必须在 Authorization 请求头中包含此令牌。</string>
     <string name="app_introduction"><![CDATA[这是一个《<a href="https://play.google.com/store/apps/details?id=net.sarasarasa.lifeup">人升</a>》的扩展工具，把手机变成 API 桥梁：可从电脑或其他设备控制人升、做二次扩展开发，也可搭配 AI Agent（MCP）使用。详见下方「文档」与「MCP &amp; Skills」。请先安装人升应用。]]></string>
     <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="title_permissions">权限</string>
+    <string name="toggle_permissions">展开或收起权限</string>
+    <string name="mcp_quick_start_title">交给 AI Agent 使用</string>
+    <string name="mcp_quick_start_message">复制这句话，发给支持 MCP 的 AI Agent，例如 Claude Code、WorkBuddy 或 ChatGPT。Agent 会按文档完成安装和首次连接。\n\n%1$s</string>
+    <string name="mcp_quick_start_prompt">按这份文档帮我安装 LifeUp MCP 并完成首次连接：%1$s</string>
+    <string name="mcp_quick_start_copy">复制</string>
+    <string name="mcp_quick_start_guide">详细使用指南</string>
+    <string name="mcp_quick_start_copied">已复制，发给 AI Agent 即可</string>
     <string name="qrcode_scan_content_description">扫描人升 API 二维码</string>
     <string name="qrcode_help_content_description">了解二维码扫描</string>
     <string name="qrcode_help_title">二维码扫描</string>
@@ -88,4 +88,16 @@
     <string name="lifeup_broadcasts_open_lab">打开人升实验页</string>
     <string name="lifeup_broadcasts_enable_failed">无法开启人升广播</string>
 
+
+    <string name="permission_summary">%1$d/%2$d 已完成</string>
+
+    <string name="lifeup_status_ready">《人升》正在运行，已授权读取数据</string>
+
+    <string name="lifeup_status_not_authorized">《人升》正在运行，但还没有授权云人升读取数据。请点击上方读取数据权限的“配置”。</string>
+
+    <string name="lifeup_status_not_running">《人升》没有在运行，系统也没有允许拉起它。请打开一次《人升》，并允许它的自启动和后台运行。</string>
+
+    <string name="lifeup_status_not_installed">未检测到《人升》，请先安装《人升》。</string>
+
+    <string name="status_badge_unknown">未知（人升未运行）</string>
 </resources>

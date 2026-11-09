@@ -17,10 +17,11 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.RotateAnimation
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.AttrRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.ViewCompat
@@ -33,6 +34,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import android.widget.TextView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ktor.util.toLowerCasePreservingASCIIRules
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +52,7 @@ import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_CN
 import net.lifeupapp.lifeup.api.Val.DOCUMENT_LINK_MCP_HANT
 import net.lifeupapp.lifeup.api.content.info.InfoApi
 import net.lifeupapp.lifeup.http.databinding.ActivityMainBinding
+import net.lifeupapp.lifeup.http.databinding.ItemConfigBinding
 import net.lifeupapp.lifeup.http.qrcode.BarcodeScanningActivity
 import net.lifeupapp.lifeup.http.service.ConnectStatusManager
 import net.lifeupapp.lifeup.http.service.BroadcastGate
@@ -71,6 +74,8 @@ class MainActivity : AppCompatActivity() {
     }
     private var latestRunningState = LifeUpService.RunningState.NOT_RUNNING
     private var latestServiceError: Throwable? = null
+    // Result of the last background LifeUp check; null until the first check finishes.
+    private var lifeupStatus: LifeUpStatus? = null
 
     private var localIpAddresses: List<String> = emptyList()
     private val resultLauncher =
@@ -199,12 +204,12 @@ class MainActivity : AppCompatActivity() {
             setupExpandablePanel(
                 binding.advancedHeader,
                 binding.btnToggleAdvanced,
-                binding.cardAdvanced
+                listOf(binding.cardAdvanced),
             )
             setupExpandablePanel(
                 binding.aboutHeader,
                 binding.btnToggleAbout,
-                binding.cardAbout
+                listOf(binding.cardAbout),
             )
 
             // Route both documentation entry points to the same action.
@@ -214,30 +219,45 @@ class MainActivity : AppCompatActivity() {
             binding.btnDocument.setOnClickListener {
                 openLocalizedUrl(DOCUMENT_LINK, DOCUMENT_LINK_CN, DOCUMENT_LINK_CN_HANT)
             }
-            binding.mcpHeader.setOnClickListener {
-                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
-            }
-            binding.btnMcp.setOnClickListener {
-                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
-            }
+            binding.mcpHeader.setOnClickListener { showMcpQuickStartDialog() }
+            binding.btnMcp.setOnClickListener { showMcpQuickStartDialog() }
+            val setPermissionsExpanded = setupExpandablePanel(
+                binding.permissionHeader,
+                binding.btnTogglePermissions,
+                listOf(
+                    binding.includeOverlayConfig.root,
+                    binding.includeBatteryConfig.root,
+                    binding.includeContentProviderPermission.root,
+                ),
+                // Overlay and battery state are cheap synchronous checks; the
+                // LifeUp provider check is asynchronous and applied in the loop below.
+                expanded = !overlayPermissionReady() || !batteryPermissionReady(),
+            )
+
+            var lastPermissionsReadyApplied: Boolean? = null
 
             lifecycleScope.launchWhenResumed {
                 withContext(Dispatchers.IO) {
                     while (true) {
-                        val isRunning = checkContentProviderAvailable()
+                        val status = checkLifeUpStatus()
                         withContext(Dispatchers.Main) {
-                            binding.tvStatusLifeup.text = if (isRunning) {
-                                "✅ ${getString(R.string.lifeup_status_normal)}"
-                            } else {
-                                "❌ ${getString(R.string.lifeup_status_unknown)}"
+                            binding.tvStatusLifeup.text = when (status) {
+                                LifeUpStatus.READY -> "✅ ${getString(R.string.lifeup_status_ready)}"
+                                LifeUpStatus.NOT_AUTHORIZED -> "❌ ${getString(R.string.lifeup_status_not_authorized)}"
+                                LifeUpStatus.NOT_RUNNING -> "⚠️ ${getString(R.string.lifeup_status_not_running)}"
+                                LifeUpStatus.NOT_INSTALLED -> "❌ ${getString(R.string.lifeup_status_not_installed)}"
                             }
-                            updatePermissionStatus()
+                            lifeupStatus = status
+                            val ready = updatePermissionStatus()
+                            if (ready != lastPermissionsReadyApplied) {
+                                lastPermissionsReadyApplied = ready
+                                setPermissionsExpanded(!ready)
+                            }
                         }
                         delay(5000L)
                     }
                 }
             }
-
             launch {
                 ConnectStatusManager.networkChangedEvent.sample(500L).collect {
                     updateLocalIpAddress()
@@ -310,8 +330,7 @@ class MainActivity : AppCompatActivity() {
             this.tvTitle.setText(R.string.content_provider_permission)
             this.tvDesc.setText(R.string.content_provider_permission_desc)
             this.btn.setOnClickListener {
-                val hasPermission = checkContentProviderAvailable()
-                if (!hasPermission) {
+                if (lifeupStatus != LifeUpStatus.READY) {
                     try {
                         LifeUpApi.requestContentProviderPermission(getString(R.string.app_name))
                     } catch (e: ActivityNotFoundException) {
@@ -442,34 +461,118 @@ class MainActivity : AppCompatActivity() {
             latestRunningState == LifeUpService.RunningState.RUNNING && localIpAddresses.isNotEmpty()
     }
 
-    private fun updatePermissionStatus() {
-        // Check the overlay permission state.
-        val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            android.provider.Settings.canDrawOverlays(this)
-        } else {
-            true
+    private fun updatePermissionStatus(): Boolean {
+        val hasOverlayPermission = overlayPermissionReady()
+        val hasBatteryPermission = batteryPermissionReady()
+        val hasLifeupAccess = lifeupStatus == LifeUpStatus.READY
+        // The configure button stays only on rows that still need action, so the
+        // missing step is the one that stands out. Battery state cannot be read
+        // reliably across vendors, so its button is always kept.
+        renderPermissionRow(
+            binding.includeOverlayConfig,
+            hasOverlayPermission,
+            R.string.status_badge_granted,
+            R.string.status_badge_missing,
+            hideButtonWhenReady = true,
+        )
+        renderPermissionRow(
+            binding.includeBatteryConfig,
+            hasBatteryPermission,
+            R.string.status_badge_battery_ignored,
+            R.string.status_badge_battery_missing,
+            hideButtonWhenReady = false,
+            // Not a hard failure: vendors may still apply their own limits either way.
+            missingEmoji = "⚠️",
+        )
+        when (lifeupStatus) {
+            // Unknown until the first background check finishes.
+            null -> Unit
+            LifeUpStatus.READY, LifeUpStatus.NOT_AUTHORIZED -> renderPermissionRow(
+                binding.includeContentProviderPermission,
+                hasLifeupAccess,
+                R.string.status_badge_granted,
+                R.string.status_badge_missing,
+                hideButtonWhenReady = true,
+            )
+            // LifeUp must be running (or installed) before authorization can be checked.
+            LifeUpStatus.NOT_RUNNING, LifeUpStatus.NOT_INSTALLED -> {
+                val row = binding.includeContentProviderPermission
+                row.tvBadge.isVisible = true
+                row.tvBadge.text = "⚠️ ${getString(R.string.status_badge_unknown)}"
+                row.tvBadge.setTextColor(colorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant))
+                row.btn.isGone = false
+            }
         }
-        binding.tvStatusPermissionOverlay.text = if (hasOverlayPermission) {
-            "✅ ${getString(R.string.status_permission_overlay_granted)}"
-        } else {
-            "❌ ${getString(R.string.status_permission_overlay_missing)}"
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            binding.includeOverlayConfig.btn.isGone = true
         }
 
-        // Check whether battery optimizations are disabled for this app.
-        val hasBatteryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            powerManager.isIgnoringBatteryOptimizations(packageName)
-        } else {
-            true
-        }
-        binding.tvStatusPermissionBattery.text = if (hasBatteryPermission) {
-            "✅ ${getString(R.string.status_permission_battery_ignored)}"
-        } else {
-            "❓ ${getString(R.string.status_permission_battery_unknown)}"
-        }
+        val doneCount = listOf(hasOverlayPermission, hasBatteryPermission, hasLifeupAccess).count { it }
+        binding.tvPermissionSummary.text = getString(R.string.permission_summary, doneCount, 3)
+        binding.tvPermissionSummary.setTextColor(
+            if (doneCount == 3) colorAttr(androidx.appcompat.R.attr.colorPrimary)
+            else colorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
+        )
+        return hasOverlayPermission && hasBatteryPermission && hasLifeupAccess
     }
 
-    private fun checkContentProviderAvailable() =
-        (LifeUpApi.getContentProviderApi<InfoApi>().getInfo().getOrNull()?.appVersion ?: 0) > 0
+    private fun renderPermissionRow(
+        row: ItemConfigBinding,
+        ready: Boolean,
+        @StringRes readyText: Int,
+        @StringRes missingText: Int,
+        hideButtonWhenReady: Boolean,
+        missingEmoji: String = "❌",
+    ) {
+        row.tvBadge.isVisible = true
+        row.tvBadge.text = if (ready) {
+            "✅ ${getString(readyText)}"
+        } else {
+            "$missingEmoji ${getString(missingText)}"
+        }
+        row.tvBadge.setTextColor(
+            if (ready) colorAttr(androidx.appcompat.R.attr.colorPrimary)
+            else colorAttr(androidx.appcompat.R.attr.colorError)
+        )
+        row.btn.isGone = ready && hideButtonWhenReady
+    }
+
+    private fun colorAttr(@AttrRes attr: Int): Int =
+        MaterialColors.getColor(binding.root, attr)
+
+    private fun overlayPermissionReady(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+            android.provider.Settings.canDrawOverlays(this)
+
+    private fun batteryPermissionReady(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+            powerManager.isIgnoringBatteryOptimizations(packageName)
+
+    /**
+     * Distinguishes why LifeUp data is unavailable. Must run off the main thread.
+     *
+     * - The provider client cannot be acquired when LifeUp is not running and the
+     *   system (e.g. vendor auto-start control) refuses to start it.
+     * - Once acquired, LifeUp returns a null cursor to callers it has not authorized.
+     */
+    private fun checkLifeUpStatus(): LifeUpStatus {
+        val installed = runCatching {
+            packageManager.getPackageInfo(Val.LIFEUP_PACKAGE_NAME, 0)
+        }.isSuccess
+        if (!installed) return LifeUpStatus.NOT_INSTALLED
+
+        val client = runCatching {
+            contentResolver.acquireUnstableContentProviderClient(LIFEUP_PROVIDER_AUTHORITY)
+        }.getOrNull() ?: return LifeUpStatus.NOT_RUNNING
+        try {
+            val info = LifeUpApi.getContentProviderApi<InfoApi>().getInfo().getOrNull()
+            return if ((info?.appVersion ?: 0) > 0) LifeUpStatus.READY else LifeUpStatus.NOT_AUTHORIZED
+        } finally {
+            // close() needs API 24; release() works on every supported version.
+            @Suppress("DEPRECATION")
+            client.release()
+        }
+    }
 
     private fun validateAndSaveWakeLockDuration() {
         val input = binding.wakeLockDurationInput.text.toString()
@@ -501,40 +604,29 @@ class MainActivity : AppCompatActivity() {
     private fun setupExpandablePanel(
         headerView: View,
         toggleButton: AppCompatImageButton,
-        contentCard: MaterialCardView
-    ) {
-        val rotateUp = RotateAnimation(
-            0f, -180f,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        ).apply {
-            duration = 200
-            fillAfter = true
-        }
+        contentViews: List<View>,
+        expanded: Boolean = false,
+    ): (Boolean) -> Unit {
+        var isExpanded = expanded
 
-        val rotateDown = RotateAnimation(
-            -180f, 0f,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        ).apply {
-            duration = 200
-            fillAfter = true
+        fun apply(expanded: Boolean) {
+            contentViews.forEach { it.isVisible = expanded }
+            toggleButton.animate().rotation(if (expanded) 180f else 0f).setDuration(200).start()
         }
 
         fun togglePanel() {
-            if (contentCard.visibility == View.VISIBLE) {
-                contentCard.visibility = View.GONE
-                toggleButton.startAnimation(rotateDown)
-            } else {
-                contentCard.visibility = View.VISIBLE 
-                toggleButton.startAnimation(rotateUp)
-            }
+            isExpanded = !isExpanded
+            apply(isExpanded)
         }
 
+        apply(expanded)
         headerView.setOnClickListener { togglePanel() }
         toggleButton.setOnClickListener { togglePanel() }
+        return { expanded ->
+            isExpanded = expanded
+            apply(expanded)
+        }
     }
-
     private fun validateAndSavePortSetting() {
         val input = binding.portSettingInput.text.toString()
         if (input.isEmpty()) {
@@ -585,6 +677,44 @@ class MainActivity : AppCompatActivity() {
             .show()
         dialog.findViewById<TextView>(com.google.android.material.R.id.message)?.apply {
             setLineSpacing(0f, 1.3f)
+        }
+    }
+
+    private fun showMcpQuickStartDialog() {
+        val prompt = getString(
+            R.string.mcp_quick_start_prompt,
+            if (isSimplifiedChinese()) Val.MCP_QUICK_START_URL_CN else Val.MCP_QUICK_START_URL,
+        )
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.mcp_quick_start_title)
+            .setMessage(getString(R.string.mcp_quick_start_message, prompt))
+            .setPositiveButton(R.string.mcp_quick_start_copy) { _, _ ->
+                copyPlainText(prompt)
+            }
+            .setNeutralButton(R.string.mcp_quick_start_guide) { _, _ ->
+                openLocalizedUrl(DOCUMENT_LINK_MCP, DOCUMENT_LINK_MCP_CN, DOCUMENT_LINK_MCP_HANT)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+        dialog.findViewById<TextView>(android.R.id.message)?.setLineSpacing(0f, 1.3f)
+    }
+
+    private fun isSimplifiedChinese(): Boolean {
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales.get(0)
+        } else {
+            @Suppress("DEPRECATION")
+            resources.configuration.locale
+        }
+        return locale.language == "zh" &&
+            locale.country.toLowerCasePreservingASCIIRules() == "cn"
+    }
+
+    private fun copyPlainText(value: String) {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("lifeup-mcp", value))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(this, R.string.mcp_quick_start_copied, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -641,3 +771,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
+private const val LIFEUP_PROVIDER_AUTHORITY = "net.sarasarasa.lifeup.provider.api"
+
+private enum class LifeUpStatus { READY, NOT_AUTHORIZED, NOT_RUNNING, NOT_INSTALLED }

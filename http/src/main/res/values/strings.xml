@@ -18,23 +18,17 @@
     <string name="overlay_permission">Overlay Permission</string>
     <string name="overlay_permission_desc">Grant permission to show pages from background and launch LifeUp API pages (Android 10+)</string>
     <string name="title_introduction">Introduction</string>
-    <string name="title_config">Config</string>
-    <string name="btn_config">CONFIG</string>
+<string name="btn_config">CONFIG</string>
     <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
-    <string name="ignore_battery_optimizations_desc">In order for the service to keep running in the background stably, you need to turn off battery optimization.
-        \n\nAnd in addition to this setting, you also need to check the additional battery optimization methods of various manufacturers（like allowing “auto-start”, and locking app in multi-tasking）.</string>
+    <string name="ignore_battery_optimizations_desc">Keeps the service running in the background. This status is for reference only; if the service still stops, also allow auto-start and lock the app in recent tasks.</string>
     <string name="notification_channel_server">Server Running</string>
     <string name="title_server">Server</string>
     <string name="title_status">Status</string>
-    <string name="status_permission">Required Permissions</string>
-    <string name="status_permission_overlay">Overlay Permission</string>
-    <string name="status_permission_overlay_granted">Overlay permission granted</string>
-    <string name="status_permission_overlay_missing">Overlay permission missing</string>
-    <string name="status_permission_battery">Battery Optimization</string>
-    <string name="status_permission_battery_ignored">Battery optimization ignored</string>
-    <string name="status_permission_battery_unknown">Battery optimization status unknown (varies by manufacturer)</string>
-    <string name="status_permission_content_provider">LifeUp Data Access</string>
-    <string name="status_lifeup">LifeUp Status</string>
+<string name="status_badge_granted">Granted</string>
+    <string name="status_badge_missing">Not granted</string>
+    <string name="status_badge_battery_ignored">Ignored (reference only)</string>
+    <string name="status_badge_battery_missing">Not ignored</string>
+<string name="status_lifeup">LifeUp Status</string>
     <string name="status_server">Server Status</string>
     <string name="switch_start_service">Start Service</string>
     <string name="title_about">About</string>
@@ -60,9 +54,7 @@
     <string name="qrcode_help_title">QR code scanning</string>
     <string name="qrcode_help_message">Turn any lifeup://api/… URL into a QR code — print it and place it on a desk, wall, or device.\n\nTap Scan in LifeUp Cloud to run the API instantly.\n\nExamples:\n• Start a pomodoro timer\n• Check in or complete a task\n• Open purchase or use-item dialogs\n• Trigger rewards, toasts, or custom workflows\n\nBridge LifeUp with real-world actions: scan at your gym, study desk, or workstation to log habits in-game.\n\nSee Documentation for more API ideas.</string>
     <string name="qrcode_help_ok">Got it</string>
-    <string name="lifeup_status_unknown">The status of LifeUp is unknown, please make sure you have authorized the permission to read LifeUp data, and LifeUp is running</string>
-    <string name="lifeup_status_normal">LifeUp is running, data permission granted...</string>
-    <string name="lifeup_permission_granted">You have successfully obtained permission.</string>
+<string name="lifeup_permission_granted">You have successfully obtained permission.</string>
     <string name="lifeup_status"><i>LifeUp</i> Status</string>
     <string name="cloud_version">Version: %1$s</string>
     <string name="switch_cors">Allow Cross-Origin Access (CORS)</string>
@@ -70,6 +62,14 @@
     <string name="title_advanced">Advanced Settings</string>
     <string name="title_document">Documentation</string>
     <string name="title_mcp">MCP &amp; Skills</string>
+    <string name="title_permissions">Permissions</string>
+    <string name="toggle_permissions">Show or hide permissions</string>
+    <string name="mcp_quick_start_title">Use with an AI agent</string>
+    <string name="mcp_quick_start_message">Copy this sentence and send it to an AI agent that supports MCP, such as Claude Code, WorkBuddy, or ChatGPT. The agent will follow the guide and finish the first connection.\n\n%1$s</string>
+    <string name="mcp_quick_start_prompt">Follow this guide to install LifeUp MCP and finish the first connection: %1$s</string>
+    <string name="mcp_quick_start_copy">Copy</string>
+    <string name="mcp_quick_start_guide">Detailed guide</string>
+    <string name="mcp_quick_start_copied">Copied. Send it to your AI agent.</string>
     <string name="wake_lock_duration">Wake Lock Duration</string>
     <string name="wake_lock_duration_desc">Set how long the service keeps awake (in minutes).\n\nIt will be automatically renewed each time a request is received, so you usually don\'t need to set it too long.\n\nRange: 1-60 minutes</string>
     <string name="wake_lock_duration_error">Please enter a number between 1-60</string>
@@ -90,4 +90,16 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="permission_summary">%1$d/%2$d done</string>
+
+    <string name="lifeup_status_ready">LifeUp is running and data access is granted</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp is running but has not authorized LifeUp Cloud. Tap “Configure” on the data permission above.</string>
+
+    <string name="lifeup_status_not_running">LifeUp is not running and the system blocked starting it. Open LifeUp once, and allow its auto-start and background activity.</string>
+
+    <string name="lifeup_status_not_installed">LifeUp is not installed. Install LifeUp first.</string>
+
+    <string name="status_badge_unknown">Unknown (LifeUp not running)</string>
 </resources>

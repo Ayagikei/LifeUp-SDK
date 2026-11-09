@@ -17,23 +17,13 @@
     <string name="overlay_permission">Разрешение на отображение поверх окон</string>
     <string name="overlay_permission_desc">Выдайте разрешение на показ страниц из фона и запуск страниц API LifeUp (Android 10+)</string>
     <string name="title_introduction">Введение</string>
-    <string name="title_config">Настройки</string>
-    <string name="btn_config">НАСТРОЙКИ</string>
+<string name="btn_config">НАСТРОЙКИ</string>
     <string name="ignore_battery_optimizations">Игнорировать оптимизацию батареи</string>
-    <string name="ignore_battery_optimizations_desc">Чтобы сервис продолжал стабильно работать в фоне, необходимо отключить оптимизацию батареи.
-        \n\nКроме этого, проверьте и дополнительные ограничения производителя (например, разрешение на автозапуск и закрепление приложения в окне многозадачности).</string>
+    <string name="ignore_battery_optimizations_desc">Позволяет службе работать в фоне. Статус носит справочный характер; если служба всё равно останавливается, разрешите автозапуск и закрепите приложение в недавних.</string>
     <string name="notification_channel_server">Сервер работает</string>
     <string name="title_server">Сервер</string>
     <string name="title_status">Статус</string>
-    <string name="status_permission">Требуемые разрешения</string>
-    <string name="status_permission_overlay">Разрешение на отображение поверх окон</string>
-    <string name="status_permission_overlay_granted">Разрешение на отображение поверх окон выдано</string>
-    <string name="status_permission_overlay_missing">Нет разрешения на отображение поверх окон</string>
-    <string name="status_permission_battery">Оптимизация батареи</string>
-    <string name="status_permission_battery_ignored">Оптимизация батареи отключена</string>
-    <string name="status_permission_battery_unknown">Статус оптимизации батареи неизвестен (зависит от производителя)</string>
-    <string name="status_permission_content_provider">Доступ к данным LifeUp</string>
-    <string name="status_lifeup">Статус LifeUp</string>
+<string name="status_lifeup">Статус LifeUp</string>
     <string name="status_server">Статус сервера</string>
     <string name="switch_start_service">Запустить сервис</string>
     <string name="title_about">О приложении</string>
@@ -54,9 +44,7 @@
     <string name="content_provider_permission">Разрешение Content Provider</string>
     <string name="content_provider_permission_desc">Выдайте разрешение на чтение данных LifeUp</string>
     <string name="qrcode_scanning">Сканирование...</string>
-    <string name="lifeup_status_unknown">Статус LifeUp неизвестен. Убедитесь, что вы выдали разрешение на чтение данных LifeUp и что LifeUp запущен</string>
-    <string name="lifeup_status_normal">LifeUp запущен, разрешение на данные выдано...</string>
-    <string name="lifeup_permission_granted">Разрешение успешно получено.</string>
+<string name="lifeup_permission_granted">Разрешение успешно получено.</string>
     <string name="lifeup_status"><i>LifeUp</i> Статус</string>
     <string name="cloud_version">Версия: %1$s</string>
     <string name="switch_cors">Разрешить межсайтовый доступ (CORS)</string>
@@ -87,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_missing">Отсутствует</string>
+
+    <string name="status_badge_battery_ignored">Отключена (справочно)</string>
+
+    <string name="status_badge_battery_missing">Включена</string>
+
+    <string name="permission_summary">%1$d/%2$d готово</string>
+
+    <string name="status_badge_granted">Выдано</string>
+
+    <string name="lifeup_status_ready">LifeUp запущен, доступ к данным выдан</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp запущен, но не разрешил доступ LifeUp Cloud. Нажмите «Настроить» у разрешения на данные выше.</string>
+
+    <string name="lifeup_status_not_running">LifeUp не запущен, и система запретила его запуск. Откройте LifeUp один раз и разрешите автозапуск и фоновую работу.</string>
+
+    <string name="lifeup_status_not_installed">LifeUp не установлен. Сначала установите LifeUp.</string>
+
+    <string name="status_badge_unknown">Неизвестно (LifeUp не запущен)</string>
 </resources>

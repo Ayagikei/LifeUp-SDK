@@ -17,14 +17,30 @@ Typical failures:
 | Signal | Meaning | What to do |
 |---|---|---|
 | discover empty | Cloud off, different Wi‑Fi, or **corporate LAN** (mDNS multicast blocked / AP isolation / VLAN) | Ask for the IP:port shown in LifeUp Cloud; `connect` `{ host }`. Do not keep calling discover. |
-| connect timeout / NetworkError | phone sleep, Wi‑Fi drop | `connect` once more; then ask user |
+| connect timeout / NetworkError | network failure, phone sleep, or slow LifeUp startup / Provider access | Check the network and phone state; one fresh `connect` is enough before asking for logs. A timeout alone does not identify the cause. |
 | `token required or invalid` (HTTP 401) | Cloud has a token, or the token is wrong | ask user; `connect` `{ token }` |
 | `LifeUp is not running, or Read LifeUp Data is not granted` (code 10001) | LifeUp closed, or Cloud has no read permission | open LifeUp / grant in Cloud |
-| `Cloud timed out (10s)` | phone sleep / Wi‑Fi drop | one `connect`, then ask user |
+| Cloud HTTP timeout | no result within the configured budget (default 30s) | For reads, reduce query size/concurrency or adjust `LIFEUP_TIMEOUT_MS`. For commands, treat the outcome as unknown and check state before any repeat. |
+| HTTP **503**, body `code` **10003** | Admission queue timed out. The request was **not** started (a command was not executed). | Back off and retry later. Do not hammer. MCP does not retry. |
+| Other HTTP **503** | Overload, proxy, or another server-side condition | Read `code` and `message`. Do not treat it as "not started" unless `code` is 10003. |
 | Non-JSON response | wrong host or captive portal | check `host:port` |
-| later calls fail after success | phone slept | `status` then `connect` again |
+| later calls fail after success | earlier connection information may be stale; the phone, Provider or network may be unavailable | `status` is only a last-known snapshot. Check the current error and use one fresh read rather than repeatedly reconnecting. |
+
+### Diagnostics
+
+When `connect` or **`/info`** fails, or a write times out with unknown outcome: call MCP **`get_diagnostics` once** with `{ host }` (and `token` if Cloud requires it). HTTP **`GET /diagnostics`** is the same auth story as other Cloud routes. Full workflow, schema, and privacy rules: **`references/diagnostics.md`**. Also read **`help`** topic **`diagnostics`** (`{ "topic": "diagnostics" }`).
 
 Do not tight-loop discover. One retry is enough. Mutations are not idempotent (`complete`, `skip`, `reward`) — do not retry a write unless the user asked.
+
+### Timeout and concurrency
+
+The MCP client uses one HTTP deadline for headers and body, without resetting it. The default is 30000 ms. Process env `LIFEUP_TIMEOUT_MS` accepts integers from 1 through 120000; invalid settings fail at startup without changing saved connection details. Timeout errors name the method, path and budget, not query strings. Command and launch-submit timeouts do not prove the operation was cancelled; MCP does not automatically retry or resend them.
+
+Every Cloud HTTP request from this client sends `X-LifeUp-Concurrency: limited`. A Cloud that understands the header leaves light reads unqueued, admits at most 4 heavy reads and 2 commands, and waits at most 20s in that queue. If the wait expires it returns HTTP 503 with body code 10003 and does not start the request. Back off and retry later; do not hammer. This client does not retry. Older Clouds ignore the header.
+
+Cloud still runs blocking ContentProvider work on **`Dispatchers.IO`**. Binder and in-process locks still limit parallel I/O. URLs within one `call_api_batch` remain sequential. A client timeout or disconnect is not proof that a write was cancelled.
+
+An open TCP port or working root page does not prove Provider access works. A fresh `GET /info` reads versions without the Scheme mutex, but may still wait on LifeUp startup or Binder. It does not guarantee later business calls will succeed or isolate them from LifeUp/Binder delays.
 
 
 ## Encoding (MCP does it)

@@ -1,11 +1,21 @@
 import { WebSocket } from "undici"
+import { assertRequestTimeoutMs, resolveRequestTimeoutMs } from "./config.js"
 import { buildLifeUpUrl, type LifeUpParamValue } from "./lifeup-url.js"
 import type { CallVia } from "./results.js"
-
 export const SUCCESS = 200
 export const LIFEUP_NOT_RUNNING = 10001
 export const CONTENT_PROVIDER_ERROR = 10002
+export const CLOUD_BUSY = 10003
 
+/** Opt-in Cloud admission header. One value, attached to every Cloud HTTP request. */
+export const LIFEUP_CONCURRENCY_LIMITED = {
+  name: "X-LifeUp-Concurrency",
+  value: "limited",
+} as const
+
+const CLOUD_BUSY_LEAD = "LifeUp Cloud is busy; request not started. Retry later"
+const CLOUD_BUSY_MESSAGE = `${CLOUD_BUSY_LEAD}.`
+const CLOUD_BUSY_COMMAND_MESSAGE = `${CLOUD_BUSY_LEAD}; the command was not executed.`
 
 export type Envelope<T> = {
   code: number
@@ -41,9 +51,17 @@ export class LifeUpHttpError extends Error {
   }
 }
 
-export function decodeEnvelope<T>(status: number, body: string): Envelope<T> {
+export function decodeEnvelope<T>(
+  status: number,
+  body: string,
+  method: "GET" | "POST" = "GET",
+): Envelope<T> {
   if (status === 401) {
     throw new LifeUpHttpError("token required or invalid", 401)
+  }
+  if (status === 503) {
+    const busy = cloudBusyError(body, method)
+    if (busy) throw busy
   }
   if (status < 200 || status >= 300) {
     throw new LifeUpHttpError(`HTTP ${status}`, status)
@@ -70,6 +88,19 @@ export function decodeEnvelope<T>(status: number, body: string): Envelope<T> {
   return parsed
 }
 
+function cloudBusyError(body: string, method: "GET" | "POST"): LifeUpHttpError | undefined {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(body)
+  } catch {
+    return undefined
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return undefined
+  if ((parsed as { code?: unknown }).code !== CLOUD_BUSY) return undefined
+  const message = method === "POST" ? CLOUD_BUSY_COMMAND_MESSAGE : CLOUD_BUSY_MESSAGE
+  return new LifeUpHttpError(message, 503, CLOUD_BUSY)
+}
+
 export type FetchLike = (
   input: string,
   init?: { method?: string; headers?: Record<string, string>; body?: string; signal?: AbortSignal },
@@ -79,7 +110,92 @@ export type FetchLike = (
   headers?: { get(name: string): string | null }
 }>
 
-const REQUEST_TIMEOUT_MS = 10_000
+function formatTimeoutBudget(ms: number): string {
+  const whole = Math.trunc(ms / 1000)
+  const fraction = ms % 1000
+  if (fraction === 0) return `${whole}s`
+  return `${whole}.${String(fraction).padStart(3, "0").replace(/0+$/, "")}s`
+}
+
+function timeoutMessage(method: string, path: string, timeoutMs: number): string {
+  const base = `${method} ${path} timed out after ${formatTimeoutBudget(timeoutMs)}`
+  return method === "GET" ? base : `${base}; outcome unknown, check state before retry`
+}
+
+function isTimeoutFailure(error: unknown): boolean {
+  if (!(error instanceof Error)) return false
+  if (error.name === "TimeoutError" || error.name === "AbortError") return true
+  const cause = (error as { cause?: unknown }).cause
+  return cause instanceof Error && (cause.name === "TimeoutError" || cause.name === "AbortError")
+}
+
+function raceAbort<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const onAbort = () => reject(abortReason(signal))
+    if (signal.aborted) onAbort()
+    else signal.addEventListener("abort", onAbort, { once: true })
+    work.then(
+      (value) => {
+        signal.removeEventListener("abort", onAbort)
+        resolve(value)
+      },
+      (error: unknown) => {
+        signal.removeEventListener("abort", onAbort)
+        reject(error)
+      },
+    )
+  })
+}
+
+function abortReason(signal: AbortSignal): Error {
+  if (signal.reason instanceof Error) return signal.reason
+  const error = new Error("The operation timed out")
+  error.name = "TimeoutError"
+  return error
+}
+
+type Deadline = {
+  signal: AbortSignal
+  guard<T>(work: Promise<T>): Promise<T>
+  close(): void
+}
+
+function startDeadline(method: string, url: string, timeoutMs: number): Deadline {
+  const pathname = new URL(url).pathname
+  const controller = new AbortController()
+  const timer = setTimeout(() => {
+    const reason = new Error("The operation timed out")
+    reason.name = "TimeoutError"
+    controller.abort(reason)
+  }, timeoutMs)
+  let closed = false
+  const close = () => {
+    if (closed) return
+    closed = true
+    clearTimeout(timer)
+  }
+  const message = timeoutMessage(method, pathname, timeoutMs)
+  return {
+    signal: controller.signal,
+    close,
+    async guard<T>(work: Promise<T>): Promise<T> {
+      try {
+        return await raceAbort(work, controller.signal)
+      } catch (error) {
+        close()
+        if (isTimeoutFailure(error)) throw new LifeUpHttpError(message)
+        throw error
+      }
+    },
+  }
+}
+
+type GuardedResponse = {
+  status: number
+  headers?: { get(name: string): string | null }
+  text: () => Promise<string>
+  finish: () => void
+}
 // ponytail: FIFO cap 32; key by full URL and raise the cap if one session outgrows it
 const RESOURCE_CACHE_MAX = 32
 
@@ -87,13 +203,25 @@ type CachedGet = { etag: string; data: unknown }
 
 export class LifeUpClient {
   private readonly resourceCache = new Map<string, CachedGet>()
-
+  // Key is this client's token plus the full href (path and query). Joiners share the
+  // first caller's promise, so they also share that caller's deadline and do not start
+  // a second timer or fetch. The entry is removed when the promise settles. ETag and
+  // 304 handling stay inside the shared call.
+  private readonly inflightGets = new Map<string, Promise<unknown>>()
+  private readonly timeoutMs: number
   constructor(
     readonly host: string,
     readonly port: number,
     readonly token: string | undefined,
     private readonly fetchImpl: FetchLike = fetch,
-  ) {}
+    timeoutMs: number = resolveRequestTimeoutMs(),
+  ) {
+    this.timeoutMs = assertRequestTimeoutMs(timeoutMs)
+  }
+
+  get requestTimeoutMs(): number {
+    return this.timeoutMs
+  }
 
   get baseUrl(): string {
     return `http://${this.host}:${this.port}`
@@ -105,14 +233,25 @@ export class LifeUpClient {
     return headers
   }
 
-  private async request(url: string, init: { method?: string; headers?: Record<string, string>; body?: string }) {
-    const signal = AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  private async send(
+    url: string,
+    init: { method?: string; headers?: Record<string, string>; body?: string },
+  ): Promise<GuardedResponse> {
+    const headers = {
+      ...(init.headers ?? {}),
+      [LIFEUP_CONCURRENCY_LIMITED.name]: LIFEUP_CONCURRENCY_LIMITED.value,
+    }
+    const deadline = startDeadline(init.method ?? "GET", url, this.timeoutMs)
     try {
-      return await this.fetchImpl(url, { ...init, signal })
-    } catch (error) {
-      if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
-        throw new LifeUpHttpError("Cloud timed out (10s). Check phone/Wi-Fi, then lifeup_connect again.")
+      const response = await deadline.guard(this.fetchImpl(url, { ...init, headers, signal: deadline.signal }))
+      return {
+        status: response.status,
+        headers: response.headers,
+        text: () => deadline.guard(response.text()),
+        finish: () => deadline.close(),
       }
+    } catch (error) {
+      deadline.close()
       throw error
     }
   }
@@ -125,9 +264,9 @@ export class LifeUpClient {
     this.resourceCache.set(url, { etag, data })
   }
 
-  private async readGet<T>(url: string, response: Awaited<ReturnType<FetchLike>>): Promise<T> {
+  private async readGet<T>(url: string, response: GuardedResponse): Promise<T> {
     const body = await response.text()
-    const envelope = decodeEnvelope<T>(response.status, body)
+    const envelope = decodeEnvelope<T>(response.status, body, "GET")
     const data = envelope.data as T
     const etag = response.headers?.get("etag")
     if (etag) this.remember(url, etag, data)
@@ -135,7 +274,7 @@ export class LifeUpClient {
     return data
   }
 
-  async get<T>(path: string, query: Record<string, string | number | number[] | undefined> = {}): Promise<T> {
+  private hrefFor(path: string, query: Record<string, string | number | number[] | undefined>): string {
     const url = new URL(path, this.baseUrl)
     for (const [key, value] of Object.entries(query)) {
       if (value === undefined) continue
@@ -145,17 +284,47 @@ export class LifeUpClient {
         url.searchParams.append(key, String(value))
       }
     }
+    return url.toString()
+  }
 
-    const href = url.toString()
+  private inflightGetKey(href: string): string {
+    return `${this.token ?? ""}\0${href}`
+  }
+
+  async get<T>(path: string, query: Record<string, string | number | number[] | undefined> = {}): Promise<T> {
+    const href = this.hrefFor(path, query)
+    const key = this.inflightGetKey(href)
+    const existing = this.inflightGets.get(key)
+    if (existing) return existing as Promise<T>
+
+    const pending = this.fetchGet<T>(href)
+    this.inflightGets.set(key, pending)
+    const forget = () => {
+      if (this.inflightGets.get(key) === pending) this.inflightGets.delete(key)
+    }
+    pending.then(forget, forget)
+    return pending
+  }
+
+  private async fetchGet<T>(href: string): Promise<T> {
     const cached = this.resourceCache.get(href)
     const headers = this.headers()
     if (cached) headers["If-None-Match"] = cached.etag
-    const response = await this.request(href, { headers })
-    if (response.status === 304) {
-      if (cached) return cached.data as T
-      return this.readGet(href, await this.request(href, { headers: this.headers() }))
+    const response = await this.send(href, { headers })
+    try {
+      if (response.status === 304) {
+        if (cached) return cached.data as T
+        const fresh = await this.send(href, { headers: this.headers() })
+        try {
+          return await this.readGet(href, fresh)
+        } finally {
+          fresh.finish()
+        }
+      }
+      return await this.readGet(href, response)
+    } finally {
+      response.finish()
     }
-    return this.readGet(href, response)
   }
 
   async callApi(
@@ -169,18 +338,22 @@ export class LifeUpClient {
   async callApis(urls: string[], via: CallVia = "contentprovider"): Promise<CallUrlResult[]> {
 
     const path = via === "launch" ? "/api" : "/api/contentprovider"
-    const response = await this.request(`${this.baseUrl}${path}`, {
+    const response = await this.send(`${this.baseUrl}${path}`, {
       method: "POST",
       headers: { ...this.headers(), "Content-Type": "application/json" },
       body: JSON.stringify({ urls }),
     })
-    const body = await response.text()
-    if (via === "launch") {
-      decodeEnvelope(response.status, body)
-      return urls.map((url) => ({ url, result: null }))
+    try {
+      const body = await response.text()
+      if (via === "launch") {
+        decodeEnvelope(response.status, body, "POST")
+        return urls.map((url) => ({ url, result: null }))
+      }
+      const envelope = decodeEnvelope<CallUrlResult[]>(response.status, body, "POST")
+      return envelope.data ?? []
+    } finally {
+      response.finish()
     }
-    const envelope = decodeEnvelope<CallUrlResult[]>(response.status, body)
-    return envelope.data ?? []
   }
 
 

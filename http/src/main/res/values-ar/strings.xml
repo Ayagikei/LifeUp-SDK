@@ -17,23 +17,13 @@
     <string name="overlay_permission">إذن الظهور فوق التطبيقات</string>
     <string name="overlay_permission_desc">امنح الإذن لعرض الصفحات من الخلفية وفتح صفحات API الخاصة بـ LifeUp (Android 10+)</string>
     <string name="title_introduction">مقدمة</string>
-    <string name="title_config">الإعدادات</string>
-    <string name="btn_config">إعدادات</string>
+<string name="btn_config">إعدادات</string>
     <string name="ignore_battery_optimizations">تجاهل تحسين البطارية</string>
-    <string name="ignore_battery_optimizations_desc">لكي تستمر الخدمة في العمل بثبات في الخلفية، تحتاج إلى إيقاف تحسين البطارية.
-        \n\nوبالإضافة إلى هذا الإعداد، تحتاج أيضًا إلى التحقق من القيود الإضافية الخاصة بكل شركة مصنّعة (مثل السماح بـ «التشغيل التلقائي» وتثبيت التطبيق في شاشة تعدد المهام).</string>
+    <string name="ignore_battery_optimizations_desc">يُبقي الخدمة تعمل في الخلفية. هذه الحالة للاسترشاد فقط؛ إذا توقفت الخدمة، اسمح بالتشغيل التلقائي وثبّت التطبيق في المهام الأخيرة.</string>
     <string name="notification_channel_server">الخادم قيد التشغيل</string>
     <string name="title_server">الخادم</string>
     <string name="title_status">الحالة</string>
-    <string name="status_permission">الأذونات المطلوبة</string>
-    <string name="status_permission_overlay">إذن الظهور فوق التطبيقات</string>
-    <string name="status_permission_overlay_granted">تم منح إذن الظهور فوق التطبيقات</string>
-    <string name="status_permission_overlay_missing">إذن الظهور فوق التطبيقات مفقود</string>
-    <string name="status_permission_battery">تحسين البطارية</string>
-    <string name="status_permission_battery_ignored">تم تجاهل تحسين البطارية</string>
-    <string name="status_permission_battery_unknown">حالة تحسين البطارية غير معروفة (تختلف حسب الشركة المصنّعة)</string>
-    <string name="status_permission_content_provider">الوصول إلى بيانات LifeUp</string>
-    <string name="status_lifeup">حالة LifeUp</string>
+<string name="status_lifeup">حالة LifeUp</string>
     <string name="status_server">حالة الخادم</string>
     <string name="switch_start_service">بدء الخدمة</string>
     <string name="title_about">حول</string>
@@ -54,9 +44,7 @@
     <string name="content_provider_permission">إذن Content Provider</string>
     <string name="content_provider_permission_desc">امنح الإذن لقراءة بيانات LifeUp</string>
     <string name="qrcode_scanning">جارٍ المسح...</string>
-    <string name="lifeup_status_unknown">حالة LifeUp غير معروفة. تأكد من منح إذن قراءة بيانات LifeUp وأن LifeUp قيد التشغيل</string>
-    <string name="lifeup_status_normal">LifeUp قيد التشغيل وتم منح إذن البيانات...</string>
-    <string name="lifeup_permission_granted">تم الحصول على الإذن بنجاح.</string>
+<string name="lifeup_permission_granted">تم الحصول على الإذن بنجاح.</string>
     <string name="lifeup_status">حالة <i>LifeUp</i></string>
     <string name="cloud_version">الإصدار: %1$s</string>
     <string name="switch_cors">السماح بالوصول عبر المصادر المختلفة (CORS)</string>
@@ -87,4 +75,24 @@
     <string name="lifeup_broadcasts_open_lab">Open LifeUp Labs</string>
     <string name="lifeup_broadcasts_enable_failed">Could not enable LifeUp broadcasts</string>
 
+
+    <string name="status_badge_missing">غير مُنح</string>
+
+    <string name="status_badge_battery_ignored">معطّل (للاسترشاد)</string>
+
+    <string name="status_badge_battery_missing">مفعّل</string>
+
+    <string name="permission_summary">%1$d/%2$d مكتمل</string>
+
+    <string name="status_badge_granted">مُنح</string>
+
+    <string name="lifeup_status_ready">LifeUp قيد التشغيل وتم منح الوصول إلى البيانات</string>
+
+    <string name="lifeup_status_not_authorized">LifeUp قيد التشغيل لكنه لم يمنح LifeUp Cloud إذن البيانات. اضغط «إعداد» في إذن البيانات أعلاه.</string>
+
+    <string name="lifeup_status_not_running">LifeUp لا يعمل وقد منع النظام تشغيله. افتح LifeUp مرة واحدة واسمح بالتشغيل التلقائي والنشاط في الخلفية.</string>
+
+    <string name="lifeup_status_not_installed">LifeUp غير مثبّت. ثبّت LifeUp أولاً.</string>
+
+    <string name="status_badge_unknown">غير معروف (LifeUp لا يعمل)</string>
 </resources>
